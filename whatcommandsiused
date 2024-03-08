@@ -1,0 +1,24 @@
+#all commands I used
+npm install -g typescript
+npm install typescript
+npm install antlr4ts
+antlr4ts Math.g4 -visitor
+code parser.ts
+tsc parser.ts
+antlr4ts Math.g4 -visitor
+tsc
+node dist/parser.js
+
+
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": ["*.ts"],
+  "exclude": ["node_modules"]
+}
+
