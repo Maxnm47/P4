@@ -26,3 +26,6 @@ test commands:grun Math.g4 -gui
 grun Math expr -tree
 grun Math expr -tree < input.txt
 
+
+Test command:
+antlr4-parse UCM.g4 expr -gui <balls.txt
