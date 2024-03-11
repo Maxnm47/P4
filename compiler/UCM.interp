@@ -1,0 +1,28 @@
+token literal names:
+null
+'int'
+'float'
+'string'
+null
+null
+null
+null
+null
+
+token symbolic names:
+null
+INT_T
+FLOAT_T
+STRING_T
+INT
+FLOAT
+STRING
+WS
+COMMENT
+
+rule names:
+type
+
+
+atn:
+[3, 51485, 51898, 1421, 44986, 20307, 1543, 60043, 49729, 3, 10, 7, 4, 2, 9, 2, 3, 2, 3, 2, 3, 2, 2, 2, 2, 3, 2, 2, 2, 3, 3, 2, 3, 5, 2, 5, 2, 4, 3, 2, 2, 2, 4, 5, 9, 2, 2, 2, 5, 3, 3, 2, 2, 2, 2]

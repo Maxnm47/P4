@@ -1,13 +1,13 @@
-import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
-import { MathLexer } from './MathLexer';
-import { MathParser } from './MathParser';
+import { CharStreams, CommonTokenStream } from 'antlr4ts';
+import { UCMLexer } from './compiler/UCMLexer';
+import { UCMParser } from './compiler/UCMParser';
 
 // Example input
-let input = "3 + 2 * 4";
-let inputStream = new ANTLRInputStream(input);
-let lexer = new MathLexer(inputStream);
+let input = "int = 0003";
+let inputStream = CharStreams.fromString(input);
+let lexer = new UCMLexer(inputStream);
 let tokenStream = new CommonTokenStream(lexer);
-let parser = new MathParser(tokenStream);
+let parser = new UCMParser(tokenStream);
 
 // Parse the input
 let tree = parser.expr();
