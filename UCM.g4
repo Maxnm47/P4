@@ -2,7 +2,6 @@ grammar UCM;
 // Add a start rule for testing
 start: expr;
 
-
 // for expressions
 ASSIGN: '=';
 IF: 'if';
