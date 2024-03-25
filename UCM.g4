@@ -1,26 +1,31 @@
 grammar UCM;
 
 // Add a start rule for testing
-start: object;
+start: statementList;
 
 // for expressions
 ASSIGN: '=';
 IF: 'if';
 ELSE: 'else';
 WHILE: 'while';
+FOR: 'for';
 RETURN: 'return';
 
+ID: [a-zA-Z_][a-zA-Z_0-9]*;
+
 // Expressions
-expr: boolExpr | numExpr;
+expr: value | ID | boolExpr | numExpr | methodCall;
 
 numExpr:
 	NUM
+	| ID
 	| MINUS numExpr
 	| numExpr (MULT | DIV | MOD) numExpr
 	| numExpr (PLUS | MINUS) numExpr
 	| LPAREN numExpr RPAREN;
 boolExpr:
 	BOOL
+	| ID
 	| NOT expr
 	| numExpr compExpr numExpr
 	| boolExpr EQ boolExpr
@@ -46,11 +51,14 @@ LTE: '<=';
 NOT: '!';
 
 // Types
-TYPE: PRIMITIVE_TYPE | COMPLEX_TYPE;
+TYPE:
+	PRIMITIVE_TYPE
+	| COMPLEX_TYPE
+	| ID; // ID IS FUCKING UP HERE
 PRIMITIVE_TYPE: INT_T | FLOAT_T | STRING_T | BOOL_T;
 COMPLEX_TYPE: OBJECT_T | ARRAY_T;
 
-VALUE: NUM | STRING | BOOL | OBJECT | ARRAY;
+value: NUM | STRING | BOOL | object | array;
 
 NUM: INT | FLOAT;
 INT_T: 'int';
@@ -96,21 +104,51 @@ SEMI: ';';
 COMMA: ',';
 COLON: ':';
 NEWLINE: '\n';
+TEMPLATE_KEYWORD: 'template';
+IN: 'in';
 
-ID: [a-zA-Z_][a-zA-Z_0-9]*;
+object: LCURLY (field)* RCURLY;
 
-OBJECT: LCURLY (FIELD)* RCURLY;
+field: TYPE? ID ASSIGN value SEMI;
 
-object: LCURLY (FIELD)* RCURLY;
+typedId: TYPE ID;
 
-FIELD: TYPE? ID ASSIGN VALUE;
+method: typedId LPAREN typedId* RPAREN LCURLY statement RCURLY;
 
-ARRAY:
-	LBRACKET VALUE (COMMA VALUE)* RBRACKET
+methodCall: ID LPAREN (expr (COMMA expr)* |) RPAREN;
+
+// Condtionals structure
+ifStatement: IF LPAREN boolExpr RPAREN LCURLY statement RCURLY;
+
+conditional: ifStatement (ELSE ifStatement)* (ELSE statement)?;
+
+// while loop
+whileLoop: WHILE LPAREN boolExpr RPAREN LCURLY statement RCURLY;
+
+// For loop
+forLoop:
+	FOR LPAREN ID IN (array | methodCall) LCURLY statement RCURLY;
+
+statementList: statement*;
+
+statement:
+	conditional
+	| assignment
+	| whileLoop
+	| forLoop
+	| methodCall
+	| method
+	| RETURN expr SEMI;
+
+array:
+	LBRACKET value (COMMA value)* RBRACKET
 	| LBRACKET RBRACKET;
 
-typedDeclaration: TYPE ID ASSIGN (expr | VALUE);
+assignment: (TYPE | ID)? ID ASSIGN expr SEMI; // TODO: find way to remove ID from here
+declaration: typedId SEMI;
 
-declaration: ID ASSIGN VALUE;
+// Templates
+templateField: typedId (ASSIGN value)? SEMI;
 
-//hiddenDeclaration: 'hidden' (typedDeclaration | declaration);
+template:
+	TEMPLATE_KEYWORD ID LCURLY (templateField | method)* RCURLY;
