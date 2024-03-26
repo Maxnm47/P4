@@ -43,6 +43,7 @@ RCURLY: '}';
 LBRACKET: '[';
 RBRACKET: ']';
 SEMI: ';';
+DOT: '.';
 COMMA: ',';
 COLON: ':';
 NEWLINE: '\n';
@@ -89,7 +90,10 @@ array:
 	LBRACKET (value (COMMA value)* | listConstruction |) RBRACKET;
 
 // Templates
-templateField: typedId (ASSIGN value)? SEMI;
+evaluaterArray:
+	LBRACKET ((boolExpr | ID) (COMMA (boolExpr | ID))* |) RBRACKET;
+templateField:
+	typedId (ASSIGN value)? (COLON evaluaterArray)? SEMI;
 templateDefenition:
 	TEMPLATE_KEYWORD ID LCURLY (templateField | method)* RCURLY SEMI;
 
@@ -99,7 +103,9 @@ functionCollection: FUNCTIONS_KEYWORD ID LCURLY method* RCURLY;
 // Methods
 method:
 	typedId LPAREN (typedId (COMMA typedId)* |) RPAREN LCURLY statementList RCURLY;
-methodCall: ID LPAREN (expr (COMMA expr)* |) RPAREN;
+functionCollectionCall: ID DOT;
+methodCall:
+	functionCollectionCall? ID LPAREN (expr (COMMA expr)* |) RPAREN;
 
 // Expressions
 expr: value | ID | boolExpr | numExpr | methodCall;
@@ -107,6 +113,7 @@ expr: value | ID | boolExpr | numExpr | methodCall;
 numExpr:
 	num
 	| ID
+	| methodCall
 	| MINUS numExpr
 	| numExpr (MULT | DIV | MOD) numExpr
 	| numExpr (PLUS | MINUS) numExpr
@@ -115,6 +122,7 @@ numExpr:
 boolExpr:
 	BOOL
 	| ID
+	| methodCall
 	| NOT expr
 	| numExpr compExpr numExpr
 	| boolExpr EQ boolExpr
