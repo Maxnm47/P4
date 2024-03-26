@@ -165,8 +165,8 @@ statement:
 	| RETURN expr SEMI;
 
 assignment: HIDDEN_? type? ID ASSIGN expr SEMI;
-objectDefenition: HIDDEN_? object_t ID ASSIGN object SEMI;
-arrayDefenition: HIDDEN_? array_t ID ASSIGN array SEMI;
+objectDefenition: HIDDEN_? object_t? ID ASSIGN object SEMI;
+arrayDefenition: HIDDEN_? array_t? ID ASSIGN array SEMI;
 declaration: typedId SEMI;
 
 // Add a start rule for testing
