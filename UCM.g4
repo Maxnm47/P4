@@ -16,6 +16,7 @@ TEMPLATE_KEYWORD: 'template';
 IN: 'in';
 HIDDEN_: 'hidden';
 OBJECT_KEYWORD: 'object';
+FUNCTIONS_KEYWORD: 'functions';
 
 //operators
 MULT: '*';
@@ -48,21 +49,17 @@ NEWLINE: '\n';
 ASSIGN: '=';
 QUOTE: '"';
 
-// Identifiers
-ID: [a-zA-Z_][a-zA-Z_0-9]*;
-typedId: type ID;
-
 // Types
 INT_T: 'int';
 FLOAT_T: 'float';
 STRING_T: 'string';
 BOOL_T: 'bool';
-object_t: ID | OBJECT_KEYWORD;
+object_t: OBJECT_KEYWORD | ID;
 array_t: (primitiveType | object_t) (LBRACKET RBRACKET)+;
 
-primitiveType: INT_T | FLOAT_T | STRING_T | BOOL_T;
+primitiveType: INT_T | FLOAT_T | BOOL_T;
+complexType: object_t | array_t | STRING_T;
 type: primitiveType | complexType;
-complexType: object_t | array_t;
 
 // Values
 BOOL: 'true' | 'false';
@@ -79,6 +76,10 @@ fragment UNICODE_ESCAPE:
 	'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 fragment HEX_DIGIT: [0-9a-fA-F];
 
+// Identifiers
+ID: [a-zA-Z_][a-zA-Z_0-9]*;
+typedId: type ID;
+
 // Objects
 object: LCURLY field* RCURLY;
 field: type? ID ASSIGN expr SEMI;
@@ -94,7 +95,7 @@ templateDefenition:
 	TEMPLATE_KEYWORD ID LCURLY (templateField | method)* RCURLY;
 
 // Functions
-functionCollection: ID LCURLY method* RCURLY;
+functionCollection: FUNCTIONS_KEYWORD ID LCURLY method* RCURLY;
 
 // Methods
 method:
@@ -154,10 +155,10 @@ declaration: typedId SEMI;
 // Add a start rule for testing
 root: (
 		templateDefenition
+		| field
 		| objectDefenition
 		| arrayDefenition
 		| functionCollection
-		| field
 	)*;
 
 start: root;
