@@ -18,6 +18,7 @@ HIDDEN_: 'hidden';
 OBJECT_KEYWORD: 'object';
 FUNCTIONS_KEYWORD: 'functions';
 EXTENDS_KEYWORD: 'extends';
+THIS_KEYWORD: 'this';
 
 //operators
 MULT: '*';
@@ -34,7 +35,6 @@ LT: '<';
 GTE: '>=';
 LTE: '<=';
 NOT: '!';
-
 // Symbols
 QUESTION: '?';
 LPAREN: '(';
@@ -93,7 +93,8 @@ array:
 
 // Templates
 evaluaterArray:
-	LBRACKET ((boolExpr | ID) (COMMA (boolExpr | ID))* |) RBRACKET;
+	LBRACKET ((boolExpr | ID) (COMMA (boolExpr |ID))* |) RBRACKET;
+
 templateField:
 	typedId (ASSIGN value)? (COLON evaluaterArray)? SEMI;
 templateExtention: EXTENDS_KEYWORD ID;
@@ -108,16 +109,17 @@ functionCollection: FUNCTIONS_KEYWORD ID LCURLY method* RCURLY;
 
 // Methods
 method:
-	typedId LPAREN (typedId (COMMA typedId)* |) RPAREN LCURLY statementList RCURLY;
+	typedId LPAREN (typedId (COMMA typedId)* |) RPAREN LCURLY statementList RCURLY SEMI;
 functionCollectionCall: ID DOT;
 methodCall:
 	functionCollectionCall? ID LPAREN (expr (COMMA expr)* |) RPAREN;
 
 // Expressions
-expr: value | ID | boolExpr | numExpr | methodCall;
+expr: value | ID | methodCall | boolExpr | numExpr;
 
 numExpr:
 	num
+	| THIS_KEYWORD // this  may ruin everything in the semantics :)))
 	| ID
 	| methodCall
 	| MINUS numExpr
@@ -127,6 +129,7 @@ numExpr:
 
 boolExpr:
 	BOOL
+	| THIS_KEYWORD // this  may ruin everything in the semantics :)))
 	| ID
 	| methodCall
 	| NOT expr
@@ -160,7 +163,7 @@ statement:
 	| assignment
 	| whileLoop
 	| forLoop
-	| methodCall
+	| methodCall SEMI
 	| method
 	| RETURN expr SEMI;
 
