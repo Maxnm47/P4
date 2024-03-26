@@ -17,6 +17,7 @@ IN: 'in';
 HIDDEN_: 'hidden';
 OBJECT_KEYWORD: 'object';
 FUNCTIONS_KEYWORD: 'functions';
+EXTENDS_KEYWORD: 'extends';
 
 //operators
 MULT: '*';
@@ -82,7 +83,8 @@ ID: [a-zA-Z_][a-zA-Z_0-9]*;
 typedId: type ID;
 
 // Objects
-object: ID? LCURLY field* RCURLY;
+adapting: ID;
+object: adapting? LCURLY field* RCURLY;
 field: HIDDEN_? type? ID ASSIGN expr SEMI;
 
 // Arrays
@@ -94,8 +96,12 @@ evaluaterArray:
 	LBRACKET ((boolExpr | ID) (COMMA (boolExpr | ID))* |) RBRACKET;
 templateField:
 	typedId (ASSIGN value)? (COLON evaluaterArray)? SEMI;
+templateExtention: EXTENDS_KEYWORD ID;
 templateDefenition:
-	TEMPLATE_KEYWORD ID LCURLY (templateField | method)* RCURLY SEMI;
+	TEMPLATE_KEYWORD ID templateExtention? LCURLY (
+		templateField
+		| method
+	)* RCURLY SEMI;
 
 // Functions
 functionCollection: FUNCTIONS_KEYWORD ID LCURLY method* RCURLY;
