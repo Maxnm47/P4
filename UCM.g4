@@ -81,18 +81,17 @@ ID: [a-zA-Z_][a-zA-Z_0-9]*;
 typedId: type ID;
 
 // Objects
-object: LCURLY field* RCURLY;
-field: type? ID ASSIGN expr SEMI;
+object: ID? LCURLY field* RCURLY;
+field: HIDDEN_? type? ID ASSIGN expr SEMI;
 
 // Arrays
 array:
-	LBRACKET value (COMMA value)* RBRACKET
-	| LBRACKET RBRACKET;
+	LBRACKET (value (COMMA value)* | listConstruction |) RBRACKET;
 
 // Templates
 templateField: typedId (ASSIGN value)? SEMI;
 templateDefenition:
-	TEMPLATE_KEYWORD ID LCURLY (templateField | method)* RCURLY;
+	TEMPLATE_KEYWORD ID LCURLY (templateField | method)* RCURLY SEMI;
 
 // Functions
 functionCollection: FUNCTIONS_KEYWORD ID LCURLY method* RCURLY;
@@ -135,6 +134,10 @@ whileLoop: WHILE LPAREN boolExpr RPAREN LCURLY statement RCURLY;
 forLoop:
 	FOR LPAREN ID IN (array | methodCall) LCURLY statement RCURLY;
 
+// List construction
+listConstruction:
+	FOR LPAREN ID IN (array | methodCall) RPAREN LCURLY object RCURLY;
+
 // Statements
 statementList: statement*;
 
@@ -147,18 +150,18 @@ statement:
 	| method
 	| RETURN expr SEMI;
 
-assignment: type? ID ASSIGN expr SEMI;
-objectDefenition: object_t ID ASSIGN object SEMI;
-arrayDefenition: array_t ID ASSIGN array SEMI;
+assignment: HIDDEN_? type? ID ASSIGN expr SEMI;
+objectDefenition: HIDDEN_? object_t ID ASSIGN object SEMI;
+arrayDefenition: HIDDEN_? array_t ID ASSIGN array SEMI;
 declaration: typedId SEMI;
 
 // Add a start rule for testing
 root: (
 		templateDefenition
-		| field
 		| objectDefenition
 		| arrayDefenition
 		| functionCollection
+		| field
 	)*;
 
 start: root;

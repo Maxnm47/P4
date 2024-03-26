@@ -1,1 +1,16 @@
--11 == 9 + 10 
+template Hello {
+    int a;
+    int b;
+};
+
+
+hidden Hello hello = {
+    a = 10;
+    b = 10;
+};
+
+
+
+objectDut = hello {
+    b = 20;
+};
