@@ -50,7 +50,7 @@ COLON: ':';
 NEWLINE: '\n';
 ASSIGN: '=';
 QUOTE: '"';
-DOLLAR:'$';
+DOLLAR: '$';
 
 // Types
 INT_T: 'int';
@@ -99,7 +99,7 @@ array:
 
 // Templates
 evaluaterArray:
-	LBRACKET ((boolExpr | ID) (COMMA (boolExpr |ID))* |) RBRACKET;
+	LBRACKET ((boolExpr | ID) (COMMA (boolExpr | ID))* |) RBRACKET;
 
 templateField:
 	typedId (ASSIGN value)? (COLON evaluaterArray)? SEMI;
@@ -111,7 +111,8 @@ templateDefenition:
 	)* RCURLY SEMI;
 
 // Functions
-functionCollection: FUNCTIONS_KEYWORD ID LCURLY method* RCURLY;
+functionCollection:
+	FUNCTIONS_KEYWORD ID LCURLY method* RCURLY SEMI;
 
 // Methods
 method:
