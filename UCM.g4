@@ -50,6 +50,7 @@ COLON: ':';
 NEWLINE: '\n';
 ASSIGN: '=';
 QUOTE: '"';
+DOLLAR:'$';
 
 // Types
 INT_T: 'int';
@@ -68,12 +69,16 @@ BOOL: 'true' | 'false';
 INT: [0-9]+;
 FLOAT: [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*;
 num: INT | FLOAT;
-value: num | STRING | BOOL | object | array;
+value: num  |augmentedString| STRING | BOOL | object | array ;
 
-STRING: QUOTE STRING_BODY QUOTE;
+//augmentedString: DOLLAR STRING (LCURLY expr RCURLY)?;
+augmentedString: DOLLAR (STRING_BODY | (LCURLY expr RCURLY))*;
+
+STRING: QUOTE STRING_BODY QUOTE; 
+
 fragment STRING_BODY: ( ESCAPE_SEQUENCE | .)*?;
 fragment ESCAPE_SEQUENCE:
-	'\\' (('\\' | '\'' | '"') | UNICODE_ESCAPE);
+	'\\' (('\\' | '\'' | '"' | LBRACKET LCURLY) | UNICODE_ESCAPE);
 fragment UNICODE_ESCAPE:
 	'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 fragment HEX_DIGIT: [0-9a-fA-F];
