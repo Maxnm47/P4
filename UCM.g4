@@ -69,15 +69,16 @@ BOOL: 'true' | 'false';
 INT: [0-9]+;
 FLOAT: [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*;
 num: INT | FLOAT;
-value: num  |augmentedString| STRING | BOOL | object | array ;
-
-augmentedString: DOLLAR STRING (LCURLY expr RCURLY)?;
+value: num  | augmentedString | string | BOOL | object | array ;
 
 
-STRING: QUOTE STRING_BODY QUOTE; 
+augmentedString:
+    DOLLAR QUOTE (( ESCAPE_SEQUENCE | .)?( LCURLY expr RCURLY) | ( ESCAPE_SEQUENCE | .)( LCURLY expr RCURLY)?  ) * QUOTE;
+
+string: QUOTE ( ESCAPE_SEQUENCE | .)*? QUOTE;
 
 fragment STRING_BODY: ( ESCAPE_SEQUENCE | .)*?;
-fragment ESCAPE_SEQUENCE:
+ESCAPE_SEQUENCE:
 	'\\' (('\\' | '\'' | '"' ) | UNICODE_ESCAPE);
 fragment UNICODE_ESCAPE:
 	'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
