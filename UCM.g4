@@ -71,14 +71,14 @@ FLOAT: [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*;
 num: INT | FLOAT;
 value: num  |augmentedString| STRING | BOOL | object | array ;
 
-//augmentedString: DOLLAR STRING (LCURLY expr RCURLY)?;
-augmentedString: DOLLAR (STRING_BODY | (LCURLY expr RCURLY))*;
+augmentedString: DOLLAR STRING (LCURLY expr RCURLY)?;
+
 
 STRING: QUOTE STRING_BODY QUOTE; 
 
 fragment STRING_BODY: ( ESCAPE_SEQUENCE | .)*?;
 fragment ESCAPE_SEQUENCE:
-	'\\' (('\\' | '\'' | '"' | LBRACKET LCURLY) | UNICODE_ESCAPE);
+	'\\' (('\\' | '\'' | '"' ) | UNICODE_ESCAPE);
 fragment UNICODE_ESCAPE:
 	'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 fragment HEX_DIGIT: [0-9a-fA-F];
