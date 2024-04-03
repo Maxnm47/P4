@@ -69,14 +69,12 @@ BOOL: 'true' | 'false';
 INT: [0-9]+;
 FLOAT: [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*;
 num: INT | FLOAT;
-value: num | augmentedString | string | BOOL | object | array;
+value: num  | augmentedString | concatanatedString | string | BOOL | object | array ;
+
 
 augmentedString:
-	DOLLAR QUOTE (
-		( ESCAPE_SEQUENCE | .)? ( LCURLY expr RCURLY)
-		| ( ESCAPE_SEQUENCE | .) ( LCURLY expr RCURLY)?
-	)* QUOTE;
-
+    DOLLAR QUOTE (( ESCAPE_SEQUENCE | .)?( LCURLY expr RCURLY) | ( ESCAPE_SEQUENCE | .)( LCURLY expr RCURLY)?  ) * QUOTE;
+concatanatedString: (string PLUS QUOTE string)*;
 string: QUOTE ( ESCAPE_SEQUENCE | .)*? QUOTE;
 
 fragment STRING_BODY: ( ESCAPE_SEQUENCE | .)*?;
@@ -163,7 +161,7 @@ whileLoop: WHILE LPAREN boolExpr RPAREN LCURLY statement RCURLY;
 
 // For loop
 forLoop:
-	FOR LPAREN ID IN (array | methodCall) LCURLY statement RCURLY;
+	FOR LPAREN ID IN (array | methodCall) RPAREN LCURLY statement RCURLY;
 
 // List construction
 listConstruction:
