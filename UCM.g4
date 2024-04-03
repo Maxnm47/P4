@@ -69,17 +69,18 @@ BOOL: 'true' | 'false';
 INT: [0-9]+;
 FLOAT: [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*;
 num: INT | FLOAT;
-value: num  | augmentedString | string | BOOL | object | array ;
-
+value: num | augmentedString | string | BOOL | object | array;
 
 augmentedString:
-    DOLLAR QUOTE (( ESCAPE_SEQUENCE | .)?( LCURLY expr RCURLY) | ( ESCAPE_SEQUENCE | .)( LCURLY expr RCURLY)?  ) * QUOTE;
+	DOLLAR QUOTE (
+		( ESCAPE_SEQUENCE | .)? ( LCURLY expr RCURLY)
+		| ( ESCAPE_SEQUENCE | .) ( LCURLY expr RCURLY)?
+	)* QUOTE;
 
 string: QUOTE ( ESCAPE_SEQUENCE | .)*? QUOTE;
 
 fragment STRING_BODY: ( ESCAPE_SEQUENCE | .)*?;
-ESCAPE_SEQUENCE:
-	'\\' (('\\' | '\'' | '"' ) | UNICODE_ESCAPE);
+ESCAPE_SEQUENCE: '\\' (('\\' | '\'' | '"') | UNICODE_ESCAPE);
 fragment UNICODE_ESCAPE:
 	'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 fragment HEX_DIGIT: [0-9a-fA-F];
@@ -122,7 +123,13 @@ methodCall:
 	functionCollectionCall? ID LPAREN (expr (COMMA expr)* |) RPAREN;
 
 // Expressions
-expr: value | ID | methodCall | boolExpr | numExpr;
+expr:
+	value
+	| ID
+	| methodCall
+	| boolExpr
+	| expr EQ expr // This to avoid left recursion
+	| numExpr;
 
 numExpr:
 	num
@@ -160,7 +167,7 @@ forLoop:
 
 // List construction
 listConstruction:
-	FOR LPAREN ID IN (array | methodCall) RPAREN LCURLY object RCURLY;
+	FOR LPAREN ID IN (array | methodCall) RPAREN LCURLY value RCURLY;
 
 // Statements
 statementList: statement*;
