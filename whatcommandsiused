@@ -1,3 +1,3 @@
 #all commands I used
 Test command:
-antlr4-parse UCM.g4 expr -gui <balls.txt
+antlr4-parse UCM.g4 start -gui <balls.txt

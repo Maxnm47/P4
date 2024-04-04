@@ -1,0 +1,4 @@
+
+template Yes{
+    string hello;
+};
