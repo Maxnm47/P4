@@ -74,7 +74,7 @@ value: num  | augmentedString | concatanatedString | string | BOOL | object | ar
 
 augmentedString:
     DOLLAR QUOTE (( ESCAPE_SEQUENCE | .)?( LCURLY expr RCURLY) | ( ESCAPE_SEQUENCE | .)( LCURLY expr RCURLY)?  ) * QUOTE;
-concatanatedString: (string PLUS QUOTE string)*;
+concatanatedString: (string PLUS string)*;
 string: QUOTE ( ESCAPE_SEQUENCE | .)*? QUOTE;
 
 fragment STRING_BODY: ( ESCAPE_SEQUENCE | .)*?;
