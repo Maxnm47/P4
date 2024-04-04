@@ -1,3 +1,11 @@
 #all commands I used
 Test command:
 antlr4-parse UCM.g4 start -gui <balls.txt
+
+# commands i used to get C# to work.
+cd /usr/local/lib
+curl -O https://www.antlr.org/download/antlr-4.13.1-complete.jar
+export CLASSPATH=".:/usr/local/lib/antlr-4.13.1-complete.jar:$CLASSPATH"
+
+#compile the grammar to Csharp
+java -jar /usr/local/lib/antlr-4.13.1-complete.jar -Dlanguage=CSharp UCM.g4
