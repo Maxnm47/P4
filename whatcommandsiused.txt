@@ -9,3 +9,7 @@ export CLASSPATH=".:/usr/local/lib/antlr-4.13.1-complete.jar:$CLASSPATH"
 
 #compile the grammar to Csharp
 java -jar /usr/local/lib/antlr-4.13.1-complete.jar -Dlanguage=CSharp UCM.g4
+
+
+C# DOCS I DINMOR LÆS DEM.
+https://github.com/antlr/antlr4/tree/master/runtime/CSharp/src
