@@ -16,7 +16,7 @@ TEMPLATE_KEYWORD: 'template';
 IN: 'in';
 HIDDEN_: 'hidden';
 OBJECT_KEYWORD: 'object';
-FUNCTIONS_KEYWORD: 'functions';
+FUNCTIONS_KEYWORD: 'methods';
 EXTENDS_KEYWORD: 'extends';
 THIS_KEYWORD: 'this';
 

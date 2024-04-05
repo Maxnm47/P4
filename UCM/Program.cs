@@ -6,7 +6,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        string filePath = "../balls.ucm";
+        string filePath = "balls.ucm";
         string input = File.ReadAllText(filePath);
 
         ICharStream stream = CharStreams.fromString(input);
@@ -23,9 +23,9 @@ class Program
 
         CustomUCMVisitor visitor = new CustomUCMVisitor();
 
-        // v = visitor.VisitProgram(tree);
+        visitor.VisitRoot(tree);
 
-        // Console.WriteLine(Trees.ToStringTree(parser));
+        Console.WriteLine(tree.ToStringTree(parser));
 
     }
 }

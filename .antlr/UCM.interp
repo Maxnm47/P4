@@ -11,7 +11,7 @@ null
 'in'
 'hidden'
 'object'
-'functions'
+'methods'
 'extends'
 'this'
 '*'

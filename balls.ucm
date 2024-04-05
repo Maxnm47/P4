@@ -1,5 +1,0 @@
-template Yes{
-    int hello = 2;
-    float hello = 2.0;
-
-};

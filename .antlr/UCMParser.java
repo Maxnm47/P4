@@ -53,11 +53,11 @@ public class UCMParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, null, null, "'if'", "'else'", "'while'", "'for'", "'return'", "'template'", 
-			"'in'", "'hidden'", "'object'", "'functions'", "'extends'", "'this'", 
-			"'*'", "'/'", "'+'", "'-'", "'%'", "'&&'", "'||'", "'=='", "'!='", "'>'", 
-			"'<'", "'>='", "'<='", "'!'", "'?'", "'('", "')'", "'{'", "'}'", "'['", 
-			"']'", "';'", "'.'", "','", "':'", "'\\n'", "'='", "'\"'", "'$'", "'int'", 
-			"'float'", "'string'", "'bool'"
+			"'in'", "'hidden'", "'object'", "'methods'", "'extends'", "'this'", "'*'", 
+			"'/'", "'+'", "'-'", "'%'", "'&&'", "'||'", "'=='", "'!='", "'>'", "'<'", 
+			"'>='", "'<='", "'!'", "'?'", "'('", "')'", "'{'", "'}'", "'['", "']'", 
+			"';'", "'.'", "','", "':'", "'\\n'", "'='", "'\"'", "'$'", "'int'", "'float'", 
+			"'string'", "'bool'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
