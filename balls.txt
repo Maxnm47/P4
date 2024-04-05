@@ -1,4 +1,6 @@
 
 template Yes{
-    string hello;
+    int hello = 2;
+    float hello = 2.0;
+
 };
