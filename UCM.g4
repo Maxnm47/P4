@@ -68,13 +68,16 @@ type: primitiveType | complexType;
 BOOL: 'true' | 'false';
 INT: [0-9]+;
 FLOAT: [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*;
-num: INT | FLOAT;
+int: INT;
+float: FLOAT;
+num: int | float;
 value: num  | augmentedString | concatanatedString | string | BOOL | object | array ;
 
 
 augmentedString:
     DOLLAR QUOTE (( ESCAPE_SEQUENCE | .)?( LCURLY expr RCURLY) | ( ESCAPE_SEQUENCE | .)( LCURLY expr RCURLY)?  ) * QUOTE;
-concatanatedString: (string PLUS string)*;
+concatanatedString: string (PLUS string)*;
+
 string: QUOTE ( ESCAPE_SEQUENCE | .)*? QUOTE;
 
 fragment STRING_BODY: ( ESCAPE_SEQUENCE | .)*?;
