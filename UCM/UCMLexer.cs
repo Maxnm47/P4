@@ -26,95 +26,99 @@ using Antlr4.Runtime;
 using Antlr4.Runtime.Atn;
 using Antlr4.Runtime.Misc;
 using DFA = Antlr4.Runtime.Dfa.DFA;
-
-[System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.13.1")]
-[System.CLSCompliant(false)]
-public partial class UCMLexer : Lexer {
-	protected static DFA[] decisionToDFA;
-	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
-	public const int
-		WS=1, COMMENT=2, IF=3, ELSE=4, WHILE=5, FOR=6, RETURN=7, TEMPLATE_KEYWORD=8, 
-		IN=9, HIDDEN_=10, OBJECT_KEYWORD=11, FUNCTIONS_KEYWORD=12, EXTENDS_KEYWORD=13, 
-		THIS_KEYWORD=14, MULT=15, DIV=16, PLUS=17, MINUS=18, MOD=19, AND=20, OR=21, 
-		EQ=22, NEQ=23, GT=24, LT=25, GTE=26, LTE=27, NOT=28, QUESTION=29, LPAREN=30, 
-		RPAREN=31, LCURLY=32, RCURLY=33, LBRACKET=34, RBRACKET=35, SEMI=36, DOT=37, 
-		COMMA=38, COLON=39, NEWLINE=40, ASSIGN=41, QUOTE=42, DOLLAR=43, INT_T=44, 
-		FLOAT_T=45, STRING_T=46, BOOL_T=47, BOOL=48, INT=49, FLOAT=50, ESCAPE_SEQUENCE=51, 
-		ID=52;
-	public static string[] channelNames = {
+namespace UCM
+{
+	[System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.13.1")]
+	[System.CLSCompliant(false)]
+	public partial class UCMLexer : Lexer
+	{
+		protected static DFA[] decisionToDFA;
+		protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
+		public const int
+			WS = 1, COMMENT = 2, IF = 3, ELSE = 4, WHILE = 5, FOR = 6, RETURN = 7, TEMPLATE_KEYWORD = 8,
+			IN = 9, HIDDEN_ = 10, OBJECT_KEYWORD = 11, FUNCTIONS_KEYWORD = 12, EXTENDS_KEYWORD = 13,
+			THIS_KEYWORD = 14, MULT = 15, DIV = 16, PLUS = 17, MINUS = 18, MOD = 19, AND = 20, OR = 21,
+			EQ = 22, NEQ = 23, GT = 24, LT = 25, GTE = 26, LTE = 27, NOT = 28, QUESTION = 29, LPAREN = 30,
+			RPAREN = 31, LCURLY = 32, RCURLY = 33, LBRACKET = 34, RBRACKET = 35, SEMI = 36, DOT = 37,
+			COMMA = 38, COLON = 39, NEWLINE = 40, ASSIGN = 41, QUOTE = 42, DOLLAR = 43, INT_T = 44,
+			FLOAT_T = 45, STRING_T = 46, BOOL_T = 47, BOOL = 48, INT = 49, FLOAT = 50, ESCAPE_SEQUENCE = 51,
+			ID = 52;
+		public static string[] channelNames = {
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
 	};
 
-	public static string[] modeNames = {
+		public static string[] modeNames = {
 		"DEFAULT_MODE"
 	};
 
-	public static readonly string[] ruleNames = {
-		"WS", "COMMENT", "LINE_COMMENT", "BLOCK_COMMENT", "IF", "ELSE", "WHILE", 
-		"FOR", "RETURN", "TEMPLATE_KEYWORD", "IN", "HIDDEN_", "OBJECT_KEYWORD", 
-		"FUNCTIONS_KEYWORD", "EXTENDS_KEYWORD", "THIS_KEYWORD", "MULT", "DIV", 
-		"PLUS", "MINUS", "MOD", "AND", "OR", "EQ", "NEQ", "GT", "LT", "GTE", "LTE", 
-		"NOT", "QUESTION", "LPAREN", "RPAREN", "LCURLY", "RCURLY", "LBRACKET", 
-		"RBRACKET", "SEMI", "DOT", "COMMA", "COLON", "NEWLINE", "ASSIGN", "QUOTE", 
-		"DOLLAR", "INT_T", "FLOAT_T", "STRING_T", "BOOL_T", "BOOL", "INT", "FLOAT", 
+		public static readonly string[] ruleNames = {
+		"WS", "COMMENT", "LINE_COMMENT", "BLOCK_COMMENT", "IF", "ELSE", "WHILE",
+		"FOR", "RETURN", "TEMPLATE_KEYWORD", "IN", "HIDDEN_", "OBJECT_KEYWORD",
+		"FUNCTIONS_KEYWORD", "EXTENDS_KEYWORD", "THIS_KEYWORD", "MULT", "DIV",
+		"PLUS", "MINUS", "MOD", "AND", "OR", "EQ", "NEQ", "GT", "LT", "GTE", "LTE",
+		"NOT", "QUESTION", "LPAREN", "RPAREN", "LCURLY", "RCURLY", "LBRACKET",
+		"RBRACKET", "SEMI", "DOT", "COMMA", "COLON", "NEWLINE", "ASSIGN", "QUOTE",
+		"DOLLAR", "INT_T", "FLOAT_T", "STRING_T", "BOOL_T", "BOOL", "INT", "FLOAT",
 		"STRING_BODY", "ESCAPE_SEQUENCE", "UNICODE_ESCAPE", "HEX_DIGIT", "ID"
 	};
 
 
-	public UCMLexer(ICharStream input)
-	: this(input, Console.Out, Console.Error) { }
+		public UCMLexer(ICharStream input)
+		: this(input, Console.Out, Console.Error) { }
 
-	public UCMLexer(ICharStream input, TextWriter output, TextWriter errorOutput)
-	: base(input, output, errorOutput)
-	{
-		Interpreter = new LexerATNSimulator(this, _ATN, decisionToDFA, sharedContextCache);
-	}
+		public UCMLexer(ICharStream input, TextWriter output, TextWriter errorOutput)
+		: base(input, output, errorOutput)
+		{
+			Interpreter = new LexerATNSimulator(this, _ATN, decisionToDFA, sharedContextCache);
+		}
 
-	private static readonly string[] _LiteralNames = {
-		null, null, null, "'if'", "'else'", "'while'", "'for'", "'return'", "'template'", 
-		"'in'", "'hidden'", "'object'", "'functions'", "'extends'", "'this'", 
-		"'*'", "'/'", "'+'", "'-'", "'%'", "'&&'", "'||'", "'=='", "'!='", "'>'", 
-		"'<'", "'>='", "'<='", "'!'", "'?'", "'('", "')'", "'{'", "'}'", "'['", 
-		"']'", "';'", "'.'", "','", "':'", "'\\n'", "'='", "'\"'", "'$'", "'int'", 
+		private static readonly string[] _LiteralNames = {
+		null, null, null, "'if'", "'else'", "'while'", "'for'", "'return'", "'template'",
+		"'in'", "'hidden'", "'object'", "'functions'", "'extends'", "'this'",
+		"'*'", "'/'", "'+'", "'-'", "'%'", "'&&'", "'||'", "'=='", "'!='", "'>'",
+		"'<'", "'>='", "'<='", "'!'", "'?'", "'('", "')'", "'{'", "'}'", "'['",
+		"']'", "';'", "'.'", "','", "':'", "'\\n'", "'='", "'\"'", "'$'", "'int'",
 		"'float'", "'string'", "'bool'"
 	};
-	private static readonly string[] _SymbolicNames = {
-		null, "WS", "COMMENT", "IF", "ELSE", "WHILE", "FOR", "RETURN", "TEMPLATE_KEYWORD", 
-		"IN", "HIDDEN_", "OBJECT_KEYWORD", "FUNCTIONS_KEYWORD", "EXTENDS_KEYWORD", 
-		"THIS_KEYWORD", "MULT", "DIV", "PLUS", "MINUS", "MOD", "AND", "OR", "EQ", 
-		"NEQ", "GT", "LT", "GTE", "LTE", "NOT", "QUESTION", "LPAREN", "RPAREN", 
-		"LCURLY", "RCURLY", "LBRACKET", "RBRACKET", "SEMI", "DOT", "COMMA", "COLON", 
-		"NEWLINE", "ASSIGN", "QUOTE", "DOLLAR", "INT_T", "FLOAT_T", "STRING_T", 
+		private static readonly string[] _SymbolicNames = {
+		null, "WS", "COMMENT", "IF", "ELSE", "WHILE", "FOR", "RETURN", "TEMPLATE_KEYWORD",
+		"IN", "HIDDEN_", "OBJECT_KEYWORD", "FUNCTIONS_KEYWORD", "EXTENDS_KEYWORD",
+		"THIS_KEYWORD", "MULT", "DIV", "PLUS", "MINUS", "MOD", "AND", "OR", "EQ",
+		"NEQ", "GT", "LT", "GTE", "LTE", "NOT", "QUESTION", "LPAREN", "RPAREN",
+		"LCURLY", "RCURLY", "LBRACKET", "RBRACKET", "SEMI", "DOT", "COMMA", "COLON",
+		"NEWLINE", "ASSIGN", "QUOTE", "DOLLAR", "INT_T", "FLOAT_T", "STRING_T",
 		"BOOL_T", "BOOL", "INT", "FLOAT", "ESCAPE_SEQUENCE", "ID"
 	};
-	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
+		public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
-	[NotNull]
-	public override IVocabulary Vocabulary
-	{
-		get
+		[NotNull]
+		public override IVocabulary Vocabulary
 		{
-			return DefaultVocabulary;
+			get
+			{
+				return DefaultVocabulary;
+			}
 		}
-	}
 
-	public override string GrammarFileName { get { return "UCM.g4"; } }
+		public override string GrammarFileName { get { return "UCM.g4"; } }
 
-	public override string[] RuleNames { get { return ruleNames; } }
+		public override string[] RuleNames { get { return ruleNames; } }
 
-	public override string[] ChannelNames { get { return channelNames; } }
+		public override string[] ChannelNames { get { return channelNames; } }
 
-	public override string[] ModeNames { get { return modeNames; } }
+		public override string[] ModeNames { get { return modeNames; } }
 
-	public override int[] SerializedAtn { get { return _serializedATN; } }
+		public override int[] SerializedAtn { get { return _serializedATN; } }
 
-	static UCMLexer() {
-		decisionToDFA = new DFA[_ATN.NumberOfDecisions];
-		for (int i = 0; i < _ATN.NumberOfDecisions; i++) {
-			decisionToDFA[i] = new DFA(_ATN.GetDecisionState(i), i);
+		static UCMLexer()
+		{
+			decisionToDFA = new DFA[_ATN.NumberOfDecisions];
+			for (int i = 0; i < _ATN.NumberOfDecisions; i++)
+			{
+				decisionToDFA[i] = new DFA(_ATN.GetDecisionState(i), i);
+			}
 		}
-	}
-	private static int[] _serializedATN = {
+		private static int[] _serializedATN = {
 		4,0,52,376,6,-1,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
 		6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,
 		7,14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,
@@ -239,8 +243,9 @@ public partial class UCMLexer : Lexer {
 		316,321,326,333,338,344,347,351,353,359,373,1,6,0,0
 	};
 
-	public static readonly ATN _ATN =
-		new ATNDeserializer().Deserialize(_serializedATN);
+		public static readonly ATN _ATN =
+			new ATNDeserializer().Deserialize(_serializedATN);
 
 
+	}
 }
