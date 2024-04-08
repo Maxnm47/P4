@@ -1,13 +1,12 @@
 using Antlr4.Runtime.Misc;
 
-namespace UCM
+namespace UCM;
+
+public class CustomUCMVisitor : UCMBaseVisitor<object>
 {
-    public class CustomUCMVisitor : UCMBaseVisitor<object>
+    public override object VisitStart([NotNull] UCMParser.StartContext context)
     {
-        public override object VisitStart([NotNull] UCMParser.StartContext context)
-        {
-            Console.WriteLine("Visiting Start");
-            return base.VisitStart(context);
-        }
+        Console.WriteLine("Visiting Start");
+        return base.VisitStart(context);
     }
 }

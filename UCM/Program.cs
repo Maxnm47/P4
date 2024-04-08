@@ -1,7 +1,6 @@
 ﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
-using System.IO;
 using UCM;
+
 class Program
 {
     static void Main(string[] args)
@@ -23,9 +22,8 @@ class Program
 
         CustomUCMVisitor visitor = new CustomUCMVisitor();
 
-        visitor.VisitRoot(tree);
+        visitor.VisitRoot (tree);
 
         Console.WriteLine(tree.ToStringTree(parser));
-
     }
 }

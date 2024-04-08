@@ -1,7 +1,6 @@
-namespace UCM.types
+namespace UCM.types;
+
+class Types
 {
-    class Types
-    {
-        
-    }
+
 }
