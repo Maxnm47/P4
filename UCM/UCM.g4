@@ -19,6 +19,7 @@ OBJECT_KEYWORD: 'object';
 FUNCTIONS_KEYWORD: 'methods';
 EXTENDS_KEYWORD: 'extends';
 THIS_KEYWORD: 'this';
+NULL: 'null'; 
 
 //operators
 MULT: '*';
@@ -71,7 +72,7 @@ FLOAT: [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*;
 int: INT;
 float: FLOAT;
 num: int | float;
-value: num  | augmentedString | concatanatedString | string | BOOL | object | array ;
+value: num  | augmentedString | concatanatedString | string | BOOL | object | array | NULL;
 
 
 augmentedString:
