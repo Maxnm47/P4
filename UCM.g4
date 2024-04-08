@@ -58,10 +58,11 @@ INT_T: 'int';
 FLOAT_T: 'float';
 STRING_T: 'string';
 BOOL_T: 'bool';
+VOID_T: 'void';
 object_t: OBJECT_KEYWORD | ID;
 array_t: (primitiveType | object_t) (LBRACKET RBRACKET)+;
 
-primitiveType: INT_T | FLOAT_T | BOOL_T;
+primitiveType: INT_T | FLOAT_T | BOOL_T | VOID_T;
 complexType: object_t | array_t | STRING_T;
 type: primitiveType | complexType;
 
