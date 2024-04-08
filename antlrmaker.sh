@@ -1,4 +1,4 @@
-#!/bin/sh
+!/bin/sh
 
 # Run the antlr command
 java -jar /usr/local/lib/antlr-4.13.1-complete.jar -Dlanguage=CSharp -no-listener -visitor UCM.g4
@@ -16,5 +16,3 @@ mv UCM*.tokens UCM/build
 
 mv UCMBaseVisitor.cs UCM/typechecker
 mv UCMVisitor.cs UCM/typechecker
-
-

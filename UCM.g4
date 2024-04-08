@@ -16,9 +16,10 @@ TEMPLATE_KEYWORD: 'template';
 IN: 'in';
 HIDDEN_: 'hidden';
 OBJECT_KEYWORD: 'object';
-FUNCTIONS_KEYWORD: 'functions';
+FUNCTIONS_KEYWORD: 'methods';
 EXTENDS_KEYWORD: 'extends';
 THIS_KEYWORD: 'this';
+NULL: 'null'; 
 
 //operators
 MULT: '*';
@@ -57,10 +58,11 @@ INT_T: 'int';
 FLOAT_T: 'float';
 STRING_T: 'string';
 BOOL_T: 'bool';
+VOID_T: 'void';
 object_t: OBJECT_KEYWORD | ID;
 array_t: (primitiveType | object_t) (LBRACKET RBRACKET)+;
 
-primitiveType: INT_T | FLOAT_T | BOOL_T;
+primitiveType: INT_T | FLOAT_T | BOOL_T | VOID_T;
 complexType: object_t | array_t | STRING_T;
 type: primitiveType | complexType;
 
@@ -71,7 +73,7 @@ FLOAT: [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*;
 int: INT;
 float: FLOAT;
 num: int | float;
-value: num  | augmentedString | concatanatedString | string | BOOL | object | array ;
+value: num  | augmentedString | concatanatedString | string | BOOL | object | array | NULL;
 
 
 augmentedString:

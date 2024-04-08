@@ -8,10 +8,12 @@ curl -O https://www.antlr.org/download/antlr-4.13.1-complete.jar
 export CLASSPATH=".:/usr/local/lib/antlr-4.13.1-complete.jar:$CLASSPATH"
 
 #compile the grammar to Csharp
-java -jar /usr/local/lib/antlr-4.13.1-complete.jar -Dlanguage=CSharp UCM.g4
+java -jar /usr/local/lib/antlr-4.13.1-complete.jar -Dlanguage=CSharp -no-listener -visitor UCM.g4
 
+max@SejComputer47:~/Desktop/uni/4. semester/p4
 #husk at installe C# packagen:
-Install-Package Antlr4.Runtime.Standard
+dotnet add package Antlr4.Runtime.Standard --version 4.13.1
+
 
 C# DOCS I DINMOR LÆS DEM.
 https://github.com/antlr/antlr4/tree/master/runtime/CSharp/src
