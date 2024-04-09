@@ -5,5 +5,10 @@ using System.Threading.Tasks;
 
 namespace UCM.ast
 {
-    public class ExpressionNode : AstNode { }
+    public class ExpressionNode : AstNode
+    {
+        public ExpressionNode()
+        {
+        }
+    }
 }

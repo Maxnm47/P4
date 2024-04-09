@@ -7,17 +7,58 @@ namespace UCM.ast;
 
 public abstract class AstNode
 {
-    public Dictionary<AstNodeName, AstNode> children;
+    public AstNodeName name {get; set;} = AstNodeName.NONE;
+    public List<AstNode> children = new List<AstNode>();
 
     public override string ToString() {
-        string str = this.GetType().Name + " ( ";
-        
-        foreach (KeyValuePair<AstNodeName, AstNode> entry in children)
+        string indent = "  ";
+        string str = indent + this.GetType().Name + " ( \n";
+
+        foreach (AstNode child in children)
         {
-            str += entry.Value.ToString();
+            str += child.ToString(indent + "  ") + "\n";
         }
 
-        str += " )";
+        str += indent + ")";
         return str;
+    }
+
+    public virtual string ToString(string indent) {
+        string str = indent + this.GetType().Name + " ( \n";
+        
+        foreach (AstNode child in children)
+        {
+            str += child.ToString(indent + "  ") + "\n";
+        }
+
+        str += indent + ")";
+        return str;
+    }
+
+    public void AddChild(AstNode node) {
+        children.Add(node);
+    }
+
+    public virtual T GetChild<T>(int i) where T : AstNode
+    {
+        if (children == null || i < 0 || i >= children.Count)
+        {
+            return default(T);
+        }
+
+        int num = -1;
+        foreach (AstNode child in children)
+        {
+            if (child is T)
+            {
+                num++;
+                if (num == i)
+                {
+                    return (T)child;
+                }
+            }
+        }
+
+        return default(T);
     }
 }

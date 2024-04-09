@@ -7,10 +7,29 @@ namespace UCM.ast;
 
 public class AstBuildVisitor : UCMBaseVisitor<AstNode> 
 { 
-    // public override AstNode VisitStart(UCMParser.StartContext context)
-    // {
-    //     return Visit(context.);
-    // }
+    public override AstNode VisitRoot(UCMParser.RootContext context)
+    {
+        AstNode root = new RootNode();
+        foreach (var child in context.children)
+        {
+            AstNode childNode = Visit(child);
+            root.AddChild(childNode);
+        }
+
+        return root;
+    }
+
+    public override AstNode VisitExpr(UCMParser.ExprContext context) {
+        AstNode expr = new ExpressionNode();
+        
+        foreach (var child in context.children)
+        {
+            AstNode childNode = Visit(child);
+            expr.AddChild(childNode);
+        }
+
+        return expr;
+    }
 
     public override AstNode VisitField(UCMParser.FieldContext context)
     {
