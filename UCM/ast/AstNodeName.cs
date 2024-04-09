@@ -5,6 +5,10 @@ namespace UCM.ast
         TYPE,
         ID,
         EXPR,
-        FIELD
+        FIELD,
+        INT,
+        FLOAT,
+        ROOT,
+        NONE
     }
 }

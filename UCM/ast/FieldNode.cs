@@ -9,15 +9,12 @@ public class FieldNode : AstNode
 {
     public FieldNode(AstNode type, AstNode id, AstNode expr)
     {
-        children = new Dictionary<AstNodeName, AstNode>
-        {
-            { AstNodeName.TYPE, type },
-            { AstNodeName.ID, id },
-            { AstNodeName.EXPR, expr }
-        };
+        children.Add(type);
+        children.Add(id);
+        children.Add(expr);
     }
 
-    public AstNode Type => children[AstNodeName.TYPE];
-    public AstNode Id => children[AstNodeName.ID];
-    public AstNode Expr => children[AstNodeName.EXPR];
+    public TypeAnotationNode Type => GetChild<TypeAnotationNode>(0);
+    public IdentifyerNode Id => GetChild<IdentifyerNode>(0);
+    public ExpressionNode Expr => GetChild<ExpressionNode>(0);
 }
