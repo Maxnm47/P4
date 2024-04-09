@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using UCM;
+using UCM.ast;
 
 class Program
 {
@@ -18,12 +19,10 @@ class Program
         // Create parser
         UCMParser parser = new UCMParser(tokens);
 
-        UCMParser.RootContext tree = parser.root(); //create tree
+        UCMParser.RootContext parseTree = parser.root(); //create tree
 
-        CustomUCMVisitor visitor = new CustomUCMVisitor();
-
-        visitor.VisitRoot (tree);
-
-        Console.WriteLine(tree.ToStringTree(parser));
+        AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
+        AstNode ast = astBuildVisitor.VisitRoot(parseTree);
+        Console.WriteLine (ast);
     }
 }

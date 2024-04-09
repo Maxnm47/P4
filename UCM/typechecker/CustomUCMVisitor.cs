@@ -1,11 +1,10 @@
 using Antlr4.Runtime.Misc;
-using UCM.types;
+using UCM.typechecker;
 
 namespace UCM;
 
 public class CustomUCMVisitor : UCMBaseVisitor<object>
 {
-    private readonly Types types = new Types();
 
     public override object VisitStart([NotNull] UCMParser.StartContext context)
     {
