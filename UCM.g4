@@ -183,6 +183,7 @@ statement:
 	| methodCall SEMI
 	| method
 	| RETURN expr SEMI;
+	| field
 
 assignment: HIDDEN_? type? ID ASSIGN expr SEMI;
 objectDefenition: HIDDEN_? object_t? ID ASSIGN object SEMI;
