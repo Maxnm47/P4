@@ -96,6 +96,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return new IntNode(context.GetText());
     }
 
+    public override AstNode VisitFloat(UCMParser.FloatContext context)
+    {
+        Console.WriteLine("Visiting Float");
+        return new FloatNode(context.GetText());
+    }
+
     protected override AstNode AggregateResult(AstNode aggregate, AstNode nextResult)
     {
         if (nextResult == null)
