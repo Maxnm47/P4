@@ -2,15 +2,18 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Antlr4.Runtime.Misc;
 using UCM.ast.numExp;
+using UCM.ast.statements;
 
 namespace UCM.ast;
 
 public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 {
+    /* ------------------------ Root ------------------------ */
     public override AstNode VisitRoot(UCMParser.RootContext context)
     {
         AstNode root = new RootNode();
@@ -23,8 +26,38 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return root;
     }
 
+    /* ------------------------ Statements ------------------------ */
+    public override AstNode VisitField(UCMParser.FieldContext context)
+    {
+        Console.WriteLine("Visiting Field: " + context.ID().GetText());
+        AstNode typeAnotationNode = Visit(context.type());
+        AstNode identifyerNode = new IdentifyerNode(context.ID().GetText());
+        AstNode expressionNode = Visit(context.expr());
+
+        return new FieldNode(typeAnotationNode, identifyerNode, expressionNode);
+    }
+
+    public override AstNode VisitMethodCall(UCMParser.MethodCallContext context)
+    {
+        Console.WriteLine("Visiting MethodCall: " + context.ID().GetText());
+        AstNode methodCall = new MethodCallNode(context.ID().GetText());
+
+        foreach (var child in context.children)
+        {
+            if (child is UCMParser.ExprContext)
+            {
+                AstNode expr = Visit(child);
+                methodCall.AddChild(expr);
+            }
+        }
+
+        return methodCall;
+    }
+
+    /* ------------------------ Exxpresions ------------------------ */
     public override AstNode VisitExpr(UCMParser.ExprContext context)
     {
+        Console.WriteLine("Visiting Expr: " + context.GetText());
         AstNode expr = new ExpressionNode();
 
         foreach (var child in context.children)
@@ -35,7 +68,6 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         return expr;
     }
-
     public override AstNode VisitNumExpr([NotNull] UCMParser.NumExprContext context)
     {
         Console.WriteLine("Visiting NumExpr: " + context.GetText());
@@ -55,10 +87,10 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
         else if (context.MULT() != null)
         {
-            AstNode c1 = Visit(context.GetChild<UCMParser.NumExprContext>(0));
-            AstNode c2 = Visit(context.GetChild<UCMParser.NumExprContext>(1));
-            AstNode dud = new MultiplicationNode(c1, c2);
-            return dud;
+            return new MultiplicationNode(
+                Visit(context.GetChild<UCMParser.NumExprContext>(0)),
+                Visit(context.GetChild<UCMParser.NumExprContext>(1))
+            );
         }
         else if (context.DIV() != null)
         {
@@ -80,28 +112,23 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
     }
 
-    public override AstNode VisitField(UCMParser.FieldContext context)
-    {
-        Console.WriteLine("Visiting Field");
-        AstNode typeAnotationNode = Visit(context.type());
-        AstNode identifyerNode = new IdentifyerNode(context.ID().GetText());
-        AstNode expressionNode = Visit(context.expr());
-
-        return new FieldNode(typeAnotationNode, identifyerNode, expressionNode);
-    }
-
     public override AstNode VisitInt(UCMParser.IntContext context)
     {
-        Console.WriteLine("Visiting Int");
+        Console.WriteLine("Visiting Int: " + context.GetText());
         return new IntNode(context.GetText());
     }
 
+
     public override AstNode VisitFloat(UCMParser.FloatContext context)
     {
-        Console.WriteLine("Visiting Float");
+        Console.WriteLine("Visiting Float: " + context.GetText());
         return new FloatNode(context.GetText());
     }
 
+
+
+
+    /* ------------------------ Utility ------------------------ */
     protected override AstNode AggregateResult(AstNode aggregate, AstNode nextResult)
     {
         if (nextResult == null)
