@@ -19,7 +19,7 @@ OBJECT_KEYWORD: 'object';
 FUNCTIONS_KEYWORD: 'methods';
 EXTENDS_KEYWORD: 'extends';
 THIS_KEYWORD: 'this';
-NULL: 'null'; 
+NULL: 'null';
 
 //operators
 MULT: '*';
@@ -69,15 +69,25 @@ type: primitiveType | complexType;
 // Values
 BOOL: 'true' | 'false';
 INT: MINUS? [0-9]+;
-FLOAT: MINUS?([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
+FLOAT: MINUS? ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
 int: INT;
 float: FLOAT;
-num: int | float; 
-value: num  | augmentedString | concatanatedString | string | BOOL | object | array | NULL;
-
+num: int | float;
+value:
+	num
+	| augmentedString
+	| concatanatedString
+	| string
+	| BOOL
+	| object
+	| array
+	| NULL;
 
 augmentedString:
-    DOLLAR QUOTE (( ESCAPE_SEQUENCE | .)?( LCURLY expr RCURLY) | ( ESCAPE_SEQUENCE | .)( LCURLY expr RCURLY)?  ) * QUOTE;
+	DOLLAR QUOTE (
+		( ESCAPE_SEQUENCE | .)? ( LCURLY expr RCURLY)
+		| ( ESCAPE_SEQUENCE | .) ( LCURLY expr RCURLY)?
+	)* QUOTE;
 concatanatedString: string (PLUS string)*;
 
 string: QUOTE ( ESCAPE_SEQUENCE | .)*? QUOTE;
@@ -90,12 +100,13 @@ fragment HEX_DIGIT: [0-9a-fA-F];
 
 // Identifiers
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
-typedId: type ID;
+id: ID;
+typedId: type id;
 
 // Objects
-adapting: ID;
+adapting: id;
 object: adapting? LCURLY field* RCURLY;
-field: HIDDEN_? type? ID ASSIGN expr SEMI;
+field: HIDDEN_? type? id ASSIGN expr SEMI;
 
 // Arrays
 array:
@@ -103,32 +114,32 @@ array:
 
 // Templates
 evaluaterArray:
-	LBRACKET ((boolExpr | ID) (COMMA (boolExpr | ID))* |) RBRACKET;
+	LBRACKET ((boolExpr | id) (COMMA (boolExpr | id))* |) RBRACKET;
 
 templateField:
 	typedId (ASSIGN value)? (COLON evaluaterArray)? SEMI;
-templateExtention: EXTENDS_KEYWORD ID;
+templateExtention: EXTENDS_KEYWORD id;
 templateDefenition:
-	TEMPLATE_KEYWORD ID templateExtention? LCURLY (
+	TEMPLATE_KEYWORD id templateExtention? LCURLY (
 		templateField
 		| method
 	)* RCURLY SEMI;
 
 // Functions
 functionCollection:
-	FUNCTIONS_KEYWORD ID LCURLY method* RCURLY SEMI;
+	FUNCTIONS_KEYWORD id LCURLY method* RCURLY SEMI;
 
 // Methods
 method:
 	typedId LPAREN (typedId (COMMA typedId)* |) RPAREN LCURLY statementList RCURLY SEMI;
-functionCollectionCall: ID DOT;
+functionCollectionCall: id DOT;
 methodCall:
-	functionCollectionCall? ID LPAREN (expr (COMMA expr)* |) RPAREN;
+	functionCollectionCall? id LPAREN (expr (COMMA expr)* |) RPAREN;
 
 // Expressions
 expr:
 	value
-	| ID
+	| id
 	| methodCall
 	| boolExpr
 	| expr EQ expr // This to avoid left recursion
@@ -137,7 +148,7 @@ expr:
 numExpr:
 	num
 	| THIS_KEYWORD // this  may ruin everything in the semantics :)))
-	| ID
+	| id
 	| methodCall
 	| MINUS numExpr
 	| numExpr (MULT | DIV | MOD) numExpr
@@ -147,7 +158,7 @@ numExpr:
 boolExpr:
 	BOOL
 	| THIS_KEYWORD // this  may ruin everything in the semantics :)))
-	| ID
+	| id
 	| methodCall
 	| NOT expr
 	| numExpr compExpr numExpr
@@ -162,22 +173,23 @@ ifStatement: IF LPAREN boolExpr RPAREN LCURLY statement RCURLY;
 conditional: ifStatement (ELSE ifStatement)* (ELSE statement)?;
 
 // While loop
-whileLoop: WHILE LPAREN boolExpr RPAREN LCURLY statement RCURLY SEMI;
+whileLoop:
+	WHILE LPAREN boolExpr RPAREN LCURLY statement RCURLY SEMI;
 
 // For loop
 forLoop:
-	FOR LPAREN ID IN (array | methodCall) RPAREN LCURLY statement RCURLY SEMI;
+	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY statement RCURLY SEMI;
 
 // List construction
 listConstruction:
-	FOR LPAREN ID IN (array | methodCall) RPAREN LCURLY value RCURLY;
+	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY value RCURLY;
 
 // Statements
 statementList: statement*;
 
 statement:
 	conditional
-	| assignment 
+	| assignment
 	| whileLoop
 	| forLoop
 	| methodCall SEMI
@@ -185,14 +197,14 @@ statement:
 	| field
 	| RETURN expr SEMI;
 
-assignment: type? ID ASSIGN expr SEMI;
-objectDefenition: HIDDEN_? object_t? ID ASSIGN object SEMI;
-arrayDefenition: HIDDEN_? array_t? ID ASSIGN array SEMI;
+assignment: type? id ASSIGN expr SEMI;
+objectDefenition: HIDDEN_? object_t? id ASSIGN object SEMI;
+arrayDefenition: HIDDEN_? array_t? id ASSIGN array SEMI;
 declaration: typedId SEMI;
 
 // Add a start rule for testing
 root: (
-	templateDefenition	
+		templateDefenition
 		| objectDefenition
 		| arrayDefenition
 		| functionCollection
