@@ -68,8 +68,8 @@ type: primitiveType | complexType;
 
 // Values
 BOOL: 'true' | 'false';
-INT: [0-9]+;
-FLOAT: [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*;
+INT: MINUS? [0-9]+;
+FLOAT: MINUS?([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
 int: INT;
 float: FLOAT;
 num: int | float; 
