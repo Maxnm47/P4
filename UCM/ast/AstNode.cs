@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace UCM.ast;
 
 public abstract class AstNode
-{    public List<AstNode> children = new List<AstNode>();
+{
+    public List<AstNode> children = new List<AstNode>();
 
-    public override string ToString() {
+    public override string ToString()
+    {
         string indent = "  ";
         string str = indent + this.GetType().Name + " ( \n";
 
@@ -21,11 +24,18 @@ public abstract class AstNode
         return str;
     }
 
-    public virtual string ToString(string indent) {
+    public virtual string ToString(string indent)
+    {
         string str = indent + this.GetType().Name + " ( \n";
-        
+
         foreach (AstNode child in children)
         {
+            if (child == null)
+            {
+                str += indent + "  null\n";
+                continue;
+            }
+
             str += child.ToString(indent + "  ") + "\n";
         }
 
@@ -33,7 +43,8 @@ public abstract class AstNode
         return str;
     }
 
-    public void AddChild(AstNode node) {
+    public void AddChild(AstNode node)
+    {
         children.Add(node);
     }
 
