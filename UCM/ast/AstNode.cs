@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 namespace UCM.ast;
 
 public abstract class AstNode
-{
-    public AstNodeName name {get; set;} = AstNodeName.NONE;
-    public List<AstNode> children = new List<AstNode>();
+{    public List<AstNode> children = new List<AstNode>();
 
     public override string ToString() {
         string indent = "  ";
