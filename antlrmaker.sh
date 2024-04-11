@@ -18,5 +18,5 @@ mv -f UCM*.tokens UCM/build
 mkdir -p UCM/typechecker
 
 # Move the generated visitor files to the UCM/typechecker, overwrite if exist
-mv -f UCMBaseVisitor.cs UCM/typechecker
-mv -f UCMVisitor.cs UCM/typechecker
+mv -f UCMBaseVisitor.cs UCM/build
+mv -f UCMVisitor.cs UCM/build
