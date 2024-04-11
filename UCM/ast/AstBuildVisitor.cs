@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Antlr4.Runtime.Misc;
 
 namespace UCM.ast;
 
@@ -29,6 +30,21 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
 
         return expr;
+    }
+
+    public override AstNode VisitNumExpr([NotNull] UCMParser.NumExprContext context)
+    {
+        if (context.PLUS() != null) {
+            return new AdditionNode(Visit(context.GetChild(0)), Visit(context.GetChild(2)));
+        // } else if (context.MINUS() != null) {
+        //     return new MinusNode();
+        // } else if (context.MULT() != null) {
+        //     return new MultNode();
+        // } else if (context.DIV() != null) {
+        //     return new DivNode();
+        } else {
+            return Visit(context.GetChild(0));
+        }
     }
 
     public override AstNode VisitField(UCMParser.FieldContext context)
