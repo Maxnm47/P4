@@ -72,7 +72,7 @@ INT: [0-9]+;
 FLOAT: [0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*;
 int: INT;
 float: FLOAT;
-num: int | float;
+num: int | float; 
 value: num  | augmentedString | concatanatedString | string | BOOL | object | array | NULL;
 
 
@@ -99,7 +99,7 @@ field: HIDDEN_? type? ID ASSIGN expr SEMI;
 
 // Arrays
 array:
-	LBRACKET (value (COMMA value)* | listConstruction |) RBRACKET;
+	LBRACKET (expr (COMMA expr)* | listConstruction |) RBRACKET;
 
 // Templates
 evaluaterArray:
@@ -162,11 +162,11 @@ ifStatement: IF LPAREN boolExpr RPAREN LCURLY statement RCURLY;
 conditional: ifStatement (ELSE ifStatement)* (ELSE statement)?;
 
 // While loop
-whileLoop: WHILE LPAREN boolExpr RPAREN LCURLY statement RCURLY;
+whileLoop: WHILE LPAREN boolExpr RPAREN LCURLY statement RCURLY SEMI;
 
 // For loop
 forLoop:
-	FOR LPAREN ID IN (array | methodCall) RPAREN LCURLY statement RCURLY;
+	FOR LPAREN ID IN (array | methodCall) RPAREN LCURLY statement RCURLY SEMI;
 
 // List construction
 listConstruction:
@@ -177,22 +177,22 @@ statementList: statement*;
 
 statement:
 	conditional
-	| assignment
+	| assignment 
 	| whileLoop
 	| forLoop
 	| methodCall SEMI
 	| method
-	| RETURN expr SEMI;
 	| field
+	| RETURN expr SEMI;
 
-assignment: HIDDEN_? type? ID ASSIGN expr SEMI;
+assignment: type? ID ASSIGN expr SEMI;
 objectDefenition: HIDDEN_? object_t? ID ASSIGN object SEMI;
 arrayDefenition: HIDDEN_? array_t? ID ASSIGN array SEMI;
 declaration: typedId SEMI;
 
 // Add a start rule for testing
 root: (
-		templateDefenition
+	templateDefenition	
 		| objectDefenition
 		| arrayDefenition
 		| functionCollection
