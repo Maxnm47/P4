@@ -41,15 +41,20 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     {
         Console.WriteLine("Visiting MethodCall: " + context.GetText());
         AstNode methodCall = new MethodCallNode(context.GetText());
+        methodCall.AddChild(Visit(context.id()));
+
+        AstNode arguments = new ArgumentsNode();
 
         foreach (var child in context.children)
         {
             if (child is UCMParser.ExprContext)
             {
                 AstNode expr = Visit(child);
-                methodCall.AddChild(expr);
+                arguments.AddChild(expr);
             }
         }
+
+        methodCall.AddChild(arguments);
 
         return methodCall;
     }
