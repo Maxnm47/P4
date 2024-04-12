@@ -139,6 +139,11 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return new FloatNode(context.GetText());
     }
 
+    public override AstNode VisitString(UCMParser.StringContext context)
+    {
+        Console.WriteLine("Visiting String: " + context.GetText());
+        return new StringNode(context.GetText());
+    }
 
     /* ------------------------ ComplexValues ------------------------ */
     public override AstNode VisitObject(UCMParser.ObjectContext context)
@@ -158,16 +163,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return objectNode;
     }
 
-    public override AstLeafNode VisitString([NotNull] UCMParser.StringContext context)
-    {
-
-        Console.WriteLine("Visiting String: " + context.GetText());
-
-        StringNode balls = new StringNode(context.GetText());
-
-        Console.WriteLine("StringNode: " + balls.value);
-        return balls;
-        }
+    
 
 
     /* ------------------------ Utility ------------------------ */

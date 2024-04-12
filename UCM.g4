@@ -70,9 +70,18 @@ type: primitiveType | complexType;
 BOOL: 'true' | 'false';
 INT: MINUS? [0-9]+;
 FLOAT: MINUS? ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
+
+STRING : QUOTE ( ESCAPE_SEQUENCE | ~["\\] )* QUOTE;
+ESCAPE_SEQUENCE: '\\' (('\\' | '\'' | '"') | UNICODE_ESCAPE);
+fragment UNICODE_ESCAPE:
+	'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
+fragment HEX_DIGIT: [0-9a-fA-F];
+
 int: INT;
 float: FLOAT;
 num: int | float;
+string: STRING;
+
 value:
 	num
 	| string
@@ -89,14 +98,9 @@ augmentedString:
 		| ( ESCAPE_SEQUENCE | .) ( LCURLY expr RCURLY)?
 	)* QUOTE;
 
-string: QUOTE ( ESCAPE_SEQUENCE | .)*? QUOTE;
-concatanatedString: string (PLUS string)*;
 
-fragment STRING_BODY: ( ESCAPE_SEQUENCE | .)*?;
-ESCAPE_SEQUENCE: '\\' (('\\' | '\'' | '"') | UNICODE_ESCAPE);
-fragment UNICODE_ESCAPE:
-	'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
-fragment HEX_DIGIT: [0-9a-fA-F];
+concatanatedString: STRING (PLUS STRING)*;
+
 
 // Identifiers
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
