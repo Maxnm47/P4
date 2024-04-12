@@ -7,7 +7,7 @@ namespace UCM.ast;
 
 public class FieldNode : AstNode
 {
-    public FieldNode(AstNode type, AstNode id, AstNode expr)
+    public FieldNode(TypeAnotationNode type, IdentifyerNode id, ExpressionNode expr)
     {
         children.Add(type);
         children.Add(id);
