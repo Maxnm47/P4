@@ -104,6 +104,12 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitString([NotNull] UCMParser.StringContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.id"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitId([NotNull] UCMParser.IdContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.typedId"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

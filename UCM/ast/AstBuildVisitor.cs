@@ -1,13 +1,16 @@
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Antlr4.Runtime.Misc;
+using UCM.ast.numExp;
 
 namespace UCM.ast;
 
-public class AstBuildVisitor : UCMBaseVisitor<AstNode> 
-{ 
+public class AstBuildVisitor : UCMBaseVisitor<AstNode>
+{
     public override AstNode VisitRoot(UCMParser.RootContext context)
     {
         AstNode root = new RootNode();
@@ -20,9 +23,10 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return root;
     }
 
-    public override AstNode VisitExpr(UCMParser.ExprContext context) {
+    public override AstNode VisitExpr(UCMParser.ExprContext context)
+    {
         AstNode expr = new ExpressionNode();
-        
+
         foreach (var child in context.children)
         {
             AstNode childNode = Visit(child);
@@ -34,16 +38,45 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
     public override AstNode VisitNumExpr([NotNull] UCMParser.NumExprContext context)
     {
-        if (context.PLUS() != null) {
-            return new AdditionNode(Visit(context.GetChild(0)), Visit(context.GetChild(2)));
-        // } else if (context.MINUS() != null) {
-        //     return new MinusNode();
-        // } else if (context.MULT() != null) {
-        //     return new MultNode();
-        // } else if (context.DIV() != null) {
-        //     return new DivNode();
-        } else {
-            return Visit(context.GetChild(0));
+        Console.WriteLine("Visiting NumExpr: " + context.GetText());
+        if (context.PLUS() != null)
+        {
+            return new AdditionNode(
+                Visit(context.GetChild<UCMParser.NumExprContext>(0)),
+                Visit(context.GetChild<UCMParser.NumExprContext>(1))
+            );
+        }
+        else if (context.MINUS() != null)
+        {
+            return new SubtractionNode(
+                Visit(context.GetChild<UCMParser.NumExprContext>(0)),
+                Visit(context.GetChild<UCMParser.NumExprContext>(1))
+            );
+        }
+        else if (context.MULT() != null)
+        {
+            AstNode c1 = Visit(context.GetChild<UCMParser.NumExprContext>(0));
+            AstNode c2 = Visit(context.GetChild<UCMParser.NumExprContext>(1));
+            AstNode dud = new MultiplicationNode(c1, c2);
+            return dud;
+        }
+        else if (context.DIV() != null)
+        {
+            return new DivisionNode(
+                Visit(context.GetChild<UCMParser.NumExprContext>(0)),
+                Visit(context.GetChild<UCMParser.NumExprContext>(1))
+            );
+        }
+        else if (context.MOD() != null)
+        {
+            return new ModuloNode(
+                Visit(context.GetChild<UCMParser.NumExprContext>(0)),
+                Visit(context.GetChild<UCMParser.NumExprContext>(1))
+            );
+        }
+        else
+        {
+            return VisitChildren(context);
         }
     }
 
@@ -78,9 +111,20 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return new IntNode(context.GetText());
     }
 
-    public override AstNode VisitPrimitiveType(UCMParser.PrimitiveTypeContext context)
+    public override AstNode VisitFloat(UCMParser.FloatContext context)
     {
-        return new TypeAnotationNode(context.GetText());
+        Console.WriteLine("Visiting Float");
+        return new FloatNode(context.GetText());
+    }
+
+    protected override AstNode AggregateResult(AstNode aggregate, AstNode nextResult)
+    {
+        if (nextResult == null)
+        {
+            return aggregate;
+        }
+
+        return nextResult;
     }
 }
 
