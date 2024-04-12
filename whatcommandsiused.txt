@@ -1,6 +1,6 @@
 #all commands I used
 Test command:
-antlr4-parse UCM.g4 start -gui <balls.txt
+ antlr4-parse UCM.g4 root -gui <UCM/balls.ucm
 
 # commands i used to get C# to work.
 cd /usr/local/lib
