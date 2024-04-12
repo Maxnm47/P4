@@ -33,6 +33,6 @@ public partial class AstLeafNode : AstNode
 
     public override string ToString(string indent)
     {
-        return indent + this.GetType().Name + ": " + value;
+        return indent + ToString();
     }
 }
