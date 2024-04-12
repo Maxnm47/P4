@@ -1,1 +1,6 @@
-string a = "hel  l  o";
+
+methods balls{
+int a(int b){
+    return a;
+};
+};

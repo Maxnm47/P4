@@ -110,11 +110,11 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitId([NotNull] UCMParser.IdContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="UCMParser.typedId"/>.
+	/// Visit a parse tree produced by <see cref="UCMParser.argument"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitTypedId([NotNull] UCMParser.TypedIdContext context);
+	Result VisitArgument([NotNull] UCMParser.ArgumentContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.adapting"/>.
 	/// </summary>
@@ -169,6 +169,12 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitFunctionCollection([NotNull] UCMParser.FunctionCollectionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.arguments"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArguments([NotNull] UCMParser.ArgumentsContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.method"/>.
 	/// </summary>
