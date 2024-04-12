@@ -395,7 +395,7 @@ public partial class UCMBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <return>The visitor result.</return>
 	public virtual Result VisitListConstruction([NotNull] UCMParser.ListConstructionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="UCMParser.return"/>.
+	/// Visit a parse tree produced by <see cref="UCMParser.return_"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -403,7 +403,7 @@ public partial class UCMBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitReturn([NotNull] UCMParser.ReturnContext context) { return VisitChildren(context); }
+	public virtual Result VisitReturn_([NotNull] UCMParser.Return_Context context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.statementList"/>.
 	/// <para>

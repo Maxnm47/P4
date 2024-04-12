@@ -54,7 +54,7 @@ public partial class UCMParser : Parser {
 		RULE_arguments = 23, RULE_method = 24, RULE_functionCollectionCall = 25, 
 		RULE_methodCall = 26, RULE_expr = 27, RULE_numExpr = 28, RULE_boolExpr = 29, 
 		RULE_compExpr = 30, RULE_ifStatement = 31, RULE_conditional = 32, RULE_whileLoop = 33, 
-		RULE_forLoop = 34, RULE_listConstruction = 35, RULE_return = 36, RULE_statementList = 37, 
+		RULE_forLoop = 34, RULE_listConstruction = 35, RULE_return_ = 36, RULE_statementList = 37, 
 		RULE_statement = 38, RULE_assignment = 39, RULE_root = 40;
 	public static readonly string[] ruleNames = {
 		"object_t", "array_t", "primitiveType", "complexType", "type", "int", 
@@ -63,7 +63,7 @@ public partial class UCMParser : Parser {
 		"templateField", "templateExtention", "templateDefenition", "functionCollection", 
 		"arguments", "method", "functionCollectionCall", "methodCall", "expr", 
 		"numExpr", "boolExpr", "compExpr", "ifStatement", "conditional", "whileLoop", 
-		"forLoop", "listConstruction", "return", "statementList", "statement", 
+		"forLoop", "listConstruction", "return_", "statementList", "statement", 
 		"assignment", "root"
 	};
 
@@ -2898,29 +2898,29 @@ public partial class UCMParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ReturnContext : ParserRuleContext {
+	public partial class Return_Context : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RETURN() { return GetToken(UCMParser.RETURN, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr() {
 			return GetRuleContext<ExprContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SEMI() { return GetToken(UCMParser.SEMI, 0); }
-		public ReturnContext(ParserRuleContext parent, int invokingState)
+		public Return_Context(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_return; } }
+		public override int RuleIndex { get { return RULE_return_; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IUCMVisitor<TResult> typedVisitor = visitor as IUCMVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitReturn(this);
+			if (typedVisitor != null) return typedVisitor.VisitReturn_(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public ReturnContext @return() {
-		ReturnContext _localctx = new ReturnContext(Context, State);
-		EnterRule(_localctx, 72, RULE_return);
+	public Return_Context return_() {
+		Return_Context _localctx = new Return_Context(Context, State);
+		EnterRule(_localctx, 72, RULE_return_);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -3021,8 +3021,8 @@ public partial class UCMParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public FieldContext field() {
 			return GetRuleContext<FieldContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ReturnContext @return() {
-			return GetRuleContext<ReturnContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Return_Context return_() {
+			return GetRuleContext<Return_Context>(0);
 		}
 		public StatementContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -3100,7 +3100,7 @@ public partial class UCMParser : Parser {
 				EnterOuterAlt(_localctx, 8);
 				{
 				State = 454;
-				@return();
+				return_();
 				}
 				break;
 			}
