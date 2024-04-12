@@ -248,11 +248,11 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitListConstruction([NotNull] UCMParser.ListConstructionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="UCMParser.return"/>.
+	/// Visit a parse tree produced by <see cref="UCMParser.return_"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitReturn([NotNull] UCMParser.ReturnContext context);
+	Result VisitReturn_([NotNull] UCMParser.Return_Context context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.statementList"/>.
 	/// </summary>

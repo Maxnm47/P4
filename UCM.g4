@@ -71,7 +71,7 @@ BOOL: 'true' | 'false';
 INT: MINUS? [0-9]+;
 FLOAT: MINUS? ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
 
-STRING : QUOTE ( ESCAPE_SEQUENCE | ~["\\] )* QUOTE;
+STRING: QUOTE ( ESCAPE_SEQUENCE | ~["\\])* QUOTE;
 ESCAPE_SEQUENCE: '\\' (('\\' | '\'' | '"') | UNICODE_ESCAPE);
 fragment UNICODE_ESCAPE:
 	'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
@@ -98,9 +98,7 @@ augmentedString:
 		| ( ESCAPE_SEQUENCE | .) ( LCURLY expr RCURLY)?
 	)* QUOTE;
 
-
 concatanatedString: STRING (PLUS STRING)*;
-
 
 // Identifiers
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
@@ -191,7 +189,7 @@ listConstruction:
 	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY value RCURLY;
 
 //return
-return: RETURN expr SEMI;
+return_: RETURN expr SEMI;
 // Statements
 statementList: statement*;
 
@@ -203,13 +201,9 @@ statement:
 	| methodCall SEMI
 	| method
 	| field
-    | return;
+	| return_;
 
 assignment: type? id ASSIGN expr SEMI;
 
 // Add a start rule for testing
-root: (
-		templateDefenition
-		| functionCollection
-		| field
-	)*;
+root: ( templateDefenition | functionCollection | field)*;
