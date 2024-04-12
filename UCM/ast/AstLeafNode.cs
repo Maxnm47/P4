@@ -15,7 +15,7 @@ public partial class AstLeafNode : AstNode
 
     public TypeEnum type { get; set; }
 
-    public AstLeafNode(string value)
+    public AstLeafNode(string value) //constructor
     {
         this.value = value;
     }

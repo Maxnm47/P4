@@ -19,7 +19,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             AstNode childNode = Visit(child);
             root.AddChild(childNode);
         }
-
+        
         return root;
     }
 
@@ -82,7 +82,6 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
     public override AstNode VisitField(UCMParser.FieldContext context)
     {
-        Console.WriteLine("Visiting Field");
         AstNode typeAnotationNode = Visit(context.type());
         AstNode identifyerNode = new IdentifyerNode(context.ID().GetText());
         AstNode expressionNode = Visit(context.expr());
@@ -90,9 +89,25 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return new FieldNode(typeAnotationNode, identifyerNode, expressionNode);
     }
 
+    public override AstNode VisitObject([NotNull] UCMParser.ObjectContext context)
+    {
+        ObjectNode objectNode = new ObjectNode();
+
+        foreach (var child in context.children)
+        {
+            if(child is UCMParser.FieldContext)
+            {
+                AstNode childNode = Visit(child);
+                objectNode.AddChild(childNode);
+            }
+        }
+        Console.WriteLine("objectnode:" +objectNode);
+        return objectNode;
+    }
+
+
     public override AstNode VisitInt(UCMParser.IntContext context)
     {
-        Console.WriteLine("Visiting Int");
         return new IntNode(context.GetText());
     }
 

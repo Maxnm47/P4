@@ -1,4 +1,4 @@
-﻿using Antlr4.Runtime;
+using Antlr4.Runtime;
 using UCM;
 using UCM.ast;
 
@@ -27,3 +27,4 @@ class Program
         Console.WriteLine(ast);
     }
 }
+
