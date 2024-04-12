@@ -80,6 +80,12 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNum([NotNull] UCMParser.NumContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.string"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitString([NotNull] UCMParser.StringContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.value"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -91,12 +97,6 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitAugmentedString([NotNull] UCMParser.AugmentedStringContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="UCMParser.string"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitString([NotNull] UCMParser.StringContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.concatanatedString"/>.
 	/// </summary>
