@@ -92,17 +92,17 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitAugmentedString([NotNull] UCMParser.AugmentedStringContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="UCMParser.concatanatedString"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitConcatanatedString([NotNull] UCMParser.ConcatanatedStringContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.string"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitString([NotNull] UCMParser.StringContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.concatanatedString"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitConcatanatedString([NotNull] UCMParser.ConcatanatedStringContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.id"/>.
 	/// </summary>

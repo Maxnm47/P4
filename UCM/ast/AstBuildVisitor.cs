@@ -140,6 +140,34 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     }
 
 
+    /* ------------------------ ComplexValues ------------------------ */
+    public override AstNode VisitObject(UCMParser.ObjectContext context)
+    {
+        Console.WriteLine("Visiting Object");
+        AstNode objectNode = new ObjectNode();
+
+        foreach (var child in context.children)
+        {
+            if(child is UCMParser.FieldContext)
+            {
+                AstNode fieldNode = Visit(child);
+                objectNode.AddChild(fieldNode);
+            }
+        }
+
+        return objectNode;
+    }
+
+    public override AstLeafNode VisitString([NotNull] UCMParser.StringContext context)
+    {
+
+        Console.WriteLine("Visiting String: " + context.GetText());
+
+        StringNode balls = new StringNode(context.GetText());
+
+        Console.WriteLine("StringNode: " + balls.value);
+        return balls;
+        }
 
 
     /* ------------------------ Utility ------------------------ */

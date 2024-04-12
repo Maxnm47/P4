@@ -1,3 +1,1 @@
-object a = {
-    int hello = 10;
-};
+string a = "hel lo";

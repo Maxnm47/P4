@@ -75,9 +75,9 @@ float: FLOAT;
 num: int | float;
 value:
 	num
+	| string
 	| augmentedString
 	| concatanatedString
-	| string
 	| BOOL
 	| object
 	| array
@@ -88,9 +88,9 @@ augmentedString:
 		( ESCAPE_SEQUENCE | .)? ( LCURLY expr RCURLY)
 		| ( ESCAPE_SEQUENCE | .) ( LCURLY expr RCURLY)?
 	)* QUOTE;
-concatanatedString: string (PLUS string)*;
 
 string: QUOTE ( ESCAPE_SEQUENCE | .)*? QUOTE;
+concatanatedString: string (PLUS string)*;
 
 fragment STRING_BODY: ( ESCAPE_SEQUENCE | .)*?;
 ESCAPE_SEQUENCE: '\\' (('\\' | '\'' | '"') | UNICODE_ESCAPE);
