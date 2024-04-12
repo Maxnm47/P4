@@ -2,9 +2,9 @@ using UCM.typechecker;
 
 namespace UCM.ast
 {
-    public class BoolNode: AstLeafNode
+    public class BoolNode : AstLeafNode<bool>
     {
-        public BoolNode(string value) :
+        public BoolNode(bool value) :
             base(value)
         {
             type = TypeEnum.BOOL;

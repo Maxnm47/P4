@@ -8,6 +8,7 @@ public enum TypeEnum
     BOOL,
     VOID,
     OBJECT,
-    ARRAY
+    ARRAY,
+    NONE
 }
 

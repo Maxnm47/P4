@@ -2,7 +2,7 @@ using UCM.typechecker;
 
 namespace UCM.ast
 {
-    public class StringNode : AstLeafNode
+    public class StringNode : AstLeafNode<string>
     {
         public StringNode(string value) :
             base(value)

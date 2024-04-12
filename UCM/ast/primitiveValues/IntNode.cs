@@ -6,9 +6,9 @@ using UCM.typechecker;
 
 namespace UCM.ast
 {
-    public class IntNode : AstLeafNode
+    public class IntNode : AstLeafNode<int>
     {
-        public IntNode(string value) :
+        public IntNode(int value) :
             base(value)
         {
             type = TypeEnum.INT;

@@ -6,7 +6,7 @@ using UCM.typechecker;
 
 namespace UCM.ast;
 
-public class IdentifyerNode : AstLeafNode
+public class IdentifyerNode : AstLeafNode<string>
 {
     public IdentifyerNode(string value) : base(value)
     {
