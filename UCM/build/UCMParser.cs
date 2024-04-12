@@ -47,7 +47,7 @@ public partial class UCMParser : Parser {
 	public const int
 		RULE_object_t = 0, RULE_array_t = 1, RULE_primitiveType = 2, RULE_complexType = 3, 
 		RULE_type = 4, RULE_int = 5, RULE_float = 6, RULE_num = 7, RULE_value = 8, 
-		RULE_augmentedString = 9, RULE_concatanatedString = 10, RULE_string = 11, 
+		RULE_augmentedString = 9, RULE_string = 10, RULE_concatanatedString = 11, 
 		RULE_id = 12, RULE_typedId = 13, RULE_adapting = 14, RULE_object = 15, 
 		RULE_field = 16, RULE_array = 17, RULE_evaluaterArray = 18, RULE_templateField = 19, 
 		RULE_templateExtention = 20, RULE_templateDefenition = 21, RULE_functionCollection = 22, 
@@ -58,7 +58,7 @@ public partial class UCMParser : Parser {
 		RULE_statement = 37, RULE_assignment = 38, RULE_root = 39;
 	public static readonly string[] ruleNames = {
 		"object_t", "array_t", "primitiveType", "complexType", "type", "int", 
-		"float", "num", "value", "augmentedString", "concatanatedString", "string", 
+		"float", "num", "value", "augmentedString", "string", "concatanatedString", 
 		"id", "typedId", "adapting", "object", "field", "array", "evaluaterArray", 
 		"templateField", "templateExtention", "templateDefenition", "functionCollection", 
 		"method", "functionCollectionCall", "methodCall", "expr", "numExpr", "boolExpr", 
@@ -549,14 +549,14 @@ public partial class UCMParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public NumContext num() {
 			return GetRuleContext<NumContext>(0);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public StringContext @string() {
+			return GetRuleContext<StringContext>(0);
+		}
 		[System.Diagnostics.DebuggerNonUserCode] public AugmentedStringContext augmentedString() {
 			return GetRuleContext<AugmentedStringContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ConcatanatedStringContext concatanatedString() {
 			return GetRuleContext<ConcatanatedStringContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StringContext @string() {
-			return GetRuleContext<StringContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BOOL() { return GetToken(UCMParser.BOOL, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ObjectContext @object() {
@@ -598,21 +598,21 @@ public partial class UCMParser : Parser {
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 112;
-				augmentedString();
+				@string();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
 				State = 113;
-				concatanatedString();
+				augmentedString();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
 				State = 114;
-				@string();
+				concatanatedString();
 				}
 				break;
 			case 5:
@@ -798,6 +798,81 @@ public partial class UCMParser : Parser {
 		return _localctx;
 	}
 
+	public partial class StringContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] QUOTE() { return GetTokens(UCMParser.QUOTE); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode QUOTE(int i) {
+			return GetToken(UCMParser.QUOTE, i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ESCAPE_SEQUENCE() { return GetTokens(UCMParser.ESCAPE_SEQUENCE); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ESCAPE_SEQUENCE(int i) {
+			return GetToken(UCMParser.ESCAPE_SEQUENCE, i);
+		}
+		public StringContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_string; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IUCMVisitor<TResult> typedVisitor = visitor as IUCMVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitString(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public StringContext @string() {
+		StringContext _localctx = new StringContext(Context, State);
+		EnterRule(_localctx, 20, RULE_string);
+		try {
+			int _alt;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 148;
+			Match(QUOTE);
+			State = 153;
+			ErrorHandler.Sync(this);
+			_alt = Interpreter.AdaptivePredict(TokenStream,12,Context);
+			while ( _alt!=1 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1+1 ) {
+					{
+					State = 151;
+					ErrorHandler.Sync(this);
+					switch ( Interpreter.AdaptivePredict(TokenStream,11,Context) ) {
+					case 1:
+						{
+						State = 149;
+						Match(ESCAPE_SEQUENCE);
+						}
+						break;
+					case 2:
+						{
+						State = 150;
+						MatchWildcard();
+						}
+						break;
+					}
+					} 
+				}
+				State = 155;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,12,Context);
+			}
+			State = 156;
+			Match(QUOTE);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
 	public partial class ConcatanatedStringContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public StringContext[] @string() {
 			return GetRuleContexts<StringContext>();
@@ -825,106 +900,31 @@ public partial class UCMParser : Parser {
 	[RuleVersion(0)]
 	public ConcatanatedStringContext concatanatedString() {
 		ConcatanatedStringContext _localctx = new ConcatanatedStringContext(Context, State);
-		EnterRule(_localctx, 20, RULE_concatanatedString);
+		EnterRule(_localctx, 22, RULE_concatanatedString);
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 148;
+			State = 158;
 			@string();
-			State = 153;
+			State = 163;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,11,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,13,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 149;
+					State = 159;
 					Match(PLUS);
-					State = 150;
+					State = 160;
 					@string();
 					}
 					} 
 				}
-				State = 155;
-				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,11,Context);
-			}
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class StringContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] QUOTE() { return GetTokens(UCMParser.QUOTE); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode QUOTE(int i) {
-			return GetToken(UCMParser.QUOTE, i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ESCAPE_SEQUENCE() { return GetTokens(UCMParser.ESCAPE_SEQUENCE); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ESCAPE_SEQUENCE(int i) {
-			return GetToken(UCMParser.ESCAPE_SEQUENCE, i);
-		}
-		public StringContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_string; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUCMVisitor<TResult> typedVisitor = visitor as IUCMVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitString(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public StringContext @string() {
-		StringContext _localctx = new StringContext(Context, State);
-		EnterRule(_localctx, 22, RULE_string);
-		try {
-			int _alt;
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 156;
-			Match(QUOTE);
-			State = 161;
-			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,13,Context);
-			while ( _alt!=1 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
-				if ( _alt==1+1 ) {
-					{
-					State = 159;
-					ErrorHandler.Sync(this);
-					switch ( Interpreter.AdaptivePredict(TokenStream,12,Context) ) {
-					case 1:
-						{
-						State = 157;
-						Match(ESCAPE_SEQUENCE);
-						}
-						break;
-					case 2:
-						{
-						State = 158;
-						MatchWildcard();
-						}
-						break;
-					}
-					} 
-				}
-				State = 163;
+				State = 165;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,13,Context);
 			}
-			State = 164;
-			Match(QUOTE);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3301,8 +3301,8 @@ public partial class UCMParser : Parser {
 		102,8,4,1,5,1,5,1,6,1,6,1,7,1,7,3,7,110,8,7,1,8,1,8,1,8,1,8,1,8,1,8,1,
 		8,1,8,3,8,120,8,8,1,9,1,9,1,9,1,9,3,9,126,8,9,1,9,1,9,1,9,1,9,1,9,1,9,
 		3,9,134,8,9,1,9,1,9,1,9,1,9,3,9,140,8,9,5,9,142,8,9,10,9,12,9,145,9,9,
-		1,9,1,9,1,10,1,10,1,10,5,10,152,8,10,10,10,12,10,155,9,10,1,11,1,11,1,
-		11,5,11,160,8,11,10,11,12,11,163,9,11,1,11,1,11,1,12,1,12,1,13,1,13,1,
+		1,9,1,9,1,10,1,10,1,10,5,10,152,8,10,10,10,12,10,155,9,10,1,10,1,10,1,
+		11,1,11,1,11,5,11,162,8,11,10,11,12,11,165,9,11,1,12,1,12,1,13,1,13,1,
 		13,1,14,1,14,1,15,3,15,175,8,15,1,15,1,15,5,15,179,8,15,10,15,12,15,182,
 		9,15,1,15,1,15,1,16,3,16,187,8,16,1,16,3,16,190,8,16,1,16,1,16,1,16,1,
 		16,1,16,1,17,1,17,1,17,1,17,5,17,201,8,17,10,17,12,17,204,9,17,1,17,1,
@@ -3327,12 +3327,12 @@ public partial class UCMParser : Parser {
 		432,8,34,1,34,1,34,1,34,1,34,1,34,1,35,1,35,1,35,1,35,1,36,5,36,444,8,
 		36,10,36,12,36,447,9,36,1,37,1,37,1,37,1,37,1,37,1,37,1,37,1,37,1,37,1,
 		37,3,37,459,8,37,1,38,3,38,462,8,38,1,38,1,38,1,38,1,38,1,38,1,39,1,39,
-		1,39,5,39,472,8,39,10,39,12,39,475,9,39,1,39,1,161,3,52,54,56,40,0,2,4,
+		1,39,5,39,472,8,39,10,39,12,39,475,9,39,1,39,1,153,3,52,54,56,40,0,2,4,
 		6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,
 		54,56,58,60,62,64,66,68,70,72,74,76,78,0,5,2,0,11,11,54,54,2,0,45,46,48,
 		49,2,0,16,17,20,20,1,0,18,19,1,0,23,28,516,0,80,1,0,0,0,2,84,1,0,0,0,4,
 		92,1,0,0,0,6,97,1,0,0,0,8,101,1,0,0,0,10,103,1,0,0,0,12,105,1,0,0,0,14,
-		109,1,0,0,0,16,119,1,0,0,0,18,121,1,0,0,0,20,148,1,0,0,0,22,156,1,0,0,
+		109,1,0,0,0,16,119,1,0,0,0,18,121,1,0,0,0,20,148,1,0,0,0,22,158,1,0,0,
 		0,24,166,1,0,0,0,26,168,1,0,0,0,28,171,1,0,0,0,30,174,1,0,0,0,32,186,1,
 		0,0,0,34,196,1,0,0,0,36,211,1,0,0,0,38,231,1,0,0,0,40,242,1,0,0,0,42,245,
 		1,0,0,0,44,261,1,0,0,0,46,273,1,0,0,0,48,292,1,0,0,0,50,296,1,0,0,0,52,
@@ -3347,7 +3347,7 @@ public partial class UCMParser : Parser {
 		1,0,0,0,101,100,1,0,0,0,102,9,1,0,0,0,103,104,5,51,0,0,104,11,1,0,0,0,
 		105,106,5,52,0,0,106,13,1,0,0,0,107,110,3,10,5,0,108,110,3,12,6,0,109,
 		107,1,0,0,0,109,108,1,0,0,0,110,15,1,0,0,0,111,120,3,14,7,0,112,120,3,
-		18,9,0,113,120,3,20,10,0,114,120,3,22,11,0,115,120,5,50,0,0,116,120,3,
+		20,10,0,113,120,3,18,9,0,114,120,3,22,11,0,115,120,5,50,0,0,116,120,3,
 		30,15,0,117,120,3,34,17,0,118,120,5,15,0,0,119,111,1,0,0,0,119,112,1,0,
 		0,0,119,113,1,0,0,0,119,114,1,0,0,0,119,115,1,0,0,0,119,116,1,0,0,0,119,
 		117,1,0,0,0,119,118,1,0,0,0,120,17,1,0,0,0,121,122,5,44,0,0,122,143,5,
@@ -3358,13 +3358,13 @@ public partial class UCMParser : Parser {
 		26,0,137,138,5,34,0,0,138,140,1,0,0,0,139,135,1,0,0,0,139,140,1,0,0,0,
 		140,142,1,0,0,0,141,125,1,0,0,0,141,133,1,0,0,0,142,145,1,0,0,0,143,141,
 		1,0,0,0,143,144,1,0,0,0,144,146,1,0,0,0,145,143,1,0,0,0,146,147,5,43,0,
-		0,147,19,1,0,0,0,148,153,3,22,11,0,149,150,5,18,0,0,150,152,3,22,11,0,
-		151,149,1,0,0,0,152,155,1,0,0,0,153,151,1,0,0,0,153,154,1,0,0,0,154,21,
-		1,0,0,0,155,153,1,0,0,0,156,161,5,43,0,0,157,160,5,53,0,0,158,160,9,0,
-		0,0,159,157,1,0,0,0,159,158,1,0,0,0,160,163,1,0,0,0,161,162,1,0,0,0,161,
-		159,1,0,0,0,162,164,1,0,0,0,163,161,1,0,0,0,164,165,5,43,0,0,165,23,1,
-		0,0,0,166,167,5,54,0,0,167,25,1,0,0,0,168,169,3,8,4,0,169,170,3,24,12,
-		0,170,27,1,0,0,0,171,172,3,24,12,0,172,29,1,0,0,0,173,175,3,28,14,0,174,
+		0,147,19,1,0,0,0,148,153,5,43,0,0,149,152,5,53,0,0,150,152,9,0,0,0,151,
+		149,1,0,0,0,151,150,1,0,0,0,152,155,1,0,0,0,153,154,1,0,0,0,153,151,1,
+		0,0,0,154,156,1,0,0,0,155,153,1,0,0,0,156,157,5,43,0,0,157,21,1,0,0,0,
+		158,163,3,20,10,0,159,160,5,18,0,0,160,162,3,20,10,0,161,159,1,0,0,0,162,
+		165,1,0,0,0,163,161,1,0,0,0,163,164,1,0,0,0,164,23,1,0,0,0,165,163,1,0,
+		0,0,166,167,5,54,0,0,167,25,1,0,0,0,168,169,3,8,4,0,169,170,3,24,12,0,
+		170,27,1,0,0,0,171,172,3,24,12,0,172,29,1,0,0,0,173,175,3,28,14,0,174,
 		173,1,0,0,0,174,175,1,0,0,0,175,176,1,0,0,0,176,180,5,33,0,0,177,179,3,
 		32,16,0,178,177,1,0,0,0,179,182,1,0,0,0,180,178,1,0,0,0,180,181,1,0,0,
 		0,181,183,1,0,0,0,182,180,1,0,0,0,183,184,5,34,0,0,184,31,1,0,0,0,185,
@@ -3449,7 +3449,7 @@ public partial class UCMParser : Parser {
 		3,52,26,0,466,467,5,37,0,0,467,77,1,0,0,0,468,472,3,42,21,0,469,472,3,
 		44,22,0,470,472,3,32,16,0,471,468,1,0,0,0,471,469,1,0,0,0,471,470,1,0,
 		0,0,472,475,1,0,0,0,473,471,1,0,0,0,473,474,1,0,0,0,474,79,1,0,0,0,475,
-		473,1,0,0,0,52,84,90,97,101,109,119,125,133,139,141,143,153,159,161,174,
+		473,1,0,0,0,52,84,90,97,101,109,119,125,133,139,141,143,151,153,163,174,
 		180,186,189,202,207,214,219,223,227,234,238,248,253,255,267,280,284,296,
 		305,309,319,326,340,348,350,364,375,377,395,400,417,431,445,458,461,471,
 		473
