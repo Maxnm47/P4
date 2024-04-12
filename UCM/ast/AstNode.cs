@@ -8,17 +8,7 @@ namespace UCM.ast;
 
 public abstract class AstNode
 {
-    string id;
     public List<AstNode> children = new List<AstNode>();
-
-
-    public AstNode()
-    {
-    }
-    public AstNode(string id)
-    {
-        this.id = id;
-    }
 
     public override string ToString()
     {

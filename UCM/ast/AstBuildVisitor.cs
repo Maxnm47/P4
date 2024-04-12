@@ -30,9 +30,9 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override AstNode VisitField(UCMParser.FieldContext context)
     {
         Console.WriteLine("Visiting Field: " + context.GetText());
-        AstNode typeAnotationNode = Visit(context.type());
-        AstNode identifyerNode = Visit(context.id());
-        AstNode expressionNode = Visit(context.expr());
+        var typeAnotationNode = (TypeAnotationNode)Visit(context.type());
+        var identifyerNode = (IdentifyerNode)Visit(context.id());
+        var expressionNode = (ExpressionNode)Visit(context.expr());
 
         return new FieldNode(typeAnotationNode, identifyerNode, expressionNode);
     }
@@ -40,11 +40,8 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override AstNode VisitMethodCall(UCMParser.MethodCallContext context)
     {
         Console.WriteLine("Visiting MethodCall: " + context.GetText());
-        AstNode methodCall = new MethodCallNode(context.GetText());
-        methodCall.AddChild(Visit(context.id()));
 
-        AstNode arguments = new ArgumentsNode();
-
+        ArgumentsNode arguments = new ArgumentsNode();
         foreach (var child in context.children)
         {
             if (child is UCMParser.ExprContext)
@@ -54,9 +51,9 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             }
         }
 
-        methodCall.AddChild(arguments);
+        IdentifyerNode identifyer = (IdentifyerNode)Visit(context.id());
 
-        return methodCall;
+        return new MethodCallNode(identifyer, arguments);
     }
 
     public override AstNode VisitId(UCMParser.IdContext context)

@@ -8,14 +8,14 @@ namespace UCM.ast.statements
 {
     public class MethodCallNode : AstNode
     {
-        public MethodCallNode(string methodId) : base(methodId)
+        public MethodCallNode(IdentifyerNode identifyer, ArgumentsNode arguments)
         {
+            this.AddChild(identifyer);
+            this.AddChild(arguments);
         }
 
         public IdentifyerNode Id => this.GetChild<IdentifyerNode>(0);
         public ArgumentsNode Arguments => this.GetChild<ArgumentsNode>(0);
-
-
     }
 
 }
