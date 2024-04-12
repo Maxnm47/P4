@@ -1,1 +1,1 @@
-int a = hej(a);
+int a = b + c * hej();
