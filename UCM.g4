@@ -105,7 +105,7 @@ concatanatedString: STRING (PLUS STRING)*;
 // Identifiers
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
 id: ID;
-typedId: type id; //maybe replace all with the right hand side.
+argument: type id; //maybe replace all with the right hand side.
 
 // Objects
 adapting: id;
@@ -121,7 +121,7 @@ evaluaterArray:
 	LBRACKET ((boolExpr | id) (COMMA (boolExpr | id))* |) RBRACKET;
 
 templateField:
-	typedId (ASSIGN value)? (COLON evaluaterArray)? SEMI;
+	type id (ASSIGN value)? (COLON evaluaterArray)? SEMI;
 templateExtention: EXTENDS_KEYWORD id;
 templateDefenition:
 	TEMPLATE_KEYWORD id templateExtention? LCURLY (
@@ -134,8 +134,10 @@ functionCollection:
 	FUNCTIONS_KEYWORD id LCURLY method* RCURLY SEMI;
 
 // Methods
+
+arguments: argument (COMMA argument)* |;
 method:
-	typedId LPAREN (typedId (COMMA typedId)* |) RPAREN LCURLY statementList RCURLY SEMI;
+	type id LPAREN arguments RPAREN LCURLY statementList RCURLY SEMI;
 functionCollectionCall: id DOT;
 methodCall:
 	functionCollectionCall? id LPAREN (expr (COMMA expr)* |) RPAREN;
