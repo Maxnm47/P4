@@ -1,1 +1,3 @@
-int a = b + c * hej();
+object a = {
+    int hello = 10;
+};

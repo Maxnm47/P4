@@ -101,7 +101,7 @@ fragment HEX_DIGIT: [0-9a-fA-F];
 // Identifiers
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
 id: ID;
-typedId: type id;
+typedId: type id; //maybe replace all with the right hand side.
 
 // Objects
 adapting: id;
@@ -184,6 +184,8 @@ forLoop:
 listConstruction:
 	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY value RCURLY;
 
+//return
+return: RETURN expr SEMI;
 // Statements
 statementList: statement*;
 
@@ -195,20 +197,13 @@ statement:
 	| methodCall SEMI
 	| method
 	| field
-	| RETURN expr SEMI;
+    | return;
 
 assignment: type? id ASSIGN expr SEMI;
-objectDefenition: HIDDEN_? object_t? id ASSIGN object SEMI;
-arrayDefenition: HIDDEN_? array_t? id ASSIGN array SEMI;
-declaration: typedId SEMI;
 
 // Add a start rule for testing
 root: (
 		templateDefenition
-		| objectDefenition
-		| arrayDefenition
 		| functionCollection
 		| field
 	)*;
-
-start: root;
