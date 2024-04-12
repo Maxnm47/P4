@@ -242,6 +242,12 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitListConstruction([NotNull] UCMParser.ListConstructionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.return"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitReturn([NotNull] UCMParser.ReturnContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.statementList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -260,33 +266,9 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitAssignment([NotNull] UCMParser.AssignmentContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="UCMParser.objectDefenition"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitObjectDefenition([NotNull] UCMParser.ObjectDefenitionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="UCMParser.arrayDefenition"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitArrayDefenition([NotNull] UCMParser.ArrayDefenitionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="UCMParser.declaration"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitDeclaration([NotNull] UCMParser.DeclarationContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.root"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitRoot([NotNull] UCMParser.RootContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="UCMParser.start"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitStart([NotNull] UCMParser.StartContext context);
 }
