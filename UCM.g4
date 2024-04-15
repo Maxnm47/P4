@@ -103,7 +103,7 @@ argument: type id; //maybe replace all with the right hand side.
 // Objects
 adapting: id;
 object: adapting? LCURLY field* RCURLY;
-field: HIDDEN_? type? id ASSIGN expr SEMI;
+field: HIDDEN_? type? (id|arrayAccess) ASSIGN expr SEMI;
 
 // Arrays
 array:
@@ -194,7 +194,7 @@ forLoop:
 
 // List construction
 listConstruction:
-	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY expr RCURLY SEMI;
+	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY (expr|assignment) RCURLY SEMI;
 
 //return
 return_: RETURN expr? SEMI;
