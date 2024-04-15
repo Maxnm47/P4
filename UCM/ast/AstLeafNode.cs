@@ -9,7 +9,7 @@ using UCM.ast;
 
 namespace UCM.ast;
 
-public partial class AstLeafNode<T> : AstNode
+public class AstLeafNode<T> : AstNode
 {
     public T value { get; set; }
 

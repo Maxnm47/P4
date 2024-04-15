@@ -4,8 +4,8 @@ namespace UCM.ast
 {
     public class VoidNode : AstLeafNode<string>
     {
-        public VoidNode(string value) :
-            base(value)
+        public VoidNode() :
+            base(TypeEnum.VOID.ToString())
         {
             type = TypeEnum.VOID;
         }

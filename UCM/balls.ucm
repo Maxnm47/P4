@@ -1,6 +1,6 @@
 
-methods balls{
-int a(int b){
-    return a;
-};
+methods Math {
+    int sum(int a, int b) {
+        return a + b;
+    };
 };

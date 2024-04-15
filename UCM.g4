@@ -173,23 +173,25 @@ boolExpr:
 compExpr: GT | LT | GTE | LTE | EQ | NEQ;
 
 // Condtionals structure
-ifStatement: IF LPAREN boolExpr RPAREN LCURLY statement RCURLY;
-conditional: ifStatement (ELSE ifStatement)* (ELSE statement)?;
+ifStatement:
+	IF LPAREN boolExpr RPAREN LCURLY statementList RCURLY;
+conditional:
+	ifStatement (ELSE ifStatement)* (ELSE statementList)?;
 
 // While loop
 whileLoop:
-	WHILE LPAREN boolExpr RPAREN LCURLY statement RCURLY SEMI;
+	WHILE LPAREN boolExpr RPAREN LCURLY statementList RCURLY SEMI;
 
 // For loop
 forLoop:
-	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY statement RCURLY SEMI;
+	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY statementList RCURLY SEMI;
 
 // List construction
 listConstruction:
 	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY value RCURLY;
 
 //return
-return_: RETURN expr SEMI;
+return_: RETURN expr? SEMI;
 // Statements
 statementList: statement*;
 

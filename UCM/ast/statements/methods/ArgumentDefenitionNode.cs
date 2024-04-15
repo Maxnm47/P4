@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace UCM.ast.statements
 {
-    public class TypedIdNode : AstNode
+    public class ArgumentDefenitionNode : AstNode
     {
-        public TypedIdNode(TypeAnotationNode type, IdentifyerNode id)
+        public ArgumentDefenitionNode(TypeAnotationNode type, IdentifyerNode id)
         {
             children.Add(type);
             children.Add(id);
