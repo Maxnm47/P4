@@ -295,7 +295,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
 
 
-    /* ------------------------ Complex Types ------------------------ */ 
+    /* ------------------------ Complex Types ------------------------ */
     public override ObjectNode VisitObject(UCMParser.ObjectContext context)
     {
         Console.WriteLine("Visiting Object");
@@ -303,7 +303,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         foreach (var child in context.children)
         {
-            if(child is UCMParser.FieldContext)
+            if (child is UCMParser.FieldContext)
             {
                 AstNode fieldNode = Visit(child);
                 objectNode.AddChild(fieldNode);
@@ -313,11 +313,13 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return objectNode;
     }
 
-    
     /* ------------------------ Strings and stuff ------------------------ */
     public override StringNode VisitString([NotNull] UCMParser.StringContext context)
     {
         Console.WriteLine("Visiting String: " + context.GetText());
+        string content = context.GetText();
+        content = content.Remove(content.Length - 1);
+        content = content.Remove(0, (content[0].Equals('$')) ? 2 : 1);
 
         StringNode stringNode = new StringNode(context.GetText());
         return stringNode;
@@ -335,7 +337,8 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
                 AstNode stringExpr = Visit(child);
                 augmentedStringNode.AddChild(stringExpr);
             }
-            else if(child is UCMParser.IdContext){
+            else if (child is UCMParser.IdContext)
+            {
                 IdentifyerNode id = (IdentifyerNode)Visit(child);
                 augmentedStringNode.AddChild(id);
             }
