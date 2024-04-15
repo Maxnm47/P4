@@ -71,34 +71,28 @@ BOOL: 'true' | 'false';
 INT: MINUS? [0-9]+;
 FLOAT: MINUS? ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
 
-STRING: QUOTE ( ESCAPE_SEQUENCE | ~["\\])* QUOTE;
-ESCAPE_SEQUENCE: '\\' (('\\' | '\'' | '"') | UNICODE_ESCAPE);
-fragment UNICODE_ESCAPE:
-	'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
-fragment HEX_DIGIT: [0-9a-fA-F];
+argumentedString:
+	STRING_START expr (STRING_MIDDLE expr)* STRING_END;
+string: SIMPLE_STRING;
+
+SIMPLE_STRING: '"' ~["\r\n]* '"' | '$"' ~["\r\n{]* '"';
+STRING_START: '$"' ~["{]* '{';
+STRING_MIDDLE: '}' ~["{]* '{';
+STRING_END: '}' ~["{]* '"';
+SPACES: [ \t\r\n]+ -> skip;
 
 int: INT;
 float: FLOAT;
 num: int | float;
-string: STRING;
 
 value:
 	num
+	| argumentedString
 	| string
-	| augmentedString
-	| concatanatedString
 	| BOOL
 	| object
 	| array
 	| NULL;
-
-augmentedString:
-	DOLLAR QUOTE (
-		( ESCAPE_SEQUENCE | .)? ( LCURLY expr RCURLY)
-		| ( ESCAPE_SEQUENCE | .) ( LCURLY expr RCURLY)?
-	)* QUOTE;
-
-concatanatedString: STRING (PLUS STRING)*;
 
 // Identifiers
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
@@ -147,7 +141,13 @@ expr:
 	| methodCall
 	| boolExpr
 	| expr EQ expr // This to avoid left recursion
-	| numExpr;
+	| numExpr
+	| stringExpr;
+
+stringExpr:
+	stringExpr PLUS stringExpr
+	| argumentedString
+	| string;
 
 numExpr:
 	num
