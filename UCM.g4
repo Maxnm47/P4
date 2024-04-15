@@ -150,6 +150,7 @@ expr:
 
 stringExpr:
 	stringExpr PLUS stringExpr
+	| stringExpr IASSIGN stringExpr
 	| argumentedString
 	| string;
 
@@ -161,6 +162,7 @@ numExpr:
 	| MINUS numExpr
 	| numExpr (MULT | DIV | MOD) numExpr
 	| numExpr (PLUS | MINUS) numExpr
+	| numExpr IASSIGN numExpr
 	| LPAREN numExpr RPAREN;
 
 boolExpr:
