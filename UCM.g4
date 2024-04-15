@@ -71,8 +71,8 @@ BOOL: 'true' | 'false';
 INT: MINUS? [0-9]+;
 FLOAT: MINUS? ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
 
-argumentedString:
-	STRING_START expr (STRING_MIDDLE expr)* STRING_END;
+augmentedString:
+	STRING_START expr? (STRING_MIDDLE expr?)* STRING_END;
 string: SIMPLE_STRING;
 
 SIMPLE_STRING: '"' ~["\r\n]* '"' | '$"' ~["\r\n{]* '"';
@@ -87,7 +87,7 @@ num: int | float;
 
 value:
 	num
-	| argumentedString
+	| augmentedString
 	| string
 	| BOOL
 	| object
@@ -115,6 +115,7 @@ evaluaterArray:
 templateField:
 	type id (ASSIGN value)? (COLON evaluaterArray)? SEMI;
 templateExtention: EXTENDS_KEYWORD id;
+
 templateDefenition:
 	TEMPLATE_KEYWORD id templateExtention? LCURLY (
 		templateField
@@ -146,7 +147,8 @@ expr:
 
 stringExpr:
 	stringExpr PLUS stringExpr
-	| argumentedString
+	| id
+	| augmentedString
 	| string;
 
 numExpr:
