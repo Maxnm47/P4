@@ -47,7 +47,7 @@ public partial class UCMParser : Parser {
 		STRING_END=56, SPACES=57, ID=58;
 	public const int
 		RULE_object_t = 0, RULE_array_t = 1, RULE_primitiveType = 2, RULE_complexType = 3, 
-		RULE_type = 4, RULE_argumentedString = 5, RULE_string = 6, RULE_int = 7, 
+		RULE_type = 4, RULE_augmentedString = 5, RULE_string = 6, RULE_int = 7, 
 		RULE_float = 8, RULE_num = 9, RULE_value = 10, RULE_id = 11, RULE_argument = 12, 
 		RULE_adapting = 13, RULE_object = 14, RULE_field = 15, RULE_array = 16, 
 		RULE_evaluaterArray = 17, RULE_templateField = 18, RULE_templateExtention = 19, 
@@ -58,7 +58,7 @@ public partial class UCMParser : Parser {
 		RULE_forLoop = 34, RULE_listConstruction = 35, RULE_return_ = 36, RULE_statementList = 37, 
 		RULE_statement = 38, RULE_assignment = 39, RULE_root = 40;
 	public static readonly string[] ruleNames = {
-		"object_t", "array_t", "primitiveType", "complexType", "type", "argumentedString", 
+		"object_t", "array_t", "primitiveType", "complexType", "type", "augmentedString", 
 		"string", "int", "float", "num", "value", "id", "argument", "adapting", 
 		"object", "field", "array", "evaluaterArray", "templateField", "templateExtention", 
 		"templateDefenition", "functionCollection", "arguments", "method", "functionCollectionCall", 
@@ -416,7 +416,7 @@ public partial class UCMParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ArgumentedStringContext : ParserRuleContext {
+	public partial class AugmentedStringContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING_START() { return GetToken(UCMParser.STRING_START, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ExprContext[] expr() {
 			return GetRuleContexts<ExprContext>();
@@ -429,23 +429,23 @@ public partial class UCMParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING_MIDDLE(int i) {
 			return GetToken(UCMParser.STRING_MIDDLE, i);
 		}
-		public ArgumentedStringContext(ParserRuleContext parent, int invokingState)
+		public AugmentedStringContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_argumentedString; } }
+		public override int RuleIndex { get { return RULE_augmentedString; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IUCMVisitor<TResult> typedVisitor = visitor as IUCMVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitArgumentedString(this);
+			if (typedVisitor != null) return typedVisitor.VisitAugmentedString(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public ArgumentedStringContext argumentedString() {
-		ArgumentedStringContext _localctx = new ArgumentedStringContext(Context, State);
-		EnterRule(_localctx, 10, RULE_argumentedString);
+	public AugmentedStringContext augmentedString() {
+		AugmentedStringContext _localctx = new AugmentedStringContext(Context, State);
+		EnterRule(_localctx, 10, RULE_augmentedString);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -657,8 +657,8 @@ public partial class UCMParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public NumContext num() {
 			return GetRuleContext<NumContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ArgumentedStringContext argumentedString() {
-			return GetRuleContext<ArgumentedStringContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public AugmentedStringContext augmentedString() {
+			return GetRuleContext<AugmentedStringContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StringContext @string() {
 			return GetRuleContext<StringContext>(0);
@@ -704,7 +704,7 @@ public partial class UCMParser : Parser {
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 127;
-				argumentedString();
+				augmentedString();
 				}
 				break;
 			case SIMPLE_STRING:
@@ -1993,8 +1993,8 @@ public partial class UCMParser : Parser {
 	}
 
 	public partial class StringExprContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ArgumentedStringContext argumentedString() {
-			return GetRuleContext<ArgumentedStringContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public AugmentedStringContext augmentedString() {
+			return GetRuleContext<AugmentedStringContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StringContext @string() {
 			return GetRuleContext<StringContext>(0);
@@ -2041,7 +2041,7 @@ public partial class UCMParser : Parser {
 			case STRING_START:
 				{
 				State = 303;
-				argumentedString();
+				augmentedString();
 				}
 				break;
 			case SIMPLE_STRING:
