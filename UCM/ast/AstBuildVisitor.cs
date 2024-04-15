@@ -3,6 +3,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Runtime.Serialization.Formatters;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -227,9 +228,9 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     {
         Console.WriteLine("Visiting Expr: " + context.GetText());
         ExpressionNode expr = new ExpressionNode();
-
+        
         foreach (var child in context.children)
-        {
+        {            
             AstNode childNode = Visit(child);
             expr.AddChild(childNode);
         }
@@ -317,13 +318,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override StringNode VisitString([NotNull] UCMParser.StringContext context)
     {
         Console.WriteLine("Visiting String: " + context.GetText());
-        string content = context.GetText();
-        content = content.Remove(content.Length - 1);
-        content = content.Remove(0, (content[0].Equals('$')) ? 2 : 1);
+        string content = CleanString(context.GetText());
 
         StringNode stringNode = new StringNode(content);
         return stringNode;
     }
+
 
     public override AugmentedStringNode VisitAugmentedString([NotNull] UCMParser.AugmentedStringContext context)
     {
@@ -332,19 +332,23 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         foreach (var child in context.children)
         {
-            Console.WriteLine("Child: " + child.GetText() + " has type " + child.GetType());
             if (child is Antlr4.Runtime.Tree.TerminalNodeImpl terminalNode)
             {
-                StringNode stringExpr = new StringNode(terminalNode.GetText());
+                string strvalue = CleanString(terminalNode.GetText());
+
+                if(strvalue.Length == 0) continue; //den er linje kan ædelægge det hele, dette er for ikke at have et tomt barn
+
+                StringNode stringExpr = new StringNode(strvalue);
                 augmentedStringNode.AddChild(stringExpr);
             }
-            else if (child is UCMParser.ExprContext exporContext)
+            else if (child is UCMParser.ExprContext exprContext)
             {
-                ExpressionNode expr = (ExpressionNode)Visit(exporContext);
+                ExpressionNode expr = (ExpressionNode)Visit(exprContext);
                 augmentedStringNode.AddChild(expr);
             }
             else if (child is UCMParser.StringExprContext stringExprContext)
             {
+
                 ExpressionNode expr = (ExpressionNode)Visit(stringExprContext);
                 augmentedStringNode.AddChild(expr);
             }
@@ -377,6 +381,15 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
 
         return nextResult;
+    }
+
+    string CleanString(string str)
+    {
+        str = str.Remove(str.Length - 1);
+        str = str.Remove(0, str[0].Equals('$') ? 2 : 1);
+        str.Trim('{', '}');
+
+        return str;
     }
 }
 
