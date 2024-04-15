@@ -115,7 +115,6 @@ evaluaterArray:
 templateField:
 	type id (ASSIGN value)? (COLON evaluaterArray)? SEMI;
 templateExtention: EXTENDS_KEYWORD id;
-
 templateDefenition:
 	TEMPLATE_KEYWORD id templateExtention? LCURLY (
 		templateField
