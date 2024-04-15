@@ -126,7 +126,7 @@ array_t
 primitiveType
 complexType
 type
-argumentedString
+augmentedString
 string
 int
 float

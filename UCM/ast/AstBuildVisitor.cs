@@ -1,6 +1,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization.Formatters;
 using System.Text.Json.Serialization;
@@ -313,7 +314,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     }
 
     
-    /* ------------------------ Strings and shit ------------------------ */
+    /* ------------------------ Strings and stuff ------------------------ */
     public override StringNode VisitString([NotNull] UCMParser.StringContext context)
     {
         Console.WriteLine("Visiting String: " + context.GetText());
@@ -322,17 +323,43 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return stringNode;
     }
 
+    public override AugmentedStringNode VisitAugmentedString([NotNull] UCMParser.AugmentedStringContext context)
+    {
+        Console.WriteLine("Visiting augmented string " + context.GetText());
+        AugmentedStringNode augmentedStringNode = new AugmentedStringNode();
+
+        foreach (var child in context.children)
+        {
+            if (child is UCMParser.StringExprContext)
+            {
+                AstNode stringExpr = Visit(child);
+                augmentedStringNode.AddChild(stringExpr);
+            }
+            else if(child is UCMParser.IdContext){
+                IdentifyerNode id = (IdentifyerNode)Visit(child);
+                augmentedStringNode.AddChild(id);
+            }
+            else if (child is UCMParser.StringContext)
+            {
+                StringNode stringNode = (StringNode)Visit(child);
+                augmentedStringNode.AddChild(stringNode);
+            }
+        }
+
+        return augmentedStringNode;
+    }
+
+
     public override AstNode VisitStringExpr([NotNull] UCMParser.StringExprContext context)
     {
-        Console.WriteLine("Visiting StringExpr" + context.GetText());        
-        if (context.PLUS != null){
-        return new AdditionNode
-            (
+        Console.WriteLine("Visiting StringExpr: " + context.GetText());
+        if (context.PLUS() != null)
+        {
+            return new AdditionNode(
                 Visit(context.GetChild<UCMParser.StringExprContext>(0)),
                 Visit(context.GetChild<UCMParser.StringExprContext>(1))
             );
         }
-
         return VisitChildren(context);
     }
 
