@@ -176,7 +176,9 @@ compExpr: GT | LT | GTE | LTE | EQ | NEQ;
 ifStatement:
 	IF LPAREN boolExpr RPAREN LCURLY statementList RCURLY;
 conditional:
-	ifStatement (ELSE ifStatement)* (ELSE statementList)?;
+	ifStatement (ELSE ifStatement)* (
+		ELSE LCURLY statementList RCURLY
+	)?;
 
 // While loop
 whileLoop:
@@ -188,7 +190,7 @@ forLoop:
 
 // List construction
 listConstruction:
-	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY value RCURLY;
+	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY expr RCURLY;
 
 //return
 return_: RETURN expr? SEMI;
