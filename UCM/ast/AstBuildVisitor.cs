@@ -321,7 +321,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         content = content.Remove(content.Length - 1);
         content = content.Remove(0, (content[0].Equals('$')) ? 2 : 1);
 
-        StringNode stringNode = new StringNode(context.GetText());
+        StringNode stringNode = new StringNode(content);
         return stringNode;
     }
 
@@ -332,20 +332,21 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         foreach (var child in context.children)
         {
-            if (child is UCMParser.StringExprContext)
+            Console.WriteLine("Child: " + child.GetText() + " has type " + child.GetType());
+            if (child is Antlr4.Runtime.Tree.TerminalNodeImpl terminalNode)
             {
-                AstNode stringExpr = Visit(child);
+                StringNode stringExpr = new StringNode(terminalNode.GetText());
                 augmentedStringNode.AddChild(stringExpr);
             }
-            else if (child is UCMParser.IdContext)
+            else if (child is UCMParser.ExprContext exporContext)
             {
-                IdentifyerNode id = (IdentifyerNode)Visit(child);
-                augmentedStringNode.AddChild(id);
+                ExpressionNode expr = (ExpressionNode)Visit(exporContext);
+                augmentedStringNode.AddChild(expr);
             }
-            else if (child is UCMParser.StringContext)
+            else if (child is UCMParser.StringExprContext stringExprContext)
             {
-                StringNode stringNode = (StringNode)Visit(child);
-                augmentedStringNode.AddChild(stringNode);
+                ExpressionNode expr = (ExpressionNode)Visit(stringExprContext);
+                augmentedStringNode.AddChild(expr);
             }
         }
 
