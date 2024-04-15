@@ -1,6 +1,1 @@
-
-methods Math {
-    int sum(int a, int b) {
-        return a + b;
-    };
-};
+string a = $"hej{2}" + "hej" + $"{2} {3}   f";
