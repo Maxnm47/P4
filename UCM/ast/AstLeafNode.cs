@@ -9,18 +9,18 @@ using UCM.ast;
 
 namespace UCM.ast;
 
-public partial class AstLeafNode : AstNode
+public class AstLeafNode<T> : AstNode
 {
-    public string value { get; set; }
+    public T value { get; set; }
 
     public TypeEnum type { get; set; }
 
-    public AstLeafNode(string value) //constructor
+    public AstLeafNode(T value) //constructor
     {
         this.value = value;
     }
 
-    public AstLeafNode(string value, TypeEnum type)
+    public AstLeafNode(T value, TypeEnum type)
     {
         this.value = value;
         this.type = type;

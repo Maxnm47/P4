@@ -6,9 +6,9 @@ using UCM.typechecker;
 
 namespace UCM.ast.numExp
 {
-    public class FloatNode : AstLeafNode
+    public class FloatNode : AstLeafNode<float>
     {
-        public FloatNode(string value) : base(value)
+        public FloatNode(float value) : base(value)
         {
             type = TypeEnum.FLOAT;
         }

@@ -6,7 +6,7 @@ using UCM.typechecker;
 
 namespace UCM.ast
 {
-    public class TypeAnotationNode : AstLeafNode
+    public class TypeAnotationNode : AstLeafNode<string>
     {
         public TypeAnotationNode(string value) :
             base(value)
