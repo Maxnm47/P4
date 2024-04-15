@@ -294,6 +294,48 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
 
 
+    /* ------------------------ Complex Types ------------------------ */ 
+    public override ObjectNode VisitObject(UCMParser.ObjectContext context)
+    {
+        Console.WriteLine("Visiting Object");
+        ObjectNode objectNode = new ObjectNode();
+
+        foreach (var child in context.children)
+        {
+            if(child is UCMParser.FieldContext)
+            {
+                AstNode fieldNode = Visit(child);
+                objectNode.AddChild(fieldNode);
+            }
+        }
+
+        return objectNode;
+    }
+
+    
+    /* ------------------------ Strings and shit ------------------------ */
+    public override StringNode VisitString([NotNull] UCMParser.StringContext context)
+    {
+        Console.WriteLine("Visiting String: " + context.GetText());
+
+        StringNode stringNode = new StringNode(context.GetText());
+        return stringNode;
+    }
+
+    public override AstNode VisitStringExpr([NotNull] UCMParser.StringExprContext context)
+    {
+        Console.WriteLine("Visiting StringExpr" + context.GetText());        
+        if (context.PLUS != null){
+        return new AdditionNode
+            (
+                Visit(context.GetChild<UCMParser.StringExprContext>(0)),
+                Visit(context.GetChild<UCMParser.StringExprContext>(1))
+            );
+        }
+
+        return VisitChildren(context);
+    }
+
 
     /* ------------------------ Utility ------------------------ */
     protected override AstNode AggregateResult(AstNode aggregate, AstNode nextResult)

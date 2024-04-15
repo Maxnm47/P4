@@ -1,1 +1,1 @@
-string a = $"hej{2}" + "hej" + $"{2} {3}   f";
+string a = "hello" + "bye";
