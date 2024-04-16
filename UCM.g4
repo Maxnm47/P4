@@ -74,8 +74,8 @@ type: primitiveType | complexType;
 
 // Values
 BOOL: 'true' | 'false';
-INT: MINUS? [0-9]+;
-FLOAT: MINUS? ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
+INT: [0-9]+;
+FLOAT: ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
 
 
 augmentedString:
@@ -90,12 +90,9 @@ STRING_MIDDLE: '´' ~["`]* '`';
 STRING_END: '´' ~["`]* '"';
 SPACES: [ \t\r\n]+ -> skip;
 
-
 compoundasign:  PLUSASSIGN |MULTASSIGN | DIVASSIGN | MODASSIGN | MINUSASSIGN;
-
-
-int: INT;
-float: FLOAT;
+int: MINUS? INT;
+float: MINUS? FLOAT;
 num: int | float;
 
 value:
