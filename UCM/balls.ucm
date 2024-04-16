@@ -1,5 +1,9 @@
-template a{
+string a = $"`hello´ text!";
+
+template balls{
+    int a = 10;
 };
 
-template c{
+template yoyo{
+    string a = "hello" + "yoyo";
 };
