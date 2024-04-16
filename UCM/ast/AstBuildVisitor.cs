@@ -47,9 +47,10 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override AstNode VisitField(UCMParser.FieldContext context)
     {
         Console.WriteLine("Visiting Field: " + context.GetText());
-
         bool isHidden = context.HIDDEN_() is not null;
         bool isTyped = context.type() is not null;
+
+        bool isCompounAssignment = context.compoundasign() is not null;
 
         var hidden = new HiddenAnotationNode(isHidden);
         var type = (isTyped) ?
@@ -59,9 +60,46 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         var id = (IdentifyerNode)Visit(context.id());
         var expr = (ExpressionNode)Visit(context.expr());
 
-        return new FieldNode(hidden, type, id, expr);
-    }
+        if (!isCompounAssignment)
+        {
+            return new FieldNode(hidden, type, id, expr);
+        }
 
+        string compoundOperator = context.compoundasign().GetText();
+        if (compoundOperator == "+=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new AdditionNode(new IdentifyerNode(id.value), expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "-=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new SubtractionNode(new IdentifyerNode(id.value), expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "*=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new MultiplicationNode(new IdentifyerNode(id.value), expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "/=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new DivisionNode(new IdentifyerNode(id.value), expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "%=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new ModuloNode(new IdentifyerNode(id.value), expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+
+        return null;
+    }
+    
     /* ------------------------ Statements ------------------------ */
     public override AstNode VisitAssignment(UCMParser.AssignmentContext context)
     {
