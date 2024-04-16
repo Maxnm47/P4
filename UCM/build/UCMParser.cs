@@ -1280,8 +1280,8 @@ public partial class UCMParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SEMI() { return GetToken(UCMParser.SEMI, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ASSIGN() { return GetToken(UCMParser.ASSIGN, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ValueContext value() {
-			return GetRuleContext<ValueContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ExprContext expr() {
+			return GetRuleContext<ExprContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COLON() { return GetToken(UCMParser.COLON, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public EvaluaterArrayContext evaluaterArray() {
@@ -1320,7 +1320,7 @@ public partial class UCMParser : Parser {
 				State = 206;
 				Match(ASSIGN);
 				State = 207;
-				value();
+				expr(0);
 				}
 			}
 
@@ -3400,7 +3400,7 @@ public partial class UCMParser : Parser {
 		198,1,0,0,0,196,194,1,0,0,0,196,197,1,0,0,0,197,201,1,0,0,0,198,196,1,
 		0,0,0,199,201,1,0,0,0,200,187,1,0,0,0,200,199,1,0,0,0,201,202,1,0,0,0,
 		202,203,5,36,0,0,203,35,1,0,0,0,204,205,3,8,4,0,205,208,3,22,11,0,206,
-		207,5,42,0,0,207,209,3,20,10,0,208,206,1,0,0,0,208,209,1,0,0,0,209,212,
+		207,5,42,0,0,207,209,3,52,26,0,208,206,1,0,0,0,208,209,1,0,0,0,209,212,
 		1,0,0,0,210,211,5,40,0,0,211,213,3,34,17,0,212,210,1,0,0,0,212,213,1,0,
 		0,0,213,214,1,0,0,0,214,215,5,37,0,0,215,37,1,0,0,0,216,217,5,13,0,0,217,
 		218,3,22,11,0,218,39,1,0,0,0,219,220,5,8,0,0,220,222,3,22,11,0,221,223,

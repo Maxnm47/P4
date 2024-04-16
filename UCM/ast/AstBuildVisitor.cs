@@ -385,7 +385,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     {
         str = str.Remove(str.Length - 1);
         str = str.Remove(0, str[0].Equals('$') ? 2 : 1);
-        str.Trim('{', '}');
+        str.Trim('`', '´');
 
         return str;
     }

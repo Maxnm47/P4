@@ -75,10 +75,12 @@ augmentedString:
 	STRING_START expr? (STRING_MIDDLE expr?)* STRING_END;
 string: SIMPLE_STRING;
 
-SIMPLE_STRING: '"' ~["\r\n]* '"' | '$"' ~["\r\n{]* '"';
-STRING_START: '$"' ~["{]* '{';
-STRING_MIDDLE: '}' ~["{]* '{';
-STRING_END: '}' ~["{]* '"';
+
+
+SIMPLE_STRING: '"' ~["\r\n]* '"' | '$"' ~["\r\n`]* '"';
+STRING_START: '$"' ~["`]* '`';
+STRING_MIDDLE: '´' ~["`]* '`';
+STRING_END: '´' ~["`]* '"';
 SPACES: [ \t\r\n]+ -> skip;
 
 int: INT;
@@ -113,7 +115,7 @@ evaluaterArray:
 	LBRACKET ((boolExpr | id) (COMMA (boolExpr | id))* |) RBRACKET;
 
 templateField:
-	type id (ASSIGN value)? (COLON evaluaterArray)? SEMI;
+	type id (ASSIGN expr)? (COLON evaluaterArray)? SEMI;
 templateExtention: EXTENDS_KEYWORD id;
 templateDefenition:
 	TEMPLATE_KEYWORD id templateExtention? LCURLY (
