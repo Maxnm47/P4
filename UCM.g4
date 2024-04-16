@@ -50,6 +50,11 @@ COMMA: ',';
 COLON: ':';
 NEWLINE: '\n';
 ASSIGN: '=';
+PLUSASSIGN: '+=';
+MULTASSIGN: '*=';
+DIVASSIGN: '/=';
+MODASSIGN: '%=';
+MINUSASSIGN: '-=';
 QUOTE: '"';
 DOLLAR: '$';
 
@@ -71,6 +76,7 @@ BOOL: 'true' | 'false';
 INT: MINUS? [0-9]+;
 FLOAT: MINUS? ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
 
+
 augmentedString:
 	STRING_START expr? (STRING_MIDDLE expr?)* STRING_END;
 string: SIMPLE_STRING;
@@ -82,6 +88,8 @@ STRING_START: '$"' ~["`]* '`';
 STRING_MIDDLE: '´' ~["`]* '`';
 STRING_END: '´' ~["`]* '"';
 SPACES: [ \t\r\n]+ -> skip;
+
+compoundasign:  PLUSASSIGN |MULTASSIGN | DIVASSIGN | MODASSIGN | MINUSASSIGN;
 
 int: INT;
 float: FLOAT;
@@ -104,18 +112,20 @@ argument: type id; //maybe replace all with the right hand side.
 // Objects
 adapting: id;
 object: adapting? LCURLY field* RCURLY;
-field: HIDDEN_? type? id ASSIGN expr SEMI;
+field: HIDDEN_? type? id (ASSIGN|compoundasign) expr SEMI;
 
 // Arrays
 array:
 	LBRACKET (expr (COMMA expr)* | listConstruction |) RBRACKET;
 
+arrayAccess:
+	id LBRACKET expr RBRACKET;
 // Templates
 evaluaterArray:
 	LBRACKET ((boolExpr | id) (COMMA (boolExpr | id))* |) RBRACKET;
 
 templateField:
-	type id (ASSIGN expr)? (COLON evaluaterArray)? SEMI;
+	type id (ASSIGN value)? (COLON evaluaterArray)? SEMI;
 templateExtention: EXTENDS_KEYWORD id;
 templateDefenition:
 	TEMPLATE_KEYWORD id templateExtention? LCURLY (
@@ -132,6 +142,7 @@ functionCollection:
 arguments: argument (COMMA argument)* |;
 method:
 	type id LPAREN arguments RPAREN LCURLY statementList RCURLY SEMI;
+
 functionCollectionCall: id DOT;
 methodCall:
 	functionCollectionCall? id LPAREN (expr (COMMA expr)* |) RPAREN;
@@ -140,6 +151,7 @@ methodCall:
 expr:
 	value
 	| id
+	| arrayAccess
 	| methodCall
 	| boolExpr
 	| expr EQ expr // This to avoid left recursion
@@ -193,7 +205,7 @@ forLoop:
 
 // List construction
 listConstruction:
-	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY expr RCURLY;
+	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY (expr|assignment) RCURLY SEMI;
 
 //return
 return_: RETURN expr? SEMI;
@@ -210,7 +222,7 @@ statement:
 	| field
 	| return_;
 
-assignment: type? id ASSIGN expr SEMI;
+assignment: type? (id|arrayAccess) (ASSIGN|compoundasign) expr SEMI;
 
 // Add a start rule for testing
 root: ( templateDefenition | functionCollection | field)*;

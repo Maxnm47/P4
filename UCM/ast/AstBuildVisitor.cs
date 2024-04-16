@@ -99,7 +99,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         return null;
     }
-    
+
     /* ------------------------ Statements ------------------------ */
     public override AstNode VisitAssignment(UCMParser.AssignmentContext context)
     {
@@ -113,6 +113,45 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             new TypeAnotationNode(typechecker.TypeEnum.NONE.ToString(), typechecker.TypeEnum.NONE);
         var id = (IdentifyerNode)Visit(context.id());
         var expr = (ExpressionNode)Visit(context.expr());
+
+        bool isCompounAssignment = context.compoundasign() is not null; 
+
+        if (!isCompounAssignment)
+        {
+            return new FieldNode(hidden, type, id, expr);
+        }
+
+        string compoundOperator = context.compoundasign().GetText();
+        if (compoundOperator == "+=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new AdditionNode(new IdentifyerNode(id.value), expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "-=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new SubtractionNode(new IdentifyerNode(id.value), expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "*=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new MultiplicationNode(new IdentifyerNode(id.value), expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "/=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new DivisionNode(new IdentifyerNode(id.value), expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "%=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new ModuloNode(new IdentifyerNode(id.value), expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
 
         return new FieldNode(hidden, type, id, expr);
     }

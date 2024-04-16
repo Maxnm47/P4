@@ -1,1 +1,9 @@
-string a = $"`hello´ text!";
+template a{
+    method test(int a){
+        if(a == 10){
+            a += 1; #<-- det her burde være en assignement right?
+        } #<-- eneste sted i hele grammeren vi ikke skal bruge semi kolon
+
+
+    };
+};
