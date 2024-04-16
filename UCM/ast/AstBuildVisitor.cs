@@ -228,6 +228,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     {
         Console.WriteLine("Visiting Arguments: " + context.GetText());
         ArgumentsDefenitionNode arguments = new ArgumentsDefenitionNode();
+
+        if (context.children == null)
+        {
+            return arguments;
+        }
+
         foreach (var child in context.children)
         {
             if (child is UCMParser.ArgumentContext)
@@ -281,6 +287,29 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         return returnNode;
     }
+
+    public override ConditionalNode VisitConditional(UCMParser.ConditionalContext context)
+    {
+        Console.WriteLine("Visiting Conditional: " + context.GetText());
+        ConditionalNode conditional = new ConditionalNode();
+
+        foreach (var child in context.children)
+        {
+            if (child is UCMParser.IfStatementContext)
+            {
+                IfStatementNode ifStatement = (IfStatementNode)Visit(child);
+                conditional.AddChild(ifStatement);
+            }
+            else if (child is UCMParser.StatementListContext)
+            {
+                BodyNode body = (BodyNode)Visit(child);
+                conditional.AddChild(body);
+            }
+        }
+
+        return conditional;
+    }
+
 
     public override AstNode VisitStatement(UCMParser.StatementContext context)
     {
