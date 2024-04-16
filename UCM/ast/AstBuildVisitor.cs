@@ -97,7 +97,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             return new FieldNode(hidden, type, id, expr2);
         }
 
-        return null;
+        return null; // skal nok være noget andet
     }
 
     /* ------------------------ Statements ------------------------ */
@@ -118,6 +118,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         if (!isCompounAssignment)
         {
+            
             return new FieldNode(hidden, type, id, expr);
         }
 
@@ -153,7 +154,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             return new FieldNode(hidden, type, id, expr2);
         }
 
-        return new FieldNode(hidden, type, id, expr);
+        return null; //skal nok være noget andet
     }
 
     public override AstNode VisitMethodCall(UCMParser.MethodCallContext context)
