@@ -82,6 +82,7 @@ STRING_MIDDLE: '}' ~["{]* '{';
 STRING_END: '}' ~["{]* '"';
 SPACES: [ \t\r\n]+ -> skip;
 
+
 int: INT;
 float: FLOAT;
 num: int | float;
@@ -103,7 +104,7 @@ argument: type id; //maybe replace all with the right hand side.
 // Objects
 adapting: id;
 object: adapting? LCURLY field* RCURLY;
-field: HIDDEN_? type? (id|arrayAccess) ASSIGN expr SEMI;
+field: HIDDEN_? type? (id|arrayAccess) (ASSIGN|IASSIGN) expr SEMI;
 
 // Arrays
 array:
@@ -150,7 +151,6 @@ expr:
 
 stringExpr:
 	stringExpr PLUS stringExpr
-	| stringExpr IASSIGN stringExpr
 	| argumentedString
 	| string;
 
@@ -162,7 +162,6 @@ numExpr:
 	| MINUS numExpr
 	| numExpr (MULT | DIV | MOD) numExpr
 	| numExpr (PLUS | MINUS) numExpr
-	| numExpr IASSIGN numExpr
 	| LPAREN numExpr RPAREN;
 
 boolExpr:
@@ -213,7 +212,7 @@ statement:
 	| field
 	| return_;
 
-assignment: type? (id|arrayAccess) ASSIGN expr SEMI;
+assignment: type? (id|arrayAccess) (ASSIGN|IASSIGN) expr SEMI;
 
 // Add a start rule for testing
 root: ( templateDefenition | functionCollection | field)*;
