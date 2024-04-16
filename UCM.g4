@@ -50,6 +50,7 @@ COMMA: ',';
 COLON: ':';
 NEWLINE: '\n';
 ASSIGN: '=';
+IASSIGN: '+=';
 QUOTE: '"';
 DOLLAR: '$';
 
@@ -83,6 +84,7 @@ STRING_MIDDLE: '´' ~["`]* '`';
 STRING_END: '´' ~["`]* '"';
 SPACES: [ \t\r\n]+ -> skip;
 
+
 int: INT;
 float: FLOAT;
 num: int | float;
@@ -104,12 +106,14 @@ argument: type id; //maybe replace all with the right hand side.
 // Objects
 adapting: id;
 object: adapting? LCURLY field* RCURLY;
-field: HIDDEN_? type? id ASSIGN expr SEMI;
+field: HIDDEN_? type? (id|arrayAccess) (ASSIGN|IASSIGN) expr SEMI;
 
 // Arrays
 array:
 	LBRACKET (expr (COMMA expr)* | listConstruction |) RBRACKET;
 
+arrayAccess:
+	id LBRACKET expr RBRACKET;
 // Templates
 evaluaterArray:
 	LBRACKET ((boolExpr | id) (COMMA (boolExpr | id))* |) RBRACKET;
@@ -140,6 +144,7 @@ methodCall:
 expr:
 	value
 	| id
+	| arrayAccess
 	| methodCall
 	| boolExpr
 	| expr EQ expr // This to avoid left recursion
@@ -193,7 +198,7 @@ forLoop:
 
 // List construction
 listConstruction:
-	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY expr RCURLY;
+	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY (expr|assignment) RCURLY SEMI;
 
 //return
 return_: RETURN expr? SEMI;
@@ -210,7 +215,7 @@ statement:
 	| field
 	| return_;
 
-assignment: type? id ASSIGN expr SEMI;
+assignment: type? (id|arrayAccess) (ASSIGN|IASSIGN) expr SEMI;
 
 // Add a start rule for testing
 root: ( templateDefenition | functionCollection | field)*;
