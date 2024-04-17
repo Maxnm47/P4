@@ -1,15 +1,9 @@
-using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization.Formatters;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using Antlr4.Runtime.Misc;
-using UCM.ast.numExp;
+using UCM.ast.boolExpr;
+using UCM.ast.compExpr;
+using UCM.ast.numExpr;
 using UCM.ast.root;
 using UCM.ast.statements;
-using UCM.ast.statements.condition;
 
 namespace UCM.ast;
 
@@ -235,6 +229,82 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         return expr;
     }
+
+    public override AstNode VisitBoolExpr([NotNull] UCMParser.BoolExprContext context)
+    {
+        Console.WriteLine("Visiting BoolExpr: " + context.GetText());
+        if (context.AND() != null)
+        {
+            return new AndNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else if (context.OR() != null)
+        {
+            return new OrNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else if (context.EQ() != null)
+        {
+            return new EqualNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        /*else if (context.NEQ() != null)
+        {
+            return new NotEqualNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }*/
+       
+        else
+        {
+            return VisitChildren(context);
+        }
+    }
+    
+    public override AstNode VisitCompExpr([NotNull] UCMParser.CompExprContext context)
+    {
+        Console.WriteLine("Visiting CompExpr: " + context.GetText());
+        if (context.GT() != null)
+        {
+            return new GreaterThanNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else if (context.GTE() != null)
+        {
+            return new GreaterThanOrEqualNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else if (context.LT() != null)
+        {
+            return new LessThanNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else if (context.LTE() != null)
+        {
+            return new LessThanOrEqualNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else
+        {
+            return VisitChildren(context);
+        }
+    }
+    
     public override AstNode VisitNumExpr([NotNull] UCMParser.NumExprContext context)
     {
         Console.WriteLine("Visiting NumExpr: " + context.GetText());
@@ -291,7 +361,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         Console.WriteLine("Visiting Float: " + context.GetText());
         return new FloatNode(float.Parse(context.GetText()));
     }
-
+    
+    /*public override BoolNode VisitFloat(UCMParser.BoolExprContext context)
+    {
+        Console.WriteLine("Visiting Bool: " + context.GetText());
+        return new BoolNode(bool.Parse(context.GetText()));
+    }*/
 
 
     /* ------------------------ Complex Types ------------------------ */

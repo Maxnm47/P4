@@ -1,9 +1,1 @@
-string a = $"`hello´ text!";
-
-template balls{
-    int a = 10;
-};
-
-template yoyo{
-    string a = "hello" + "yoyo";
-};
+bool a = 10<11;
