@@ -2,5 +2,9 @@
 methods a{
     int a(){
         int b += 20;
+
+        for (x in fuckMeArray) {
+            
+        }
     }
 }

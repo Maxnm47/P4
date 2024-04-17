@@ -7,10 +7,14 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Antlr4.Runtime.Atn;
 using Antlr4.Runtime.Misc;
+using UCM.ast.boolExpr;
+using UCM.ast.complexValues;
 using UCM.ast.numExp;
 using UCM.ast.root;
 using UCM.ast.statements;
 using UCM.ast.statements.condition;
+using UCM.ast.statements.forLoops;
+using UCM.ast.statements.whileLoop;
 
 namespace UCM.ast;
 
@@ -69,7 +73,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         {
             id = new FieldId(exprNode);
         }
-        
+
         var expr = (ExpressionNode)Visit(context.expr());
 
         if (!isCompounAssignment)
@@ -228,6 +232,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     {
         Console.WriteLine("Visiting Arguments: " + context.GetText());
         ArgumentsDefenitionNode arguments = new ArgumentsDefenitionNode();
+
+        if (context.children == null)
+        {
+            return arguments;
+        }
+
         foreach (var child in context.children)
         {
             if (child is UCMParser.ArgumentContext)
@@ -253,6 +263,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     {
         Console.WriteLine("Visiting StatementList: " + context.GetText());
         BodyNode body = new BodyNode();
+
+        if (context.children == null)
+        {
+            return body;
+        }
+
         foreach (var child in context.children)
         {
             if (child is UCMParser.StatementContext)
@@ -280,6 +296,74 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
 
         return returnNode;
+    }
+
+    public override ConditionalNode VisitConditional(UCMParser.ConditionalContext context)
+    {
+        Console.WriteLine("Visiting Conditional: " + context.GetText());
+        ConditionalNode conditional = new ConditionalNode();
+
+        foreach (var child in context.children)
+        {
+            if (child is UCMParser.IfStatementContext)
+            {
+                IfStatementNode ifStatement = (IfStatementNode)Visit(child);
+                conditional.AddChild(ifStatement);
+            }
+            else if (child is UCMParser.StatementListContext)
+            {
+                BodyNode body = (BodyNode)Visit(child);
+                conditional.AddChild(body);
+            }
+        }
+
+        return conditional;
+    }
+
+    public override IfStatementNode VisitIfStatement(UCMParser.IfStatementContext context)
+    {
+        Console.WriteLine("Visiting IfStatement: " + context.GetText());
+
+        BoolExpr condition = (BoolExpr)Visit(context.boolExpr());
+        BodyNode body = (BodyNode)Visit(context.statementList());
+
+        return new IfStatementNode(condition, body);
+    }
+
+    public override WhileLoopNode VisitWhileLoop([NotNull] UCMParser.WhileLoopContext context)
+    {
+        Console.WriteLine("Visiting WhileLoop: " + context.GetText());
+        BoolExpr condition = (BoolExpr)Visit(context.boolExpr());
+        BodyNode body = (BodyNode)Visit(context.statementList());
+
+        return new WhileLoopNode(condition, body);
+    }
+
+    public override ForLoopNode VisitForLoop([NotNull] UCMParser.ForLoopContext context)
+    {
+        Console.WriteLine("Visiting ForLoop: " + context.GetText());
+        IdentifyerNode enumeratorId = (IdentifyerNode)Visit(context.id());
+        ExpressionNode loopArray = (ExpressionNode)Visit(context.expr());
+        BodyNode body = (BodyNode)Visit(context.statementList());
+
+        return new ForLoopNode(enumeratorId, loopArray, body);
+    }
+
+    public override AstNode VisitArray([NotNull] UCMParser.ArrayContext context)
+    {
+        Console.WriteLine("Visiting Array: " + context.GetText());
+        ArrayNode array = new ArrayNode();
+
+        foreach (var child in context.children)
+        {
+            if (child is UCMParser.ExprContext)
+            {
+                AstNode expr = Visit(child);
+                array.AddChild(expr);
+            }
+        }
+
+        return array;
     }
 
     public override AstNode VisitStatement(UCMParser.StatementContext context)
@@ -380,6 +464,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         {
             return VisitChildren(context);
         }
+    }
+
+    // TODO: Delete this vvvvvvvvvvvvv
+    public override AstNode VisitBoolExpr(UCMParser.BoolExprContext context)
+    {
+        return new AndNode(new IntNode(1), new IntNode(2));
     }
 
     public override IntNode VisitInt(UCMParser.IntContext context)

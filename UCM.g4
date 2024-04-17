@@ -74,15 +74,12 @@ type: primitiveType | complexType;
 
 // Values
 BOOL: 'true' | 'false';
-INT: MINUS? [0-9]+;
-FLOAT: MINUS? ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
-
+INT: [0-9]+;
+FLOAT: ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
 
 augmentedString:
 	STRING_START expr? (STRING_MIDDLE expr?)* STRING_END;
 string: SIMPLE_STRING;
-
-
 
 SIMPLE_STRING: '"' ~["\r\n]* '"' | '$"' ~["\r\n`]* '"';
 STRING_START: '$"' ~["`]* '`';
@@ -90,12 +87,15 @@ STRING_MIDDLE: '´' ~["`]* '`';
 STRING_END: '´' ~["`]* '"';
 SPACES: [ \t\r\n]+ -> skip;
 
+compoundasign:
+	PLUSASSIGN
+	| MULTASSIGN
+	| DIVASSIGN
+	| MODASSIGN
+	| MINUSASSIGN;
 
-compoundasign:  PLUSASSIGN |MULTASSIGN | DIVASSIGN | MODASSIGN | MINUSASSIGN;
-
-
-int: INT;
-float: FLOAT;
+int: MINUS? INT;
+float: MINUS? FLOAT;
 num: int | float;
 
 value:
@@ -117,15 +117,14 @@ fieldId: id | stringId;
 adapting: id;
 object: adapting? LCURLY field* RCURLY;
 
-field: HIDDEN_? type? fieldId (ASSIGN|compoundasign) expr SEMI;
-
+field:
+	HIDDEN_? type? fieldId (ASSIGN | compoundasign) expr SEMI;
 
 // Arrays
 array:
 	LBRACKET (expr (COMMA expr)* | listConstruction |) RBRACKET;
 
-arrayAccess:
-	id LBRACKET expr RBRACKET;
+arrayAccess: id LBRACKET expr RBRACKET;
 // Templates
 evaluaterArray:
 	LBRACKET ((boolExpr | id) (COMMA (boolExpr | id))* |) RBRACKET;
@@ -140,8 +139,7 @@ templateDefenition:
 	)* RCURLY;
 
 // Functions
-functionCollection:
-	FUNCTIONS_KEYWORD id LCURLY method* RCURLY;
+functionCollection: FUNCTIONS_KEYWORD id LCURLY method* RCURLY;
 
 // Methods
 
@@ -171,7 +169,6 @@ stringExpr:
 	| methodCall
 	| augmentedString
 	| string;
-	
 
 numExpr:
 	num
@@ -207,15 +204,15 @@ conditional:
 
 // While loop
 whileLoop:
-	WHILE LPAREN boolExpr RPAREN LCURLY statementList RCURLY SEMI;
+	WHILE LPAREN boolExpr RPAREN LCURLY statementList RCURLY;
 
 // For loop
 forLoop:
-	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY statementList RCURLY SEMI;
+	FOR LPAREN id IN expr RPAREN LCURLY statementList RCURLY;
 
 // List construction
 listConstruction:
-	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY (expr|assignment) RCURLY SEMI;
+	FOR LPAREN id IN expr RPAREN LCURLY (expr | assignment) RCURLY SEMI;
 
 //return
 return_: RETURN expr? SEMI;
@@ -232,9 +229,8 @@ statement:
 	| field
 	| return_;
 
-assignment: type? (id|arrayAccess) (ASSIGN|compoundasign) expr SEMI;
-
-
+assignment:
+	type? (id | arrayAccess) (ASSIGN | compoundasign) expr SEMI;
 
 // Add a start rule for testing
 root: ( templateDefenition | functionCollection | field)*;
