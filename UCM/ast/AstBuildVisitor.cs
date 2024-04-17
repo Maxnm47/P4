@@ -73,7 +73,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         {
             id = new FieldId(exprNode);
         }
-        
+
         var expr = (ExpressionNode)Visit(context.expr());
 
         if (!isCompounAssignment)
@@ -263,6 +263,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     {
         Console.WriteLine("Visiting StatementList: " + context.GetText());
         BodyNode body = new BodyNode();
+
+        if (context.children == null)
+        {
+            return body;
+        }
+
         foreach (var child in context.children)
         {
             if (child is UCMParser.StatementContext)
