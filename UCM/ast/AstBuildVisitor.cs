@@ -8,10 +8,13 @@ using System.Threading.Tasks;
 using Antlr4.Runtime.Atn;
 using Antlr4.Runtime.Misc;
 using UCM.ast.boolExpr;
+using UCM.ast.complexValues;
 using UCM.ast.numExp;
 using UCM.ast.root;
 using UCM.ast.statements;
 using UCM.ast.statements.condition;
+using UCM.ast.statements.forLoops;
+using UCM.ast.statements.whileLoop;
 
 namespace UCM.ast;
 
@@ -321,6 +324,41 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return new IfStatementNode(condition, body);
     }
 
+    public override WhileLoopNode VisitWhileLoop([NotNull] UCMParser.WhileLoopContext context)
+    {
+        Console.WriteLine("Visiting WhileLoop: " + context.GetText());
+        BoolExpr condition = (BoolExpr)Visit(context.boolExpr());
+        BodyNode body = (BodyNode)Visit(context.statementList());
+
+        return new WhileLoopNode(condition, body);
+    }
+
+    public override ForLoopNode VisitForLoop([NotNull] UCMParser.ForLoopContext context)
+    {
+        Console.WriteLine("Visiting ForLoop: " + context.GetText());
+        IdentifyerNode enumeratorId = (IdentifyerNode)Visit(context.id());
+        ExpressionNode loopArray = (ExpressionNode)Visit(context.expr());
+        BodyNode body = (BodyNode)Visit(context.statementList());
+
+        return new ForLoopNode(enumeratorId, loopArray, body);
+    }
+
+    public override AstNode VisitArray([NotNull] UCMParser.ArrayContext context)
+    {
+        Console.WriteLine("Visiting Array: " + context.GetText());
+        ArrayNode array = new ArrayNode();
+
+        foreach (var child in context.children)
+        {
+            if (child is UCMParser.ExprContext)
+            {
+                AstNode expr = Visit(child);
+                array.AddChild(expr);
+            }
+        }
+
+        return array;
+    }
 
     public override AstNode VisitStatement(UCMParser.StatementContext context)
     {
