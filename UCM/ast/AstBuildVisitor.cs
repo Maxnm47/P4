@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Antlr4.Runtime.Atn;
 using Antlr4.Runtime.Misc;
+using UCM.ast.boolExpr;
 using UCM.ast.numExp;
 using UCM.ast.root;
 using UCM.ast.statements;
@@ -310,6 +311,16 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return conditional;
     }
 
+    public override IfStatementNode VisitIfStatement(UCMParser.IfStatementContext context)
+    {
+        Console.WriteLine("Visiting IfStatement: " + context.GetText());
+
+        BoolExpr condition = (BoolExpr)Visit(context.boolExpr());
+        BodyNode body = (BodyNode)Visit(context.statementList());
+
+        return new IfStatementNode(condition, body);
+    }
+
 
     public override AstNode VisitStatement(UCMParser.StatementContext context)
     {
@@ -409,6 +420,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         {
             return VisitChildren(context);
         }
+    }
+
+    // TODO: Delete this vvvvvvvvvvvvv
+    public override AstNode VisitBoolExpr(UCMParser.BoolExprContext context)
+    {
+        return new AndNode(new IntNode(1), new IntNode(2));
     }
 
     public override IntNode VisitInt(UCMParser.IntContext context)
