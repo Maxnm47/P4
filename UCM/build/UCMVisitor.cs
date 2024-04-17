@@ -74,6 +74,12 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitString([NotNull] UCMParser.StringContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.compoundasign"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCompoundasign([NotNull] UCMParser.CompoundasignContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.int"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -110,6 +116,18 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitArgument([NotNull] UCMParser.ArgumentContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.stringId"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitStringId([NotNull] UCMParser.StringIdContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.fieldId"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFieldId([NotNull] UCMParser.FieldIdContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.adapting"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -133,6 +151,12 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitArray([NotNull] UCMParser.ArrayContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.arrayAccess"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArrayAccess([NotNull] UCMParser.ArrayAccessContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.evaluaterArray"/>.
 	/// </summary>

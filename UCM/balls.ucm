@@ -1,9 +1,6 @@
-string a = $"`hello´ text!";
 
-template balls{
-    int a = 10;
-};
-
-template yoyo{
-    string a = "hello" + "yoyo";
-};
+methods a{
+    int a(){
+        int b += 20;
+    }
+}
