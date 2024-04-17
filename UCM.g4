@@ -55,6 +55,7 @@ MULTASSIGN: '*=';
 DIVASSIGN: '/=';
 MODASSIGN: '%=';
 MINUSASSIGN: '-=';
+
 QUOTE: '"';
 DOLLAR: '$';
 
@@ -89,7 +90,9 @@ STRING_MIDDLE: '´' ~["`]* '`';
 STRING_END: '´' ~["`]* '"';
 SPACES: [ \t\r\n]+ -> skip;
 
+
 compoundasign:  PLUSASSIGN |MULTASSIGN | DIVASSIGN | MODASSIGN | MINUSASSIGN;
+
 
 int: INT;
 float: FLOAT;
@@ -113,7 +116,9 @@ fieldId: id | stringId;
 // Objects
 adapting: id;
 object: adapting? LCURLY field* RCURLY;
+
 field: HIDDEN_? type? fieldId (ASSIGN|compoundasign) expr SEMI;
+
 
 // Arrays
 array:
@@ -228,6 +233,8 @@ statement:
 	| return_;
 
 assignment: type? (id|arrayAccess) (ASSIGN|compoundasign) expr SEMI;
+
+
 
 // Add a start rule for testing
 root: ( templateDefenition | functionCollection | field)*;
