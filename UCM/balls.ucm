@@ -1,6 +1,6 @@
-
-methods a{
-    int a(){
-        int b += 20;
+template yoyo{
+    int a = 10;
+    int b(){
+        return 0;
     }
 }

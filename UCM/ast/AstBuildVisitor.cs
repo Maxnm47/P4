@@ -1,6 +1,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using System.Linq;
 using System.Runtime.Serialization.Formatters;
 using System.Text.Json.Serialization;
@@ -10,6 +11,7 @@ using Antlr4.Runtime.Misc;
 using UCM.ast.numExp;
 using UCM.ast.root;
 using UCM.ast.statements;
+using UCM.ast.Template;
 using UCM.ast.statements.condition;
 
 namespace UCM.ast;
@@ -470,6 +472,36 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             );
         }
         return VisitChildren(context);
+    }
+
+    /* ------------------------ Templates ------------------------ */
+    public override TemplateDefinitionNode VisitTemplateDefenition([NotNull] UCMParser.TemplateDefenitionContext context)
+    {
+        Console.WriteLine("Visiting templateDefinition: " + context.GetText());
+        TemplateDefinitionNode templateDefinition = new TemplateDefinitionNode();
+        foreach (var child in context.children)
+        {
+            if(child is UCMParser.TemplateFieldContext)
+            {
+                TemplateFieldNode field = (TemplateFieldNode)Visit(child);
+                templateDefinition.AddChild(field);
+            }
+
+            else if (child is UCMParser.MethodContext)
+            {
+                MethodDefenitionNode method = (MethodDefenitionNode)Visit(child);
+                templateDefinition.AddChild(method);
+           }
+        }
+
+        return templateDefinition;
+    }
+
+    public override TemplateFieldNode VisitTemplateField([NotNull] UCMParser.TemplateFieldContext context)
+    {
+        Console.WriteLine("Visiting TemplateField: " + context.GetText());
+        
+        return new TemplateFieldNode();
     }
 
 
