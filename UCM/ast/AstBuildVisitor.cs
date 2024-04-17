@@ -58,56 +58,59 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             (TypeAnotationNode)Visit(context.type()) :
             new TypeAnotationNode(typechecker.TypeEnum.NONE.ToString(), typechecker.TypeEnum.NONE);
 
-        var fieldId = Visit(context.fieldId()); 
-        AstNode id;
+        var _id = Visit(context.fieldId());
+        FieldId? id = default;
 
-        if(fieldId is IdentifyerNode<string>){
-            id = new IdentifyerNode<string>(((IdentifyerNode<string>)fieldId).value);            
+        if (_id is IdentifyerNode idNode)
+        {
+            id = new FieldId(idNode);
         }
-        else{
-            id = new IdentifyerNode<ExpressionNode>((ExpressionNode)fieldId);
+        else if (_id is ExpressionNode exprNode)
+        {
+            id = new FieldId(exprNode);
         }
+
 
         var expr = (ExpressionNode)Visit(context.expr());
 
-        // if (!isCompounAssignment)
-        // {
-        //     return new FieldNode<id.GetType>(hidden, type, id, expr);
-        // }
+        if (!isCompounAssignment)
+        {
+            return new FieldNode(hidden, type, id, expr);
+        }
 
-        // string compoundOperator = context.compoundasign().GetText();
-        // if (compoundOperator == "+=")
-        // {
-        //     ExpressionNode expr2 = new ExpressionNode();
+        string compoundOperator = context.compoundasign().GetText();
+        if (compoundOperator == "+=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
 
-        //     expr2.AddChild(new AdditionNode(new IdentifyerNode(id.value), expr));
+            expr2.AddChild(new AdditionNode(id, expr));
 
-        //     return new FieldNode(hidden, type, id, expr2);
-        // }
-        // else if (compoundOperator == "-=")
-        // {
-        //     ExpressionNode expr2 = new ExpressionNode();
-        //     expr2.AddChild(new SubtractionNode(new IdentifyerNode(id.value), expr));
-        //     return new FieldNode(hidden, type, id, expr2);
-        // }
-        // else if (compoundOperator == "*=")
-        // {
-        //     ExpressionNode expr2 = new ExpressionNode();
-        //     expr2.AddChild(new MultiplicationNode(new IdentifyerNode(id.value), expr));
-        //     return new FieldNode(hidden, type, id, expr2);
-        // }
-        // else if (compoundOperator == "/=")
-        // {
-        //     ExpressionNode expr2 = new ExpressionNode();
-        //     expr2.AddChild(new DivisionNode(new IdentifyerNode(id.value), expr));
-        //     return new FieldNode(hidden, type, id, expr2);
-        // }
-        // else if (compoundOperator == "%=")
-        // {
-        //     ExpressionNode expr2 = new ExpressionNode();
-        //     expr2.AddChild(new ModuloNode(new IdentifyerNode(id.value), expr));
-        //     return new FieldNode(hidden, type, id, expr2);
-        // }
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "-=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new SubtractionNode(id, expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "*=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new MultiplicationNode(id, expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "/=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new DivisionNode(id, expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
+        else if (compoundOperator == "%=")
+        {
+            ExpressionNode expr2 = new ExpressionNode();
+            expr2.AddChild(new ModuloNode(id, expr));
+            return new FieldNode(hidden, type, id, expr2);
+        }
 
         return null; // skal nok være noget andet
     }
@@ -115,7 +118,8 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override AstNode VisitFieldId([NotNull] UCMParser.FieldIdContext context)
     {
         Console.WriteLine("Visiting FieldId: " + context.GetText());
-        if(context.id() is not null){
+        if (context.id() is not null)
+        {
             return Visit(context.id());
         }
         return Visit(context.stringId());
@@ -134,14 +138,14 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         var id = (IdentifyerNode)Visit(context.id());
         var expr = (ExpressionNode)Visit(context.expr());
 
-        bool isCompounAssignment = context.compoundasign() is not null; 
+        bool isCompounAssignment = context.compoundasign() is not null;
 
         if (!isCompounAssignment)
         {
             return new AssignmentNode(type, id, expr); //ændre til assignnode
         }
 
-        if(isCompounAssignment)
+        if (isCompounAssignment)
         {
             string compoundOperator = context.compoundasign().GetText();
             if (compoundOperator == "+=")
@@ -326,9 +330,9 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     {
         Console.WriteLine("Visiting Expr: " + context.GetText());
         ExpressionNode expr = new ExpressionNode();
-        
+
         foreach (var child in context.children)
-        {            
+        {
             AstNode childNode = Visit(child);
             expr.AddChild(childNode);
         }
@@ -434,7 +438,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             {
                 string strvalue = CleanString(terminalNode.GetText());
 
-                if(strvalue.Length == 0) continue; //den er linje kan ædelægge det hele, dette er for ikke at have et tomt barn
+                if (strvalue.Length == 0) continue; //den er linje kan ædelægge det hele, dette er for ikke at have et tomt barn
 
                 StringNode stringExpr = new StringNode(strvalue);
                 augmentedStringNode.AddChild(stringExpr);
