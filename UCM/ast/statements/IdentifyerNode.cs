@@ -6,14 +6,16 @@ using UCM.typechecker;
 
 namespace UCM.ast;
 
-public class IdentifyerNode : AstLeafNode<string>
+public class IdentifyerNode<T> : AstLeafNode<T>
 {
-    public IdentifyerNode(string value) : base(value)
+    public IdentifyerNode(T value) : base(value)
     {
     }
 
-    public IdentifyerNode(string value, TypeEnum type) : base(value, type)
+    public IdentifyerNode(T value, TypeEnum type) : base(value, type)
     {
     }
+
+    
 }
 

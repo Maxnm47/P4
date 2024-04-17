@@ -108,11 +108,12 @@ value:
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
 id: ID;
 argument: type id; //maybe replace all with the right hand side.
-
+stringId: LPAREN expr RPAREN;
+fieldId: id | stringId;
 // Objects
 adapting: id;
 object: adapting? LCURLY field* RCURLY;
-field: HIDDEN_? type? id (ASSIGN|compoundasign) expr SEMI;
+field: HIDDEN_? type? fieldId (ASSIGN|compoundasign) expr SEMI;
 
 // Arrays
 array:
@@ -131,17 +132,17 @@ templateDefenition:
 	TEMPLATE_KEYWORD id templateExtention? LCURLY (
 		templateField
 		| method
-	)* RCURLY SEMI;
+	)* RCURLY;
 
 // Functions
 functionCollection:
-	FUNCTIONS_KEYWORD id LCURLY method* RCURLY SEMI;
+	FUNCTIONS_KEYWORD id LCURLY method* RCURLY;
 
 // Methods
 
 arguments: argument (COMMA argument)* |;
 method:
-	type id LPAREN arguments RPAREN LCURLY statementList RCURLY SEMI;
+	type id LPAREN arguments RPAREN LCURLY statementList RCURLY;
 
 functionCollectionCall: id DOT;
 methodCall:
@@ -161,14 +162,18 @@ expr:
 stringExpr:
 	stringExpr PLUS stringExpr
 	| id
+	| arrayAccess
+	| methodCall
 	| augmentedString
 	| string;
+	
 
 numExpr:
 	num
 	| THIS_KEYWORD // this  may ruin everything in the semantics :)))
 	| id
 	| methodCall
+	| arrayAccess
 	| MINUS numExpr
 	| numExpr (MULT | DIV | MOD) numExpr
 	| numExpr (PLUS | MINUS) numExpr

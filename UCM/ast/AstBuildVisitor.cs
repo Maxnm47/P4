@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Antlr4.Runtime.Atn;
 using Antlr4.Runtime.Misc;
 using UCM.ast.numExp;
 using UCM.ast.root;
@@ -57,47 +58,67 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             (TypeAnotationNode)Visit(context.type()) :
             new TypeAnotationNode(typechecker.TypeEnum.NONE.ToString(), typechecker.TypeEnum.NONE);
 
-        var id = (IdentifyerNode)Visit(context.id());
+        var fieldId = Visit(context.fieldId()); 
+        AstNode id;
+
+        if(fieldId is IdentifyerNode<string>){
+            id = new IdentifyerNode<string>(((IdentifyerNode<string>)fieldId).value);            
+        }
+        else{
+            id = new IdentifyerNode<ExpressionNode>((ExpressionNode)fieldId);
+        }
+
         var expr = (ExpressionNode)Visit(context.expr());
 
-        if (!isCompounAssignment)
-        {
-            return new FieldNode(hidden, type, id, expr);
-        }
+        // if (!isCompounAssignment)
+        // {
+        //     return new FieldNode<id.GetType>(hidden, type, id, expr);
+        // }
 
-        string compoundOperator = context.compoundasign().GetText();
-        if (compoundOperator == "+=")
-        {
-            ExpressionNode expr2 = new ExpressionNode();
-            expr2.AddChild(new AdditionNode(new IdentifyerNode(id.value), expr));
-            return new FieldNode(hidden, type, id, expr2);
-        }
-        else if (compoundOperator == "-=")
-        {
-            ExpressionNode expr2 = new ExpressionNode();
-            expr2.AddChild(new SubtractionNode(new IdentifyerNode(id.value), expr));
-            return new FieldNode(hidden, type, id, expr2);
-        }
-        else if (compoundOperator == "*=")
-        {
-            ExpressionNode expr2 = new ExpressionNode();
-            expr2.AddChild(new MultiplicationNode(new IdentifyerNode(id.value), expr));
-            return new FieldNode(hidden, type, id, expr2);
-        }
-        else if (compoundOperator == "/=")
-        {
-            ExpressionNode expr2 = new ExpressionNode();
-            expr2.AddChild(new DivisionNode(new IdentifyerNode(id.value), expr));
-            return new FieldNode(hidden, type, id, expr2);
-        }
-        else if (compoundOperator == "%=")
-        {
-            ExpressionNode expr2 = new ExpressionNode();
-            expr2.AddChild(new ModuloNode(new IdentifyerNode(id.value), expr));
-            return new FieldNode(hidden, type, id, expr2);
-        }
+        // string compoundOperator = context.compoundasign().GetText();
+        // if (compoundOperator == "+=")
+        // {
+        //     ExpressionNode expr2 = new ExpressionNode();
+
+        //     expr2.AddChild(new AdditionNode(new IdentifyerNode(id.value), expr));
+
+        //     return new FieldNode(hidden, type, id, expr2);
+        // }
+        // else if (compoundOperator == "-=")
+        // {
+        //     ExpressionNode expr2 = new ExpressionNode();
+        //     expr2.AddChild(new SubtractionNode(new IdentifyerNode(id.value), expr));
+        //     return new FieldNode(hidden, type, id, expr2);
+        // }
+        // else if (compoundOperator == "*=")
+        // {
+        //     ExpressionNode expr2 = new ExpressionNode();
+        //     expr2.AddChild(new MultiplicationNode(new IdentifyerNode(id.value), expr));
+        //     return new FieldNode(hidden, type, id, expr2);
+        // }
+        // else if (compoundOperator == "/=")
+        // {
+        //     ExpressionNode expr2 = new ExpressionNode();
+        //     expr2.AddChild(new DivisionNode(new IdentifyerNode(id.value), expr));
+        //     return new FieldNode(hidden, type, id, expr2);
+        // }
+        // else if (compoundOperator == "%=")
+        // {
+        //     ExpressionNode expr2 = new ExpressionNode();
+        //     expr2.AddChild(new ModuloNode(new IdentifyerNode(id.value), expr));
+        //     return new FieldNode(hidden, type, id, expr2);
+        // }
 
         return null; // skal nok være noget andet
+    }
+
+    public override AstNode VisitFieldId([NotNull] UCMParser.FieldIdContext context)
+    {
+        Console.WriteLine("Visiting FieldId: " + context.GetText());
+        if(context.id() is not null){
+            return Visit(context.id());
+        }
+        return Visit(context.stringId());
     }
 
     /* ------------------------ Statements ------------------------ */
@@ -107,7 +128,6 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         bool isTyped = context.type() is not null;
 
-        var hidden = new HiddenAnotationNode(false);
         var type = (isTyped) ?
             (TypeAnotationNode)Visit(context.type()) :
             new TypeAnotationNode(typechecker.TypeEnum.NONE.ToString(), typechecker.TypeEnum.NONE);
@@ -118,40 +138,42 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         if (!isCompounAssignment)
         {
-            
-            return new FieldNode(hidden, type, id, expr);
+            return new AssignmentNode(type, id, expr); //ændre til assignnode
         }
 
-        string compoundOperator = context.compoundasign().GetText();
-        if (compoundOperator == "+=")
+        if(isCompounAssignment)
         {
-            ExpressionNode expr2 = new ExpressionNode();
-            expr2.AddChild(new AdditionNode(new IdentifyerNode(id.value), expr));
-            return new FieldNode(hidden, type, id, expr2);
-        }
-        else if (compoundOperator == "-=")
-        {
-            ExpressionNode expr2 = new ExpressionNode();
-            expr2.AddChild(new SubtractionNode(new IdentifyerNode(id.value), expr));
-            return new FieldNode(hidden, type, id, expr2);
-        }
-        else if (compoundOperator == "*=")
-        {
-            ExpressionNode expr2 = new ExpressionNode();
-            expr2.AddChild(new MultiplicationNode(new IdentifyerNode(id.value), expr));
-            return new FieldNode(hidden, type, id, expr2);
-        }
-        else if (compoundOperator == "/=")
-        {
-            ExpressionNode expr2 = new ExpressionNode();
-            expr2.AddChild(new DivisionNode(new IdentifyerNode(id.value), expr));
-            return new FieldNode(hidden, type, id, expr2);
-        }
-        else if (compoundOperator == "%=")
-        {
-            ExpressionNode expr2 = new ExpressionNode();
-            expr2.AddChild(new ModuloNode(new IdentifyerNode(id.value), expr));
-            return new FieldNode(hidden, type, id, expr2);
+            string compoundOperator = context.compoundasign().GetText();
+            if (compoundOperator == "+=")
+            {
+                ExpressionNode expr2 = new ExpressionNode();
+                expr2.AddChild(new AdditionNode(new IdentifyerNode(id.value), expr));
+                return new AssignmentNode(type, id, expr2);
+            }
+            else if (compoundOperator == "-=")
+            {
+                ExpressionNode expr2 = new ExpressionNode();
+                expr2.AddChild(new SubtractionNode(new IdentifyerNode(id.value), expr));
+                return new AssignmentNode(type, id, expr2);
+            }
+            else if (compoundOperator == "*=")
+            {
+                ExpressionNode expr2 = new ExpressionNode();
+                expr2.AddChild(new MultiplicationNode(new IdentifyerNode(id.value), expr));
+                return new AssignmentNode(type, id, expr2);
+            }
+            else if (compoundOperator == "/=")
+            {
+                ExpressionNode expr2 = new ExpressionNode();
+                expr2.AddChild(new DivisionNode(new IdentifyerNode(id.value), expr));
+                return new AssignmentNode(type, id, expr2);
+            }
+            else if (compoundOperator == "%=")
+            {
+                ExpressionNode expr2 = new ExpressionNode();
+                expr2.AddChild(new ModuloNode(new IdentifyerNode(id.value), expr));
+                return new AssignmentNode(type, id, expr2);
+            }
         }
 
         return null; //skal nok være noget andet
