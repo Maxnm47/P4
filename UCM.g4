@@ -126,7 +126,7 @@ evaluaterArray:
 	LBRACKET ((boolExpr | id) (COMMA (boolExpr | id))* |) RBRACKET;
 
 templateField:
-	type id (ASSIGN value)? (COLON evaluaterArray)? SEMI;
+	type id (ASSIGN expr)? (COLON evaluaterArray)? SEMI;
 templateExtention: EXTENDS_KEYWORD id;
 templateDefenition:
 	TEMPLATE_KEYWORD id templateExtention? LCURLY (
