@@ -69,8 +69,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         {
             id = new FieldId(exprNode);
         }
-
-
+        
         var expr = (ExpressionNode)Visit(context.expr());
 
         if (!isCompounAssignment)
