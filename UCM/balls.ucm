@@ -1,2 +1,3 @@
 
-bool hej = true == false;
+bool a = !(true == false);
+

@@ -189,7 +189,8 @@ boolExpr:
 	| NOT boolExpr
 	| boolExpr compExpr boolExpr
 	| boolExpr AND boolExpr
-	| boolExpr OR boolExpr;
+	| boolExpr OR boolExpr
+	| LPAREN boolExpr RPAREN;
 
 compExpr: GT | LT | GTE | LTE | EQ | NEQ;
 

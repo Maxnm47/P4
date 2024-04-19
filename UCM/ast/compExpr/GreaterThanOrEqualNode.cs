@@ -1,6 +1,6 @@
-﻿namespace UCM.ast.compExpr;
+﻿namespace UCM.ast.boolExpr;
 
-public class GreaterThanOrEqualNode : BinaryOperation
+public class GreaterThanOrEqualNode : BoolExpr
 {
     public GreaterThanOrEqualNode(AstNode left, AstNode right) :
         base(left, right)

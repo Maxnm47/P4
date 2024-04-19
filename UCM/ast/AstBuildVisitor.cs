@@ -1,16 +1,6 @@
-using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization.Formatters;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Antlr4.Runtime.Atn;
 using Antlr4.Runtime.Misc;
 using UCM.ast.boolExpr;
-using UCM.ast.compExpr;
 using UCM.ast.numExpr;
-using UCM.ast.boolExpr;
 using UCM.ast.complexValues;
 using UCM.ast.root;
 using UCM.ast.statements;
@@ -440,6 +430,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             return new OrNode(
                 Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
                 Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else if (context.NOT() != null)
+        {
+            return new NotNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0))
             );
         }
 
