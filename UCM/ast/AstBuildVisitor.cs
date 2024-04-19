@@ -500,8 +500,13 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override TemplateFieldNode VisitTemplateField([NotNull] UCMParser.TemplateFieldContext context)
     {
         Console.WriteLine("Visiting TemplateField: " + context.GetText());
+
+        return new TemplateFieldNode(
+            (TypeAnotationNode)Visit(context.type()),
+            (IdentifyerNode)Visit(context.id()),
+            context.expr() != null ? (ExpressionNode)Visit(context.expr()) : null
+        );
         
-        return new TemplateFieldNode();
     }
 
 
