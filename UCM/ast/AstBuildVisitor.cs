@@ -316,7 +316,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     {
         Console.WriteLine("Visiting IfStatement: " + context.GetText());
 
-        BoolExpr condition = (BoolExpr)Visit(context.boolExpr());
+        ExpressionNode condition = (ExpressionNode)Visit(context.expr());
         BodyNode body = (BodyNode)Visit(context.statementList());
 
         return new IfStatementNode(condition, body);
@@ -325,7 +325,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override WhileLoopNode VisitWhileLoop([NotNull] UCMParser.WhileLoopContext context)
     {
         Console.WriteLine("Visiting WhileLoop: " + context.GetText());
-        BoolExpr condition = (BoolExpr)Visit(context.boolExpr());
+        ExpressionNode condition = (ExpressionNode)Visit(context.expr());
         BodyNode body = (BodyNode)Visit(context.statementList());
 
         return new WhileLoopNode(condition, body);

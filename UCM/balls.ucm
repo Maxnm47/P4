@@ -1,3 +1,9 @@
 
-bool a = !(true == false);
+methods Test {
+    void test() {
+        while (a == b) {
+            return;
+        }
+    }
+}
 
