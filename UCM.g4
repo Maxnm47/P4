@@ -116,14 +116,14 @@ stringId: LPAREN expr RPAREN;
 fieldId: id | stringId;
 // Objects
 adapting: id;
-object: adapting? LCURLY (field | listConstruction)* RCURLY;
+object: adapting? LCURLY (field | loopConstruction)* RCURLY;
 
 field:
 	HIDDEN_? type? fieldId (ASSIGN | compoundasign) expr SEMI;
 
 // Arrays
-array:
-	LBRACKET (expr (COMMA expr)* | listConstruction |) RBRACKET;
+arrayElement: expr | loopConstruction;
+array: LBRACKET (arrayElement (COMMA arrayElement)* |) RBRACKET;
 
 arrayAccess: id LBRACKET expr RBRACKET;
 // Templates
@@ -209,8 +209,9 @@ forLoop:
 	FOR LPAREN id IN expr RPAREN LCURLY statementList RCURLY;
 
 // List construction
-listConstruction:
-	FOR LPAREN id IN expr RPAREN LCURLY (expr | field) RCURLY SEMI;
+loopConstructContent: (expr | field)*;
+loopConstruction:
+	FOR LPAREN id IN expr RPAREN LCURLY loopConstructContent RCURLY SEMI;
 
 //return
 return_: RETURN expr? SEMI;
@@ -231,4 +232,9 @@ assignment:
 	type? (id | arrayAccess) (ASSIGN | compoundasign) expr SEMI;
 
 // Add a start rule for testing
-root: ( templateDefenition | functionCollection | field)*;
+root: (
+		templateDefenition
+		| functionCollection
+		| field
+		| loopConstruction
+	)*;
