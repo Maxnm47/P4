@@ -442,25 +442,61 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
                 Visit(context.GetChild<UCMParser.BoolExprContext>(1))
             );
         }
-        // else if (context.EQ() != null)
-        // {
-        //     return new EqualNode(
-        //         Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
-        //         Visit(context.GetChild<UCMParser.BoolExprContext>(1))
-        //     );
-        // }
-        /*else if (context.NEQ() != null)
+
+        if (context.compExpr() == null)
+        {
+            return VisitChildren(context);
+        }
+
+        if (context.compExpr().GT() != null)
+        {
+            return new GreaterThanNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else if (context.compExpr().GTE() != null)
+        {
+            return new GreaterThanOrEqualNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else if (context.compExpr().LT() != null)
+        {
+            return new LessThanNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else if (context.compExpr().LTE() != null)
+        {
+            return new LessThanOrEqualNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else if (context.compExpr().EQ() != null)
+        {
+            return new EqualNode(
+                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+            );
+        }
+        else if (context.compExpr().NEQ() != null)
         {
             return new NotEqualNode(
                 Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
                 Visit(context.GetChild<UCMParser.BoolExprContext>(1))
             );
-        }*/
-
-        else
-        {
-            return VisitChildren(context);
         }
+
+        return default;
+    }
+
+    public override BoolNode VisitBool([NotNull] UCMParser.BoolContext context)
+    {
+        return new BoolNode(bool.Parse(context.GetText()));
     }
 
     public override AstNode VisitCompExpr([NotNull] UCMParser.CompExprContext context)
