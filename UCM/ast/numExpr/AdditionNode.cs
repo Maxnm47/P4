@@ -1,6 +1,5 @@
-using UCM.ast.numExp;
 
-namespace UCM.ast;
+namespace UCM.ast.numExpr;
 
 public class AdditionNode : BinaryOperation
 {

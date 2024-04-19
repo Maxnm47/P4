@@ -92,6 +92,12 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitFloat([NotNull] UCMParser.FloatContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.bool"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBool([NotNull] UCMParser.BoolContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.num"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

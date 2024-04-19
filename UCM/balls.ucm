@@ -2,11 +2,12 @@ template yoyo{
     int a;
     object b = 10;
 
-    method yoyo(int b){
-        return ballz;
+methods Test {
+    void test() {
+        while (a == b) {
+            return;
+        }
     }
 }
 
-template ngr{
-    int a = b;
-}
+

@@ -7,6 +7,6 @@ namespace UCM.ast.statements.condition
 {
     public class ConditionalNode : AstNode
     {
-
+        public AstNode ElseBody => GetChild<BodyNode>(0);
     }
 }

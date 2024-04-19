@@ -74,15 +74,12 @@ type: primitiveType | complexType;
 
 // Values
 BOOL: 'true' | 'false';
-INT: MINUS? [0-9]+;
-FLOAT: MINUS? ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
-
+INT: [0-9]+;
+FLOAT: ([0-9]* '.' [0-9]+ | [0-9]+ '.' [0-9]*);
 
 augmentedString:
 	STRING_START expr? (STRING_MIDDLE expr?)* STRING_END;
 string: SIMPLE_STRING;
-
-
 
 SIMPLE_STRING: '"' ~["\r\n]* '"' | '$"' ~["\r\n`]* '"';
 STRING_START: '$"' ~["`]* '`';
@@ -90,19 +87,23 @@ STRING_MIDDLE: '´' ~["`]* '`';
 STRING_END: '´' ~["`]* '"';
 SPACES: [ \t\r\n]+ -> skip;
 
+compoundasign:
+	PLUSASSIGN
+	| MULTASSIGN
+	| DIVASSIGN
+	| MODASSIGN
+	| MINUSASSIGN;
 
-compoundasign:  PLUSASSIGN |MULTASSIGN | DIVASSIGN | MODASSIGN | MINUSASSIGN;
-
-
-int: INT;
-float: FLOAT;
+int: MINUS? INT;
+float: MINUS? FLOAT;
+bool: BOOL;
 num: int | float;
 
 value:
 	num
 	| augmentedString
 	| string
-	| BOOL
+	| bool
 	| object
 	| array
 	| NULL;
@@ -115,17 +116,16 @@ stringId: LPAREN expr RPAREN;
 fieldId: id | stringId;
 // Objects
 adapting: id;
-object: adapting? LCURLY field* RCURLY;
+object: adapting? LCURLY (field | listConstruction)* RCURLY;
 
-field: HIDDEN_? type? fieldId (ASSIGN|compoundasign) expr SEMI;
-
+field:
+	HIDDEN_? type? fieldId (ASSIGN | compoundasign) expr SEMI;
 
 // Arrays
 array:
 	LBRACKET (expr (COMMA expr)* | listConstruction |) RBRACKET;
 
-arrayAccess:
-	id LBRACKET expr RBRACKET;
+arrayAccess: id LBRACKET expr RBRACKET;
 // Templates
 evaluaterArray:
 	LBRACKET ((boolExpr | id) (COMMA (boolExpr | id))* |) RBRACKET;
@@ -140,8 +140,7 @@ templateDefenition:
 	)* RCURLY;
 
 // Functions
-functionCollection:
-	FUNCTIONS_KEYWORD id LCURLY method* RCURLY;
+functionCollection: FUNCTIONS_KEYWORD id LCURLY method* RCURLY;
 
 // Methods
 
@@ -160,7 +159,6 @@ expr:
 	| arrayAccess
 	| methodCall
 	| boolExpr
-	| expr EQ expr // This to avoid left recursion
 	| numExpr
 	| stringExpr;
 
@@ -171,7 +169,6 @@ stringExpr:
 	| methodCall
 	| augmentedString
 	| string;
-	
 
 numExpr:
 	num
@@ -185,37 +182,35 @@ numExpr:
 	| LPAREN numExpr RPAREN;
 
 boolExpr:
-	BOOL
+	value
 	| THIS_KEYWORD // this  may ruin everything in the semantics :)))
 	| id
 	| methodCall
-	| NOT expr
-	| numExpr compExpr numExpr
-	| boolExpr EQ boolExpr
+	| NOT boolExpr
+	| boolExpr compExpr boolExpr
 	| boolExpr AND boolExpr
-	| boolExpr OR boolExpr;
+	| boolExpr OR boolExpr
+	| LPAREN boolExpr RPAREN;
 
 compExpr: GT | LT | GTE | LTE | EQ | NEQ;
 
 // Condtionals structure
-ifStatement:
-	IF LPAREN boolExpr RPAREN LCURLY statementList RCURLY;
+ifStatement: IF LPAREN expr RPAREN LCURLY statementList RCURLY;
 conditional:
 	ifStatement (ELSE ifStatement)* (
 		ELSE LCURLY statementList RCURLY
 	)?;
 
 // While loop
-whileLoop:
-	WHILE LPAREN boolExpr RPAREN LCURLY statementList RCURLY SEMI;
+whileLoop: WHILE LPAREN expr RPAREN LCURLY statementList RCURLY;
 
 // For loop
 forLoop:
-	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY statementList RCURLY SEMI;
+	FOR LPAREN id IN expr RPAREN LCURLY statementList RCURLY;
 
 // List construction
 listConstruction:
-	FOR LPAREN id IN (array | methodCall) RPAREN LCURLY (expr|assignment) RCURLY SEMI;
+	FOR LPAREN id IN expr RPAREN LCURLY (expr | field) RCURLY SEMI;
 
 //return
 return_: RETURN expr? SEMI;
@@ -232,9 +227,8 @@ statement:
 	| field
 	| return_;
 
-assignment: type? (id|arrayAccess) (ASSIGN|compoundasign) expr SEMI;
-
-
+assignment:
+	type? (id | arrayAccess) (ASSIGN | compoundasign) expr SEMI;
 
 // Add a start rule for testing
 root: ( templateDefenition | functionCollection | field)*;
