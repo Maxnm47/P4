@@ -1,2 +1,9 @@
 
-bool hej = true == false;
+methods Test {
+    void test() {
+        while (a == b) {
+            return;
+        }
+    }
+}
+

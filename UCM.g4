@@ -189,21 +189,20 @@ boolExpr:
 	| NOT boolExpr
 	| boolExpr compExpr boolExpr
 	| boolExpr AND boolExpr
-	| boolExpr OR boolExpr;
+	| boolExpr OR boolExpr
+	| LPAREN boolExpr RPAREN;
 
 compExpr: GT | LT | GTE | LTE | EQ | NEQ;
 
 // Condtionals structure
-ifStatement:
-	IF LPAREN boolExpr RPAREN LCURLY statementList RCURLY;
+ifStatement: IF LPAREN expr RPAREN LCURLY statementList RCURLY;
 conditional:
 	ifStatement (ELSE ifStatement)* (
 		ELSE LCURLY statementList RCURLY
 	)?;
 
 // While loop
-whileLoop:
-	WHILE LPAREN boolExpr RPAREN LCURLY statementList RCURLY;
+whileLoop: WHILE LPAREN expr RPAREN LCURLY statementList RCURLY;
 
 // For loop
 forLoop:
