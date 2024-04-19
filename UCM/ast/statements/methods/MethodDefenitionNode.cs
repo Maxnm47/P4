@@ -10,20 +10,18 @@ namespace UCM.ast.statements
         public MethodDefenitionNode(
             TypeAnotationNode type,
             IdentifyerNode id,
-            ArgumentsDefenitionNode argumentsDefs,
+            List<ArgumentDefenitionNode> argumentDefs,
             BodyNode body)
         {
-            children.Add(type);
-            children.Add(id);
-            children.Add(argumentsDefs);
-            children.Add(body);
+            this.AddChild(type);
+            this.AddChild(id);
+            this.AddChildren(argumentDefs);
+            this.AddChild(body);
         }
 
         public TypeAnotationNode Type => GetChild<TypeAnotationNode>(0);
         public IdentifyerNode Id => GetChild<IdentifyerNode>(0);
-        public ArgumentsDefenitionNode ArgumentsDefs => GetChild<ArgumentsDefenitionNode>(0);
+        public List<ArgumentDefenitionNode> ArgumentsDefs => GetChildren<ArgumentDefenitionNode>();
         public BodyNode Body => GetChild<BodyNode>(0);
     }
-
-
 }

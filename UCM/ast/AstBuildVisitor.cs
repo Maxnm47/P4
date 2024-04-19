@@ -30,17 +30,50 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override MethodCollectionNode VisitFunctionCollection(UCMParser.FunctionCollectionContext context)
     {
         Console.WriteLine("Visiting MethodCollection: " + context.GetText());
-        MethodCollectionNode methodCollection = new MethodCollectionNode();
-        foreach (var child in context.children)
+
+        IdentifyerNode id = (IdentifyerNode)Visit(context.id());
+        List<MethodDefenitionNode> methods = context.method().Select(method => (MethodDefenitionNode)Visit(method)).ToList();
+
+        return new MethodCollectionNode(id, methods);
+    }
+
+    public override AstNode VisitTemplateDefenition(UCMParser.TemplateDefenitionContext context)
+    {
+        Console.WriteLine("Visiting Template: " + context.GetText());
+
+        IdentifyerNode id = (IdentifyerNode)Visit(context.id());
+        List<TemplateFieldNode> fields = context.templateField().Select(field => (TemplateFieldNode)Visit(field)).ToList();
+        List<MethodDefenitionNode> methods = context.method().Select(method => (MethodDefenitionNode)Visit(method)).ToList();
+        IdentifyerNode? parent = context.templateExtention() is not null ? (IdentifyerNode)Visit(context.templateExtention()) : null;
+
+
+        return new TemplateNode(id, fields, methods, parent);
+    }
+
+
+    public override AstNode VisitTemplateField(UCMParser.TemplateFieldContext context)
+    {
+        Console.WriteLine("Visiting TemplateField: " + context.GetText());
+        IdentifyerNode id = (IdentifyerNode)Visit(context.id());
+        TypeAnotationNode type = (TypeAnotationNode)Visit(context.type());
+        ExpressionNode? expr = context.expr() is not null ? (ExpressionNode)Visit(context.expr()) : null;
+
+        if (context.evaluaterArray() is null)
         {
-            if (child is UCMParser.MethodContext)
-            {
-                AstNode method = Visit(child);
-                methodCollection.AddChild(method);
-            }
+            return new TemplateFieldNode(type, id, expr);
         }
 
-        return methodCollection;
+        ArrayNode array = (ArrayNode)Visit(context.evaluaterArray());
+        return new TemplateFieldNode(type, id, expr, array);
+    }
+
+    public override ArrayNode VisitEvaluaterArray(UCMParser.EvaluaterArrayContext context)
+    {
+        Console.WriteLine("Visiting EvaluaterArray: " + context.GetText());
+
+        List<ExpressionNode> expressions = context.expr().Select(expr => (ExpressionNode)Visit(expr)).ToList();
+
+        return new ArrayNode(expressions);
     }
 
     public override AstNode VisitField(UCMParser.FieldContext context)
@@ -216,32 +249,14 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         Console.WriteLine("Visiting MethodDef: " + context.GetText());
         var type = (TypeAnotationNode)Visit(context.type());
         var id = (IdentifyerNode)Visit(context.id());
-        var argumentsDefs = (ArgumentsDefenitionNode)Visit(context.arguments());
+        List<ArgumentDefenitionNode> arguments = context.arguments()
+            .argument()
+            .Select(argument => (ArgumentDefenitionNode)Visit(argument))
+            .ToList();
+
         var body = (BodyNode)Visit(context.statementList());
 
-        return new MethodDefenitionNode(type, id, argumentsDefs, body);
-    }
-
-    public override ArgumentsDefenitionNode VisitArguments(UCMParser.ArgumentsContext context)
-    {
-        Console.WriteLine("Visiting Arguments: " + context.GetText());
-        ArgumentsDefenitionNode arguments = new ArgumentsDefenitionNode();
-
-        if (context.children == null)
-        {
-            return arguments;
-        }
-
-        foreach (var child in context.children)
-        {
-            if (child is UCMParser.ArgumentContext)
-            {
-                AstNode argument = Visit(child);
-                arguments.AddChild(argument);
-            }
-        }
-
-        return arguments;
+        return new MethodDefenitionNode(type, id, arguments, body);
     }
 
     public override AstNode VisitArgument(UCMParser.ArgumentContext context)
@@ -575,12 +590,6 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return new FloatNode(float.Parse(context.GetText()));
     }
 
-    /*public override BoolNode VisitFloat(UCMParser.BoolExprContext context)
-    {
-        Console.WriteLine("Visiting Bool: " + context.GetText());
-        return new BoolNode(bool.Parse(context.GetText()));
-    }*/
-
 
     /* ------------------------ Complex Types ------------------------ */
     public override ObjectNode VisitObject(UCMParser.ObjectContext context)
@@ -613,16 +622,10 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         foreach (var child in context.children)
         {
-            if (child is UCMParser.ExprContext)
+            if (child is UCMParser.ArrayElementContext)
             {
                 AstNode expr = Visit(child);
                 array.AddChild(expr);
-            }
-
-            if (child is UCMParser.LoopConstructionContext)
-            {
-                AstNode listConstruction = Visit(child);
-                array.AddChild(listConstruction);
             }
         }
 
