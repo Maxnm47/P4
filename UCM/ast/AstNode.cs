@@ -10,7 +10,7 @@ public abstract class AstNode
 {
     public List<AstNode> children = new List<AstNode>();
 
-    public override string ToString()
+    public virtual string ToString()
     {
         string indent = "  ";
         string str = indent + this.GetType().Name + " ( \n";
@@ -48,7 +48,15 @@ public abstract class AstNode
         children.Add(node);
     }
 
-    public virtual T GetChild<T>(int i) where T : AstNode
+    public void AddChildren(AstNode[] children)
+    {
+        foreach (AstNode child in children)
+        {
+            AddChild(child);
+        }
+    }
+
+    public T GetChild<T>(int i) where T : AstNode
     {
         if (children == null || i < 0 || i >= children.Count)
         {

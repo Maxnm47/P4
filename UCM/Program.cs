@@ -1,4 +1,4 @@
-using Antlr4.Runtime;
+﻿using Antlr4.Runtime;
 using UCM;
 using UCM.ast;
 
@@ -23,8 +23,10 @@ class Program
 
         AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
         AstNode ast = astBuildVisitor.VisitRoot(parseTree);
+
+
         Console.WriteLine("AST done");
-        Console.WriteLine(ast);
+        Console.WriteLine(ast.ToString());
     }
 }
 

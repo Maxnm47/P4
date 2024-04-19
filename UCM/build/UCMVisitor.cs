@@ -152,6 +152,12 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitField([NotNull] UCMParser.FieldContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.arrayElement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArrayElement([NotNull] UCMParser.ArrayElementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.array"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -272,11 +278,17 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitForLoop([NotNull] UCMParser.ForLoopContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="UCMParser.listConstruction"/>.
+	/// Visit a parse tree produced by <see cref="UCMParser.loopConstructContent"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitListConstruction([NotNull] UCMParser.ListConstructionContext context);
+	Result VisitLoopConstructContent([NotNull] UCMParser.LoopConstructContentContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.loopConstruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLoopConstruction([NotNull] UCMParser.LoopConstructionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.return_"/>.
 	/// </summary>

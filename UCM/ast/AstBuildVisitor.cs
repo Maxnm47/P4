@@ -7,6 +7,8 @@ using UCM.ast.statements;
 using UCM.ast.statements.condition;
 using UCM.ast.statements.forLoops;
 using UCM.ast.statements.whileLoop;
+using UCM.ast.loopConstruction;
+using System.Runtime.CompilerServices;
 
 namespace UCM.ast;
 
@@ -341,23 +343,6 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return new ForLoopNode(enumeratorId, loopArray, body);
     }
 
-    public override AstNode VisitArray([NotNull] UCMParser.ArrayContext context)
-    {
-        Console.WriteLine("Visiting Array: " + context.GetText());
-        ArrayNode array = new ArrayNode();
-
-        foreach (var child in context.children)
-        {
-            if (child is UCMParser.ExprContext)
-            {
-                AstNode expr = Visit(child);
-                array.AddChild(expr);
-            }
-        }
-
-        return array;
-    }
-
     public override AstNode VisitStatement(UCMParser.StatementContext context)
     {
         Console.WriteLine("Visiting Statement: " + context.GetText());
@@ -610,9 +595,66 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
                 AstNode fieldNode = Visit(child);
                 objectNode.AddChild(fieldNode);
             }
+
+            if (child is UCMParser.LoopConstructionContext)
+            {
+                AstNode listConstruction = Visit(child);
+                objectNode.AddChild(listConstruction);
+            }
         }
 
         return objectNode;
+    }
+
+    public override AstNode VisitArray([NotNull] UCMParser.ArrayContext context)
+    {
+        Console.WriteLine("Visiting Array: " + context.GetText());
+        ArrayNode array = new ArrayNode();
+
+        foreach (var child in context.children)
+        {
+            if (child is UCMParser.ExprContext)
+            {
+                AstNode expr = Visit(child);
+                array.AddChild(expr);
+            }
+
+            if (child is UCMParser.LoopConstructionContext)
+            {
+                AstNode listConstruction = Visit(child);
+                array.AddChild(listConstruction);
+            }
+        }
+
+        return array;
+    }
+
+    public override LoopConstructionNode VisitLoopConstruction([NotNull] UCMParser.LoopConstructionContext context)
+    {
+        Console.WriteLine("Visiting ListConstruction: " + context.GetText());
+
+        IdentifyerNode entity = (IdentifyerNode)Visit(context.id());
+        ExpressionNode array = (ExpressionNode)Visit(context.expr());
+        LoopConstructContentNode evaluationContent = (LoopConstructContentNode)Visit(context.loopConstructContent());
+
+        return new LoopConstructionNode(entity, array, evaluationContent);
+    }
+
+    public override LoopConstructContentNode VisitLoopConstructContent([NotNull] UCMParser.LoopConstructContentContext context)
+    {
+        Console.WriteLine("Visiting LoopConstructContent: " + context.GetText());
+        LoopConstructContentNode loopConstructContent = new LoopConstructContentNode();
+
+        foreach (var child in context.children)
+        {
+            if (child is UCMParser.ExprContext || child is UCMParser.FieldContext)
+            {
+                AstNode statementList = Visit(child);
+                loopConstructContent.AddChild(statementList);
+            }
+        }
+
+        return loopConstructContent;
     }
 
     /* ------------------------ Strings and stuff ------------------------ */

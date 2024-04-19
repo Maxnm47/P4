@@ -7,14 +7,14 @@ namespace UCM.ast.statements.forLoops
 {
     public class ForLoopNode : AstNode
     {
-        public ForLoopNode(IdentifyerNode enumeratorId, ExpressionNode loopArray, BodyNode body)
+        public ForLoopNode(IdentifyerNode entity, ExpressionNode array, BodyNode body)
         {
-            this.AddChild(enumeratorId);
-            this.AddChild(loopArray);
+            this.AddChild(entity);
+            this.AddChild(array);
             this.AddChild(body);
         }
-        public IdentifyerNode EnumeratorId => GetChild<IdentifyerNode>(0);
-        public ExpressionNode LoopArray => GetChild<ExpressionNode>(0);
+        public IdentifyerNode Entity => GetChild<IdentifyerNode>(0);
+        public ExpressionNode Array => GetChild<ExpressionNode>(0);
         public BodyNode Body => GetChild<BodyNode>(0);
     }
 }
