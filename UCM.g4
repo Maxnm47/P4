@@ -96,13 +96,14 @@ compoundasign:
 
 int: MINUS? INT;
 float: MINUS? FLOAT;
+bool: BOOL;
 num: int | float;
 
 value:
 	num
 	| augmentedString
 	| string
-	| BOOL
+	| bool
 	| object
 	| array
 	| NULL;
@@ -115,7 +116,7 @@ stringId: LPAREN expr RPAREN;
 fieldId: id | stringId;
 // Objects
 adapting: id;
-object: adapting? LCURLY field* RCURLY;
+object: adapting? LCURLY (field | listConstruction)* RCURLY;
 
 field:
 	HIDDEN_? type? fieldId (ASSIGN | compoundasign) expr SEMI;
@@ -158,7 +159,6 @@ expr:
 	| arrayAccess
 	| methodCall
 	| boolExpr
-	| expr EQ expr // This to avoid left recursion
 	| numExpr
 	| stringExpr;
 
@@ -182,13 +182,12 @@ numExpr:
 	| LPAREN numExpr RPAREN;
 
 boolExpr:
-	BOOL
+	value
 	| THIS_KEYWORD // this  may ruin everything in the semantics :)))
 	| id
 	| methodCall
-	| NOT expr
-	| numExpr compExpr numExpr
-	| boolExpr EQ boolExpr
+	| NOT boolExpr
+	| boolExpr compExpr boolExpr
 	| boolExpr AND boolExpr
 	| boolExpr OR boolExpr;
 
@@ -212,7 +211,7 @@ forLoop:
 
 // List construction
 listConstruction:
-	FOR LPAREN id IN expr RPAREN LCURLY (expr | assignment) RCURLY SEMI;
+	FOR LPAREN id IN expr RPAREN LCURLY (expr | field) RCURLY SEMI;
 
 //return
 return_: RETURN expr? SEMI;
