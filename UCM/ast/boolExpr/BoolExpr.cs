@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace UCM.ast.boolExpr
 {
-    public class BoolExpr : BinaryOperation
+    public abstract class BoolExpr : BinaryOperation
     {
-        public BoolExpr(AstNode left, AstNode right) : base(left, right)
+        protected BoolExpr(AstNode left, AstNode right) : base(left, right)
         {
         }
     }
