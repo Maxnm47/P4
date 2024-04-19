@@ -1,4 +1,12 @@
 template yoyo{
     int a;
-    object b;
+    object b = 10;
+
+    method yoyo(int b){
+        return ballz;
+    }
+}
+
+template ngr{
+    int a = b;
 }
