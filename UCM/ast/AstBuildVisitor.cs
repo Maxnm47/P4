@@ -12,7 +12,6 @@ using UCM.ast.compExpr;
 using UCM.ast.numExpr;
 using UCM.ast.boolExpr;
 using UCM.ast.complexValues;
-using UCM.ast.numExp;
 using UCM.ast.root;
 using UCM.ast.statements;
 using UCM.ast.statements.condition;
@@ -443,13 +442,13 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
                 Visit(context.GetChild<UCMParser.BoolExprContext>(1))
             );
         }
-        else if (context.EQ() != null)
-        {
-            return new EqualNode(
-                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
-                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
-            );
-        }
+        // else if (context.EQ() != null)
+        // {
+        //     return new EqualNode(
+        //         Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
+        //         Visit(context.GetChild<UCMParser.BoolExprContext>(1))
+        //     );
+        // }
         /*else if (context.NEQ() != null)
         {
             return new NotEqualNode(
@@ -457,13 +456,13 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
                 Visit(context.GetChild<UCMParser.BoolExprContext>(1))
             );
         }*/
-       
+
         else
         {
             return VisitChildren(context);
         }
     }
-    
+
     public override AstNode VisitCompExpr([NotNull] UCMParser.CompExprContext context)
     {
         Console.WriteLine("Visiting CompExpr: " + context.GetText());
@@ -500,7 +499,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             return VisitChildren(context);
         }
     }
-    
+
     public override AstNode VisitNumExpr([NotNull] UCMParser.NumExprContext context)
     {
         Console.WriteLine("Visiting NumExpr: " + context.GetText());
@@ -545,11 +544,6 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
     }
 
-    // TODO: Delete this vvvvvvvvvvvvv
-    public override AstNode VisitBoolExpr(UCMParser.BoolExprContext context)
-    {
-        return new AndNode(new IntNode(1), new IntNode(2));
-    }
 
     public override IntNode VisitInt(UCMParser.IntContext context)
     {
@@ -563,7 +557,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         Console.WriteLine("Visiting Float: " + context.GetText());
         return new FloatNode(float.Parse(context.GetText()));
     }
-    
+
     /*public override BoolNode VisitFloat(UCMParser.BoolExprContext context)
     {
         Console.WriteLine("Visiting Bool: " + context.GetText());
