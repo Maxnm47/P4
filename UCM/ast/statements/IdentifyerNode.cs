@@ -15,5 +15,7 @@ public class IdentifyerNode : AstLeafNode<string>
     public IdentifyerNode(string value, TypeEnum type) : base(value, type)
     {
     }
+
+
 }
 
