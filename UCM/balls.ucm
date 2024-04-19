@@ -1,10 +1,18 @@
+template Pipeline{
+    string name;
+    bool active;
+    int port : [this >= 6000, LessThan7k];
 
+    bool LessThan7k(int x){
+        return x <= 7000;
+    }
+}
 
-object a = {
-    for (i in [0, 1, 2]) {
-        int b = 2;
-    }
-    for (i in [0, 1, 2]) {
-        int b = 2;
-    }
-};
+bool[] activeArray = [true, true, false];
+for (i in range(1, 4)) {
+    Pipeline ($"pipe `i´") = {
+        string name = $"pipeline `i´";
+        bool active = activeArray[i-1];
+        int port = 6000+i;
+    };
+}

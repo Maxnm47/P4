@@ -43,18 +43,33 @@ public abstract class AstNode
         return str;
     }
 
-    public void AddChild(AstNode node)
+    public void AddChild<T>(T node) where T : AstNode
     {
         children.Add(node);
     }
 
-    public void AddChildren(AstNode[] children)
+    public void AddChildren<T>(List<T> children) where T : AstNode
     {
         foreach (AstNode child in children)
         {
             AddChild(child);
         }
     }
+
+    public List<T> GetChildren<T>() where T : AstNode
+    {
+        List<T> result = new List<T>();
+        foreach (AstNode child in children)
+        {
+            if (child is T)
+            {
+                result.Add((T)child);
+            }
+        }
+
+        return result;
+    }
+
 
     public T GetChild<T>(int i) where T : AstNode
     {

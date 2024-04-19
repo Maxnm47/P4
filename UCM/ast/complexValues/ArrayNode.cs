@@ -7,6 +7,12 @@ namespace UCM.ast.complexValues
 {
     public class ArrayNode : AstNode
     {
-
+        public ArrayNode()
+        {
+        }
+        public ArrayNode(List<ExpressionNode> expressions)
+        {
+            AddChildren(expressions);
+        }
     }
 }

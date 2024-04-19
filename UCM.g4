@@ -18,7 +18,7 @@ HIDDEN_: 'hidden';
 OBJECT_KEYWORD: 'object';
 FUNCTIONS_KEYWORD: 'methods';
 EXTENDS_KEYWORD: 'extends';
-THIS_KEYWORD: 'this';
+//THIS_KEYWORD: 'this';
 NULL: 'null';
 
 //operators
@@ -66,7 +66,9 @@ STRING_T: 'string';
 BOOL_T: 'bool';
 VOID_T: 'void';
 object_t: OBJECT_KEYWORD | ID;
-array_t: (primitiveType | object_t) (LBRACKET RBRACKET)+;
+array_t: (primitiveType | object_t | STRING_T) (
+		LBRACKET RBRACKET
+	)+;
 
 primitiveType: INT_T | FLOAT_T | BOOL_T | VOID_T;
 complexType: object_t | array_t | STRING_T;
@@ -127,8 +129,7 @@ array: LBRACKET (arrayElement (COMMA arrayElement)* |) RBRACKET;
 
 arrayAccess: id LBRACKET expr RBRACKET;
 // Templates
-evaluaterArray:
-	LBRACKET ((boolExpr | id) (COMMA (boolExpr | id))* |) RBRACKET;
+evaluaterArray: LBRACKET (expr (COMMA expr)* |) RBRACKET;
 
 templateField:
 	type id (ASSIGN expr)? (COLON evaluaterArray)? SEMI;
@@ -172,7 +173,7 @@ stringExpr:
 
 numExpr:
 	num
-	| THIS_KEYWORD // this  may ruin everything in the semantics :)))
+	//| THIS_KEYWORD // this  may ruin everything in the semantics :)))
 	| id
 	| methodCall
 	| arrayAccess
@@ -183,7 +184,7 @@ numExpr:
 
 boolExpr:
 	value
-	| THIS_KEYWORD // this  may ruin everything in the semantics :)))
+	//| THIS_KEYWORD // this  may ruin everything in the semantics :)))
 	| id
 	| methodCall
 	| NOT boolExpr
@@ -209,7 +210,7 @@ forLoop:
 	FOR LPAREN id IN expr RPAREN LCURLY statementList RCURLY;
 
 // List construction
-loopConstructContent: (expr | field)*;
+loopConstructContent: (field | expr)*;
 loopConstruction:
 	FOR LPAREN id IN expr RPAREN LCURLY loopConstructContent RCURLY;
 
