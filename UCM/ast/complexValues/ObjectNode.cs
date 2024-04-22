@@ -9,5 +9,7 @@ namespace UCM.ast
 
         }
 
+        public List<FieldNode> Fields => GetChildren<FieldNode>();
+        public IdentifyerNode? Id => GetChild<IdentifyerNode>(0);
     }
 }

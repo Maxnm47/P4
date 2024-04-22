@@ -599,6 +599,11 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         Console.WriteLine("Visiting Object");
         ObjectNode objectNode = new ObjectNode();
 
+        if (context.adapting() != null)
+        {
+            objectNode.AddChild(Visit(context.adapting()));
+        }
+
         foreach (var child in context.children)
         {
             if (child is UCMParser.FieldContext)
