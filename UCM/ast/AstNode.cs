@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using UCM.astVisitor;
 
 namespace UCM.ast;
 
 public abstract class AstNode
 {
     public List<AstNode> children = new List<AstNode>();
+
+
+    public AstNode Accept(AstBaseVisitor<AstNode> visitor)
+    {
+        return visitor.Visit(this);
+    }
 
     public virtual string ToString()
     {
