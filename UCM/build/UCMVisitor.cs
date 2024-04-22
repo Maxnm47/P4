@@ -224,6 +224,12 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMethodCall([NotNull] UCMParser.MethodCallContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.objectFieldAcess"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitObjectFieldAcess([NotNull] UCMParser.ObjectFieldAcessContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.expr"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

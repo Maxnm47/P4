@@ -9,12 +9,14 @@ using UCM.ast.statements.forLoops;
 using UCM.ast.statements.whileLoop;
 using UCM.ast.loopConstruction;
 using System.Runtime.CompilerServices;
+using UCM.scope;
 
 namespace UCM.ast;
 
 public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 {
     /* ------------------------ Root ------------------------ */
+    
     public override AstNode VisitRoot(UCMParser.RootContext context)
     {
         AstNode root = new RootNode();
@@ -615,6 +617,15 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         return objectNode;
     }
 
+    public override ObjectFieldAcessNode VisitObjectFieldAcess(UCMParser.ObjectFieldAcessContext context)
+    {
+        List<IdentifyerNode> ids = context.id().
+        Select(id => (IdentifyerNode)Visit(id)).ToList();
+
+        Console.WriteLine("Visiting ObjectFieldAcess: " + context.GetText());
+        return new ObjectFieldAcessNode(ids);
+    }
+
     public override AstNode VisitArray([NotNull] UCMParser.ArrayContext context)
     {
         Console.WriteLine("Visiting Array: " + context.GetText());
@@ -737,5 +748,6 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         return str;
     }
+
 }
 

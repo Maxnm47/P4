@@ -1,8 +1,1 @@
-object a = {
-    a = 2;
-};
-
-object b = a{
-    int d = 0;
-    float c = 0.0;
-};
+int c = a.b;

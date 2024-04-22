@@ -1,68 +1,86 @@
-namespace UCM.scope;
-
-using UCM.tabels;
 using UCM.tables;
 
+namespace UCM.scope;
 public class Scope
 {
-
     public VTable vTable = new VTable();
     public FTable fTable = new FTable();
 
-    public bool VtableContains(string key)
+    public void AddVariable(string name, VTableEntry value)
     {
-        return vTable.VtableContains(key);
+        if(vTable.Contains(name))
+        {
+            throw new Exception($"Variable {name} already exists in scope");
+        }
+        vTable.AddVariable(name, value); 
     }
 
-    public string VtableFind(string key)
+    public bool Contains(string key)
     {
-        return vTable.VtableFind(key);
+        return vTable.Contains(key);
     }
 
-    public void AddVariable(string name, string type)
+    public VTableEntry Find(string key)
     {
-        vTable.AddVariable(name, type);
+        return vTable.Find(key);
     }
 
-    public bool FtableContains(string key)
+    public void AddFunction(string name, FTableEntry value)
     {
-        return fTable.FtableContains(key);
+        if(fTable.Contains(name))
+        {
+            throw new Exception($"Function {name} already exists in scope");
+        }
+        fTable.AddFunction(name, new FTableEntry[] { value }); 
     }
 
-    public string[][] FtableFind(string key)
+    public bool ContainsFunction(string key)
     {
-        return fTable.FtableFind(key);
+        return fTable.Contains(key);
     }
 
-    public void AddFunction(string name, string[][] value)
+    public FTableEntry[] FindFunction(string key)
     {
-        fTable.AddFunction(name, value);
+        return fTable.Find(key);
     }
-//helper functions for scope stack to be put in visitor        
-    // private void EnterScope(Scope scope) 
-    // {
-    //     if (ScopeStack.Count() != 0)
-    //     {
-    //         foreach (var variable in GetCurrentScope().vTable.Variables) 
-    //         {
-    //             scope.AddVariable(variable.Key, variable.Value);
-    //         }
-    //         foreach (var function in GetCurrentScope().fTable.Functions) 
-    //         {
-    //             scope.AddFunction(function.Key, function.Value);
-    //         }
-    //     }
-    //     ScopeStack.Push(scope);
-    // }
-    // private void ExitScope()
-    // {
-    //     _ = ScopeStack.Pop();
-    // }
-    // private Scope GetCurrentScope()
-    // {
-    //     return ScopeStack.Peek();
-    // }
+
+
+    public void CopyFrom(Scope other)
+    {
+        foreach (var variable in other.vTable.Variables)
+        {
+            AddVariable(variable.Key, variable.Value);
+        }
+        foreach (var function in other.fTable.Functions)
+        {
+            foreach (var entry in function.Value)
+            {
+                AddFunction(function.Key, entry);
+            }
+        }
+    }
 }
 
 
 
+
+
+////////////////////////// scope stack //////////////////////////
+///    private Stack<Scope> ScopeStack { get; } = new Stack<Scope>();
+// private void EnterScope(Scope scope) 
+// {
+//     if (ScopeStack.Count() != 0) 
+//     {
+//         scope.CopyFrom(GetCurrentScope()); 
+//     }
+//     ScopeStack.Push(scope);
+// }
+
+// private void ExitScope()
+// {
+//     _ = ScopeStack.Pop();
+// }
+// private Scope GetCurrentScope()
+// {
+//     return ScopeStack.Peek();
+// }
