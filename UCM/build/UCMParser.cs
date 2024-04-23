@@ -2290,11 +2290,11 @@ public partial class UCMParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public IdContext id() {
 			return GetRuleContext<IdContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ObjectFieldAcessContext objectFieldAcess() {
-			return GetRuleContext<ObjectFieldAcessContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public ArrayAccessContext arrayAccess() {
 			return GetRuleContext<ArrayAccessContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ObjectFieldAcessContext objectFieldAcess() {
+			return GetRuleContext<ObjectFieldAcessContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public MethodCallContext methodCall() {
 			return GetRuleContext<MethodCallContext>(0);
@@ -2347,14 +2347,14 @@ public partial class UCMParser : Parser {
 				EnterOuterAlt(_localctx, 3);
 				{
 				State = 336;
-				objectFieldAcess();
+				arrayAccess();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
 				State = 337;
-				arrayAccess();
+				objectFieldAcess();
 				}
 				break;
 			case 5:
@@ -3906,7 +3906,7 @@ public partial class UCMParser : Parser {
 		1,0,0,0,323,322,1,0,0,0,324,325,1,0,0,0,325,326,5,31,0,0,326,63,1,0,0,
 		0,327,330,3,26,13,0,328,329,5,37,0,0,329,331,3,26,13,0,330,328,1,0,0,0,
 		331,332,1,0,0,0,332,330,1,0,0,0,332,333,1,0,0,0,333,65,1,0,0,0,334,343,
-		3,24,12,0,335,343,3,26,13,0,336,343,3,64,32,0,337,343,3,44,22,0,338,343,
+		3,24,12,0,335,343,3,26,13,0,336,343,3,44,22,0,337,343,3,64,32,0,338,343,
 		3,62,31,0,339,343,3,72,36,0,340,343,3,70,35,0,341,343,3,68,34,0,342,334,
 		1,0,0,0,342,335,1,0,0,0,342,336,1,0,0,0,342,337,1,0,0,0,342,338,1,0,0,
 		0,342,339,1,0,0,0,342,340,1,0,0,0,342,341,1,0,0,0,343,67,1,0,0,0,344,345,
