@@ -1,3 +1,1 @@
-object a = b {
-    int c = 2;
-};
+int c = a.b;
