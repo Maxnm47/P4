@@ -152,11 +152,13 @@ method:
 functionCollectionCall: id DOT;
 methodCall:
 	functionCollectionCall? id LPAREN (expr (COMMA expr)* |) RPAREN;
-
+objectAcess:
+	id (DOT id)+;
 // Expressions
 expr:
 	value
 	| id
+	| objectAcess
 	| arrayAccess
 	| methodCall
 	| boolExpr
