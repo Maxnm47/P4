@@ -17,7 +17,7 @@ namespace UCM.ast.root
         public IdentifyerNode Id => GetChild<IdentifyerNode>(0);
         public List<MethodDefenitionNode> Methods => GetChildren<MethodDefenitionNode>();
 
-        public override T Accept1<T>(astVisitor.AstBaseVisitor<T> visitor)
+        public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
         {
             return visitor.VisitMethodCollection(this);
         }

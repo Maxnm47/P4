@@ -25,7 +25,7 @@ namespace UCM.ast.statements
         public List<ArgumentDefenitionNode> ArgumentsDefs => GetChildren<ArgumentDefenitionNode>();
         public BodyNode Body => GetChild<BodyNode>(0);
 
-        public override T Accept1<T>(AstBaseVisitor<T> visitor)
+        public override T Accept<T>(AstBaseVisitor<T> visitor)
         {
             return visitor.VisitMethodDefenition(this);
         }

@@ -8,7 +8,7 @@ namespace UCM.ast.statements
 {
     public class ReturnNode : AstNode
     {
-        public override T Accept1<T>(AstBaseVisitor<T> visitor)
+        public override T Accept<T>(AstBaseVisitor<T> visitor)
         {
             return visitor.VisitReturn(this);
         }

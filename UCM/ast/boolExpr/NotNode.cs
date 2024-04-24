@@ -9,7 +9,7 @@ public class NotNode : AstNode
 
     public AstNode Child => children[0];
 
-    public override T Accept1<T>(astVisitor.AstBaseVisitor<T> visitor)
+    public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
     {
         return visitor.VisitNot(this);
     }

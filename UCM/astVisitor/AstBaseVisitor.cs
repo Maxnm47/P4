@@ -28,7 +28,7 @@ namespace UCM.astVisitor
             Result? result = default(Result);
             foreach (AstNode child in node.children)
             {
-                Result? nextResult = child.Accept1(this);
+                Result? nextResult = child.Accept(this);
                 if (nextResult != null)
                 {
                     result = nextResult;
@@ -283,6 +283,11 @@ namespace UCM.astVisitor
         public virtual Result VisitLoopConstruction(LoopConstructionNode loopConstructionNode)
         {
             return VisitChildren(loopConstructionNode);
+        }
+
+        public virtual Result VisitObjectFieldAcess(ObjectFieldAcessNode objectFieldAcessNode)
+        {
+            return VisitChildren(objectFieldAcessNode);
         }
     }
 }

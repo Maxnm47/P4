@@ -17,7 +17,7 @@ public class IdentifyerNode : AstLeafNode<string>
     {
     }
 
-    public override T Accept1<T>(AstBaseVisitor<T> visitor)
+    public override T Accept<T>(AstBaseVisitor<T> visitor)
     {
         return visitor.VisitIdentifyer(this);
     }

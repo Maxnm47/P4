@@ -16,7 +16,7 @@ namespace UCM.ast.statements.condition
         public ExpressionNode Condition => GetChild<ExpressionNode>(0);
         public BodyNode Body => GetChild<BodyNode>(0);
 
-        public override T Accept1<T>(astVisitor.AstBaseVisitor<T> visitor)
+        public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
         {
             return visitor.VisitIfStatement(this);
         }

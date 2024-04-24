@@ -18,13 +18,7 @@ public abstract class AstNode
 
     public TypeEnum type;
 
-    public virtual T? Accept<T>(AstBaseVisitor<T> visitor)
-    {
-        Console.WriteLine("IN AST NODE");
-        return visitor.Visit(this);
-    }
-
-    public abstract T? Accept1<T>(astVisitor.AstBaseVisitor<T> visitor);
+    public abstract T? Accept<T>(astVisitor.AstBaseVisitor<T> visitor);
 
     public virtual string ToString()
     {

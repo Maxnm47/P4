@@ -19,7 +19,7 @@ namespace UCM.ast.loopConstruction
         public ExpressionNode Array => GetChild<ExpressionNode>(0);
         public LoopConstructContentNode EvaluationContent => GetChild<LoopConstructContentNode>(0);
 
-        public override T Accept1<T>(astVisitor.AstBaseVisitor<T> visitor)
+        public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
         {
             return visitor.VisitLoopConstruction(this);
         }

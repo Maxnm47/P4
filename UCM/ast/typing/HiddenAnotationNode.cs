@@ -13,7 +13,7 @@ namespace UCM.ast
 
         }
 
-        public override T Accept1<T>(AstBaseVisitor<T> visitor)
+        public override T Accept<T>(AstBaseVisitor<T> visitor)
         {
             return visitor.VisitHiddenAnotation(this);
         }

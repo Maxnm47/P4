@@ -19,7 +19,7 @@ public class AssignmentNode : AstNode
     public IdentifyerNode Id => GetChild<IdentifyerNode>(0);
     public ExpressionNode Expr => GetChild<ExpressionNode>(0);
 
-    public override T Accept1<T>(AstBaseVisitor<T> visitor)
+    public override T Accept<T>(AstBaseVisitor<T> visitor)
     {
         return visitor.VisitAssignment(this);
     }
