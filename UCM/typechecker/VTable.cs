@@ -1,15 +1,16 @@
+using UCM.ast;
 using UCM.typechecker;
 
 namespace UCM.tables;
 
 public class VTableEntry{
-    public string id;
+    public ExpressionNode expr;
     public TypeEnum type;
-    public VTableEntry(string id, TypeEnum type){
-        this.id = id;
+
+    public VTableEntry(TypeEnum type, ExpressionNode expressionNode){
+        this.expr = expressionNode;
         this.type = type;
     }
-
 }
 public class VTable
 {   

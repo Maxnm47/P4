@@ -15,12 +15,13 @@ using UCM.ast.statements.whileLoop;
 
 namespace UCM.astVisitor
 {
+
     public partial class AstBaseVisitor<Result>
     {
         public virtual Result Visit(AstNode node)
         {
             Console.WriteLine(node.GetType());
-            return VisitChildren(node);
+            return node.Accept(this);
         }
 
         public virtual Result VisitChildren(AstNode node)

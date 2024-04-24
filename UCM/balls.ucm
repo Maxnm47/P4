@@ -1,1 +1,9 @@
-int c = a.b;
+
+
+object a = {
+    int a = 0;
+    int b = 10;
+    object b = {
+        string balls = "balls";
+    };
+};

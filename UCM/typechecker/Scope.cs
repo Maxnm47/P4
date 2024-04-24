@@ -15,7 +15,7 @@ public class Scope
         vTable.AddVariable(name, value); 
     }
 
-    public bool Contains(string key)
+    public bool VTableContains(string key)
     {
         return vTable.Contains(key);
     }
@@ -34,7 +34,7 @@ public class Scope
         fTable.AddFunction(name, new FTableEntry[] { value }); 
     }
 
-    public bool ContainsFunction(string key)
+    public bool FTableContains(string key)
     {
         return fTable.Contains(key);
     }
