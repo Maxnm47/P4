@@ -19,14 +19,11 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     
     public override AstNode VisitRoot(UCMParser.RootContext context)
     {
-        AstNode root = new RootNode();
-        foreach (var child in context.children)
-        {
-            AstNode childNode = Visit(child);
-            root.AddChild(childNode);
-        }
+        List<FieldNode> fields = context.field().Select(field => (FieldNode)Visit(field)).ToList();
+        List<MethodCollectionNode> methodCollections = context.functionCollection().Select(methodCollection => (MethodCollectionNode)Visit(methodCollection)).ToList();
+        List<TemplateNode> templates = context.templateDefenition().Select(template => (TemplateNode)Visit(template)).ToList();
 
-        return root;
+        return new RootNode(fields, methodCollections, templates);
     }
 
     public override MethodCollectionNode VisitFunctionCollection(UCMParser.FunctionCollectionContext context)
@@ -89,7 +86,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         var hidden = new HiddenAnotationNode(isHidden);
         var type = (isTyped) ?
             (TypeAnotationNode)Visit(context.type()) :
-            new TypeAnotationNode(typechecker.TypeEnum.NONE.ToString(), typechecker.TypeEnum.NONE);
+            new TypeAnotationNode(typechecker.TypeEnum.None.ToString(), typechecker.TypeEnum.None);
 
         var _id = Visit(context.fieldId());
         FieldId? id = default;
@@ -166,7 +163,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         var type = (isTyped) ?
             (TypeAnotationNode)Visit(context.type()) :
-            new TypeAnotationNode(typechecker.TypeEnum.NONE.ToString(), typechecker.TypeEnum.NONE);
+            new TypeAnotationNode(typechecker.TypeEnum.None.ToString(), typechecker.TypeEnum.None);
         var id = (IdentifyerNode)Visit(context.id());
         var expr = (ExpressionNode)Visit(context.expr());
 

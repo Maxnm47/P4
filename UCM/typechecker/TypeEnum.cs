@@ -9,6 +9,8 @@ public enum TypeEnum
     VOID,
     OBJECT,
     ARRAY,
-    NONE
+    None,
+    Unknown,
+    Ok,
 }
 

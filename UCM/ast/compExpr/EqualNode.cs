@@ -8,4 +8,9 @@ public class EqualNode : BoolExpr
         base(left, right)
     {
     }
+
+    public override T Accept1<T>(astVisitor.AstBaseVisitor<T> visitor)
+    {
+        return visitor.VisitEqual(this);
+    }
 }

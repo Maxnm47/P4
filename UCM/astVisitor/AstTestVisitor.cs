@@ -8,10 +8,11 @@ namespace UCM.astVisitor
 {
     public class AstTestVisitor : AstBaseVisitor<AstNode>
     {
-        public FieldNode Visit(FieldNode node)
+
+        public override AstNode VisitField(FieldNode node)
         {
-            Console.WriteLine("Visiting object");
-            return VisitChildren(node);
+            Console.WriteLine("Visiting AST FieldNode");
+            return base.VisitField(node);
         }
     }
 }

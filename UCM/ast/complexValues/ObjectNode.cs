@@ -11,5 +11,10 @@ namespace UCM.ast
 
         public List<FieldNode> Fields => GetChildren<FieldNode>();
         public IdentifyerNode? Id => GetChild<IdentifyerNode>(0);
+
+        public override T Accept1<T>(astVisitor.AstBaseVisitor<T> visitor)
+        {
+            return visitor.VisitObject(this);
+        }
     }
 }

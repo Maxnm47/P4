@@ -10,5 +10,10 @@ namespace UCM.ast.boolExpr
         public AndNode(AstNode left, AstNode right) : base(left, right)
         {
         }
+
+        public override T Accept1<T>(astVisitor.AstBaseVisitor<T> visitor)
+        {
+            return visitor.VisitAnd(this);
+        }
     }
 }

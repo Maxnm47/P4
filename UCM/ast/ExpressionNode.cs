@@ -10,5 +10,10 @@ namespace UCM.ast
         public ExpressionNode()
         {
         }
+
+        public override T Accept1<T>(astVisitor.AstBaseVisitor<T> visitor)
+        {
+            return visitor.VisitExpression(this);
+        }
     }
 }

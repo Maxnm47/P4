@@ -6,4 +6,9 @@ public class NotEqualNode : BoolExpr
         base(left, right)
     {
     }
+
+    public override T Accept1<T>(astVisitor.AstBaseVisitor<T> visitor)
+    {
+        return visitor.VisitNotEqual(this);
+    }
 }
