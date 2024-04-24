@@ -6,5 +6,11 @@ public class SubtractionNode : NumExpr
         base(left, right)
     {
     }
+
+
+    public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
+    {
+        return visitor.VisitSubtraction(this);
+    }
 }
 

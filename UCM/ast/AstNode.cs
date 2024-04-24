@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using UCM.astVisitor;
+using UCM.typechecker;
 
 namespace UCM.ast;
 
@@ -11,11 +12,13 @@ public abstract class AstNode
 {
     public List<AstNode> children = new List<AstNode>();
 
+    public AstNode parent { get; set; }
 
-    public AstNode Accept(AstBaseVisitor<AstNode> visitor)
-    {
-        return visitor.Visit(this);
-    }
+    public string referenceId;
+
+    public TypeEnum type;
+
+    public abstract T? Accept<T>(astVisitor.AstBaseVisitor<T> visitor);
 
     public virtual string ToString()
     {
@@ -52,6 +55,7 @@ public abstract class AstNode
 
     public void AddChild<T>(T node) where T : AstNode
     {
+        node.parent = this;
         children.Add(node);
     }
 

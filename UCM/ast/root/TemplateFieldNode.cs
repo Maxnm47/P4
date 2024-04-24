@@ -26,5 +26,10 @@ namespace UCM.ast.root
         public ExpressionNode Expr => GetChild<ExpressionNode>(0);
 
         public ArrayNode? EvaluatorArray => GetChild<ArrayNode>(0);
+
+        public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
+        {
+            return visitor.VisitTemplateField(this);
+        }
     }
 }

@@ -16,5 +16,10 @@ namespace UCM.ast.statements.forLoops
         public IdentifyerNode Entity => GetChild<IdentifyerNode>(0);
         public ExpressionNode Array => GetChild<ExpressionNode>(0);
         public BodyNode Body => GetChild<BodyNode>(0);
+
+        public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
+        {
+            return visitor.VisitForLoop(this);
+        }
     }
 }

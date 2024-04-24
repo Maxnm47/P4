@@ -14,5 +14,10 @@ namespace UCM.ast.complexValues
         {
             AddChildren(expressions);
         }
+
+        public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
+        {
+            return visitor.VisitArray(this);
+        }
     }
 }

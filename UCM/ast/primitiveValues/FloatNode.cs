@@ -9,5 +9,10 @@ namespace UCM.ast
         {
             type = TypeEnum.FLOAT;
         }
+
+        public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
+        {
+            return visitor.VisitFloat(this);
+        }
     }
 }

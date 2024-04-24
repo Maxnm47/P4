@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UCM.astVisitor;
 
 namespace UCM.ast.statements
 {
@@ -23,5 +24,10 @@ namespace UCM.ast.statements
         public IdentifyerNode Id => GetChild<IdentifyerNode>(0);
         public List<ArgumentDefenitionNode> ArgumentsDefs => GetChildren<ArgumentDefenitionNode>();
         public BodyNode Body => GetChild<BodyNode>(0);
+
+        public override T Accept<T>(AstBaseVisitor<T> visitor)
+        {
+            return visitor.VisitMethodDefenition(this);
+        }
     }
 }
