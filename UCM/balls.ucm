@@ -1,1 +1,5 @@
-int c = a.b;
+
+
+Pik hej = {
+    int ("hej") = {};
+}

@@ -7,7 +7,7 @@ namespace UCM.ast
         public IntNode(int value) :
             base(value)
         {
-            type = TypeEnum.INT;
+            type = TypeEnum.Int;
         }
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)

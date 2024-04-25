@@ -7,7 +7,7 @@ namespace UCM.ast
         public StringNode(string value) :
             base(value)
         {
-            type = TypeEnum.STRING;
+            type = TypeEnum.String;
         }
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)

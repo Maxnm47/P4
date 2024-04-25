@@ -13,8 +13,6 @@ public abstract class AstLeafNode<T> : AstNode
 {
     public T value { get; set; }
 
-    public TypeEnum type { get; set; }
-
     public AstLeafNode(T value) //constructor
     {
         this.value = value;

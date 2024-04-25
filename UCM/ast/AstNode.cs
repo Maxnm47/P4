@@ -16,7 +16,7 @@ public abstract class AstNode
 
     public string referenceId;
 
-    public TypeEnum type;
+    public TypeEnum type { get; set; }
 
     public abstract T? Accept<T>(astVisitor.AstBaseVisitor<T> visitor);
 

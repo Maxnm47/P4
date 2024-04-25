@@ -16,7 +16,7 @@ namespace UCM.ast;
 public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 {
     /* ------------------------ Root ------------------------ */
-    
+
     public override AstNode VisitRoot(UCMParser.RootContext context)
     {
         List<FieldNode> fields = context.field().Select(field => (FieldNode)Visit(field)).ToList();
@@ -240,7 +240,49 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override TypeAnotationNode VisitType(UCMParser.TypeContext context)
     {
         Console.WriteLine("Visiting Type: " + context.GetText());
-        return new TypeAnotationNode(context.GetText());
+
+        if (context.GetText() == "void")
+        {
+            return new TypeAnotationNode(typechecker.TypeEnum.Void.ToString(), typechecker.TypeEnum.Void);
+        }
+        else if (context.GetText() == "string")
+        {
+            return new TypeAnotationNode(typechecker.TypeEnum.String.ToString(), typechecker.TypeEnum.String);
+        }
+        else if (context.GetText() == "int")
+        {
+            return new TypeAnotationNode(typechecker.TypeEnum.Int.ToString(), typechecker.TypeEnum.Int);
+        }
+        else if (context.GetText() == "float")
+        {
+            return new TypeAnotationNode(typechecker.TypeEnum.Float.ToString(), typechecker.TypeEnum.Float);
+        }
+        else if (context.GetText() == "bool")
+        {
+            return new TypeAnotationNode(typechecker.TypeEnum.Bool.ToString(), typechecker.TypeEnum.Bool);
+        }
+        else if (context.complexType() != null)
+        {
+            return (TypeAnotationNode)Visit(context.complexType());
+        }
+
+        return new TypeAnotationNode(context.GetText(), typechecker.TypeEnum.Undefined);
+    }
+
+    public override TypeAnotationNode VisitComplexType(UCMParser.ComplexTypeContext context)
+    {
+        Console.WriteLine("Visiting ComplexType: " + context.GetText());
+
+        if (context.object_t() != null)
+        {
+            return new TypeAnotationNode(context.object_t().GetText(), typechecker.TypeEnum.Object);
+        }
+        else if (context.array_t() != null)
+        {
+            return new TypeAnotationNode(context.array_t().GetText(), typechecker.TypeEnum.Array);
+        }
+
+        return new TypeAnotationNode(context.GetText(), typechecker.TypeEnum.Undefined);
     }
 
     public override AstNode VisitMethod(UCMParser.MethodContext context)

@@ -2,15 +2,18 @@ namespace UCM.typechecker;
 
 public enum TypeEnum
 {
-    INT,
-    FLOAT,
-    STRING,
-    BOOL,
-    VOID,
-    OBJECT,
-    ARRAY,
+    pik,
+    Undefined,
+    Int,
+    Float,
+    String,
+    Bool,
+    Void,
+    Object,
+    Array,
     None,
     Unknown,
     Ok,
+    Error,
 }
 
