@@ -20,7 +20,7 @@ namespace UCM.ast.root
 
         public IdentifyerNode Id => GetChild<IdentifyerNode>(0);
         public List<MethodDefenitionNode> Methods => GetChildren<MethodDefenitionNode>();
-        public List<FieldNode> Fields => GetChildren<FieldNode>();
+        public List<TemplateFieldNode> Fields => GetChildren<TemplateFieldNode>();
         public IdentifyerNode? Parent => GetChild<IdentifyerNode>(1);
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)

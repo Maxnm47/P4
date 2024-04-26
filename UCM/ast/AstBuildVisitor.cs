@@ -23,7 +23,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         List<MethodCollectionNode> methodCollections = context.functionCollection().Select(methodCollection => (MethodCollectionNode)Visit(methodCollection)).ToList();
         List<TemplateNode> templates = context.templateDefenition().Select(template => (TemplateNode)Visit(template)).ToList();
 
-        return new RootNode(fields, methodCollections, templates);
+        return new RootNode(methodCollections, templates, fields);
     }
 
     public override MethodCollectionNode VisitFunctionCollection(UCMParser.FunctionCollectionContext context)
@@ -83,10 +83,10 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         bool isCompounAssignment = context.compoundasign() is not null;
 
-        var hidden = new HiddenAnotationNode(isHidden);
+        var hidden = isHidden ? new HiddenAnotationNode(isHidden) : null;
         var type = (isTyped) ?
             (TypeAnotationNode)Visit(context.type()) :
-            new TypeAnotationNode(typechecker.TypeEnum.None.ToString(), typechecker.TypeEnum.None);
+            null;
 
         var _id = Visit(context.fieldId());
         FieldId? id = default;

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using UCM.ast;
 using UCM.ast.complexValues;
 using UCM.ast.numExpr;
+using UCM.ast.root;
 using UCM.ast.statements;
 using UCM.typechecker;
 
@@ -27,53 +28,47 @@ namespace UCM.astVisitor
 
         public override TypeInfo VisitField(FieldNode node)
         {
-            bool hasDynamicKey = node.Key.Id is null;
-            string refId;
+            Visit(node.Key);
 
-            if (hasDynamicKey)
-            {
-                // Asign random id if the key is dynamic
-                refId = Guid.NewGuid().ToString();
-                Visit(node.Key);
-            }
-            else
-            {
-                refId = node.Key.Id!.value;
-            }
+            // Set key to id if it exist, else set it to a random guid
+            string key = node.Key.Id is not null ? node.Key.Id!.value : Guid.NewGuid().ToString();
 
-            node.referenceId = refId;
-
-            if (CurrentScope.ContainsKey(refId))
+            if (CurrentScope.ContainsKey(key))
             {
-                // If the field is already declared in the current scope add an error and return error type
-                Errors.Add($"Variable {refId} already declared in this scope");
+                Errors.Add($"Field ({key}) already declared in this scope");
                 return new TypeInfo(TypeEnum.Error);
             }
 
-            // Check if the type is valid
-            TypeInfo typeAnotation = Visit(node.Type);
             TypeInfo exprType = Visit(node.Expr);
+            TypeInfo typeAnotation = node.Type is not null ? Visit(node.Type) : exprType;
 
             if (typeAnotation.type == TypeEnum.Error || exprType.type == TypeEnum.Error)
             {
                 return new TypeInfo(TypeEnum.Error);
             }
 
-            if (typeAnotation.type == TypeEnum.None)
-            {
-                typeAnotation = exprType;
-            }
-
             if (typeAnotation.type != exprType.type)
             {
-                // If the type is not valid add an error and return error type
-                Errors.Add($"Type mismatch in field {refId}: {typeAnotation.type} != {exprType.type}");
+                Errors.Add($"Type mismatch in field {key}: {typeAnotation.type} != {exprType.type}");
                 return new TypeInfo(TypeEnum.Error);
             }
 
-            // Add the field to the current scope
-            CurrentScope.Add(refId, new TypeInfo(typeAnotation));
-            return new TypeInfo(TypeEnum.Object);
+            if (typeAnotation.templateId is not null)
+            {
+                ObjectTypeChecker objectTypeChecker = new ObjectTypeChecker();
+
+                TypeInfo result = objectTypeChecker.CheckObjectType(typeAnotation, exprType);
+
+                if (result.type == TypeEnum.Error)
+                {
+                    Errors.Add($"Type mismatch in field {key}: value does not match template type ({typeAnotation.templateId})");
+                    return new TypeInfo(TypeEnum.Error);
+                }
+            }
+
+            TypeInfo typeInfo = new TypeInfo(typeAnotation.type, fieldKey: key);
+            CurrentScope.Add(key, typeInfo);
+            return typeInfo;
         }
 
         public override TypeInfo VisitExpression(ExpressionNode node)
@@ -168,6 +163,22 @@ namespace UCM.astVisitor
 
         public override TypeInfo VisitTypeAnotation(TypeAnotationNode node)
         {
+            if (node.type == TypeEnum.Object && node.value != "object")
+            {
+                string templateId = node.value;
+
+                foreach (var scope in Scopes)
+                {
+                    if (scope.TryGetValue(templateId, out TypeInfo? value))
+                    {
+                        return value;
+                    }
+                }
+
+                Errors.Add($"Template {templateId} not found");
+                return new TypeInfo(TypeEnum.Error);
+            }
+
             return new TypeInfo(node.type);
         }
 
@@ -177,9 +188,9 @@ namespace UCM.astVisitor
         {
             foreach (var scope in Scopes)
             {
-                if (scope.ContainsKey(node.value))
+                if (scope.TryGetValue(node.value, out TypeInfo? typeInfo))
                 {
-                    return scope[node.value];
+                    return typeInfo;
                 }
             }
 
@@ -206,6 +217,55 @@ namespace UCM.astVisitor
             }
 
             return new TypeInfo(TypeEnum.String);
+        }
+
+        public override TypeInfo VisitTemplate(TemplateNode node)
+        {
+            Scopes.Push(new Dictionary<string, TypeInfo>());
+
+            List<TypeInfo> templateFields = new List<TypeInfo>();
+
+            foreach (TemplateFieldNode field in node.Fields)
+            {
+                templateFields.Add(Visit(field));
+            }
+
+            foreach (MethodDefenitionNode method in node.Methods)
+            {
+                Visit(method);
+            }
+
+            Scopes.Pop();
+
+            CurrentScope.Add(node.Id.value, new TypeInfo(TypeEnum.Object, templateId: node.Id.value, subFields: templateFields));
+
+            return new TypeInfo(TypeEnum.Object, templateId: node.Id.value, subFields: templateFields);
+        }
+
+        public override TypeInfo VisitTemplateField(TemplateFieldNode node)
+        {
+            TypeInfo typeAnotation = Visit(node.Type);
+            string key = node.Id.value;
+
+            if (node.Expr is null)
+            {
+                return new TypeInfo(typeAnotation.type, fieldKey: key);
+            }
+
+            TypeInfo exprType = Visit(node.Expr);
+
+            if (typeAnotation.type == TypeEnum.Error || exprType.type == TypeEnum.Error)
+            {
+                return new TypeInfo(TypeEnum.Error);
+            }
+
+            if (typeAnotation.type != exprType.type)
+            {
+                Errors.Add($"Type mismatch in template field {key}: {typeAnotation.type} != {exprType.type}");
+                return new TypeInfo(TypeEnum.Error);
+            }
+
+            return new TypeInfo(typeAnotation.type, fieldKey: key);
         }
     }
 }

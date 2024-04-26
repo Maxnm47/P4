@@ -66,7 +66,7 @@ STRING_T: 'string';
 BOOL_T: 'bool';
 VOID_T: 'void';
 object_t: OBJECT_KEYWORD | ID;
-array_t: (primitiveType | object_t | STRING_T) (
+array_t: (primitiveType | object_t | STRING_T |) (
 		LBRACKET RBRACKET
 	)+;
 

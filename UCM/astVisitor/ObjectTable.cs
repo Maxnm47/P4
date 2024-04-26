@@ -30,6 +30,15 @@ namespace UCM.astVisitor
             this.subFields = null;
         }
 
+        public TypeInfo(TypeEnum type, string fieldKey = null, string templateId = null, List<TypeInfo> subFields = null, bool isHidden = false)
+        {
+            this.type = type;
+            this.fieldKey = fieldKey;
+            this.templateId = templateId;
+            this.subFields = subFields;
+            this.isHidden = isHidden;
+        }
+
         public TypeInfo(TypeEnum type, List<TypeInfo> subFields)
         {
             this.type = type;
@@ -38,7 +47,7 @@ namespace UCM.astVisitor
             this.subFields = subFields;
         }
 
-        public TypeInfo(TypeEnum type, string fieldKey)
+        public TypeInfo(TypeEnum type, string fieldKey = null)
         {
             this.type = type;
             this.fieldKey = fieldKey;
@@ -68,47 +77,6 @@ namespace UCM.astVisitor
             this.fieldKey = fieldKey;
             this.templateId = null;
             this.subFields = subFields;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            TypeInfo other = (TypeInfo)obj;
-
-            if (other.type != type)
-            {
-                return false;
-            }
-
-            if (other.fieldKey != fieldKey)
-            {
-                return false;
-            }
-
-            if (other.subFields == null && subFields == null)
-            {
-                return true;
-            }
-            else if (other.subFields == null)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < subFields!.Count; i++)
-            {
-                if (!subFields[i].Equals(other.subFields![i]))
-                {
-                    return false;
-                }
-            }
-
-
-
-            return true;
         }
     }
 }

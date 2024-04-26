@@ -1,5 +1,11 @@
 
-
-Pik hej = {
-    int ("hej") = {};
+template A {
+    int a;
+    string b;
 }
+
+
+A o = {
+    a = 2;
+    b = "hej";
+};
