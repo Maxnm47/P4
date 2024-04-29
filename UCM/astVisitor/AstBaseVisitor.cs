@@ -22,6 +22,7 @@ namespace UCM.astVisitor
             Console.WriteLine(node.GetType());
             return node.Accept(this);
         }
+        
 
         public virtual Result VisitChildren(AstNode node)
         {

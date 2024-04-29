@@ -4,7 +4,9 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using UCM.ast;
+using UCM.ast.boolExpr;
 using UCM.ast.complexValues;
 using UCM.ast.numExpr;
 using UCM.ast.root;
@@ -16,7 +18,7 @@ namespace UCM.astVisitor
     public class SemanticAnalysisVisitor : AstBaseVisitor<AstNode>
     {
 
-        public Stack<Dictionary<string, TypeInfo>> ObjectTables { get; set; } = new Stack<Dictionary<string, TypeInfo>>();
+        public Stack<Dictionary<string, ObjectNode>> ObjectTables { get; set; } = new Stack<Dictionary<string, ObjectNode>>();
         public Stack<Dictionary<string, AstNode>> Scopes { get; set; } = new Stack<Dictionary<string, AstNode>>();
         public List<string> Errors { get; set; } = new List<string>();
 
@@ -37,14 +39,18 @@ namespace UCM.astVisitor
             
             if (node.Type != null)
             {
-
                 TypeAnotationNode typeAnotationNode= (TypeAnotationNode)Visit(node.Type);
                 type = typeAnotationNode.type;
                 ExpressionNode Expr = (ExpressionNode)Visit(node.Expr);
                 exprType = Expr.type;
-                Console.WriteLine($"Type: {type} ExprType: {exprType}");
-            }
+                node.type = (TypeEnum)type; // set the type of the field
 
+                if(type != exprType)
+                {
+                    Errors.Add($"Type mismatch in field {key}");
+                }
+            }
+                        
             //scope checking
             if(CurrentScope.ContainsKey(key))
             {
@@ -59,30 +65,146 @@ namespace UCM.astVisitor
 
         public override AstNode VisitExpression(ExpressionNode node)
         {
-            Console.WriteLine("Visiting Expression");
-
-            TypeEnum exprNodeType = TypeEnum.Unknown;
-            node.type = exprNodeType;
-
-            foreach (var child in node.children)
+            AstNode firstChild= Visit(node.children[0]);
+            
+            node.type = firstChild.type;
+            
+            foreach (var child in node.children.Skip(0)) 
             {
                 child.Accept(this);
-                exprNodeType = child.type;
+                node.type = child.type;
             }
 
-            node.type = exprNodeType;
             return node;
         }
 
+        public override AstNode VisitAddition(AdditionNode node)
+        {
+            
+            AstNode left = Visit(node.Left);
+            AstNode right = Visit(node.Right);
+            if (left is IdentifyerNode identifierNode)
+            {   
+                Console.WriteLine("Left is an identifier");
+                left = CurrentScope[identifierNode.value];
+                left.type = CurrentScope[identifierNode.value].type;
+            }
+            if (right is IdentifyerNode identifierNode1)
+            {
+                Console.WriteLine("Right is an identifier");
+                right = CurrentScope[identifierNode1.value];
+                right.type = CurrentScope[identifierNode1.value].type;
+            }
+
+            if (!(left.type == TypeEnum.Int || left.type == TypeEnum.Float || left.type == TypeEnum.String) ||
+                !(right.type == TypeEnum.Int || right.type == TypeEnum.Float || right.type == TypeEnum.String))
+            {
+                Console.WriteLine("Type mismatch in addition, illegal type cannot add " + left.type + " and " + right.type);
+            }
+
+            if (left.type != right.type)
+            {
+                Errors.Add("Type mismatch in addition");
+            }
+
+            node.type = left.type;
+            return node;
+        }
+
+        public override AstNode VisitIdentifyer(IdentifyerNode node)
+        {
+            if (!CurrentScope.ContainsKey(node.value))
+            {
+                Errors.Add($"Variable {node.value} not declared in this scope");
+            }
+
+            return node;
+        }
         public override AstNode VisitTypeAnotation (TypeAnotationNode node)
         {
             return node.type switch
             {
                 TypeEnum.Int => new TypeAnotationNode(node.value, TypeEnum.Int),
+                TypeEnum.Float => new TypeAnotationNode(node.value, TypeEnum.Float),
                 TypeEnum.String => new TypeAnotationNode(node.value, TypeEnum.String),
                 TypeEnum.Bool => new TypeAnotationNode(node.value, TypeEnum.Bool),
             };
         }
+
+        public override AstNode VisitTemplate(TemplateNode node)
+        {
+
+            CurrentScope.Add(node.Id.value, node);
+
+            Scopes.Push(new Dictionary<string, AstNode>());
+            foreach (var field in node.Fields)
+            {
+               AstNode templateField = Visit(field);
+               //DER ER IKKE NOGET FIELDID
+               CurrentScope.Add(field.Id.value, templateField);
+            }
+
+            return node;
+        }
+
+        public override AstNode VisitTemplateField(TemplateFieldNode node)
+        {
+            TypeEnum type;
+            TypeEnum? exprType;
+            
+            TypeAnotationNode typeAnotationNode= (TypeAnotationNode)Visit(node.Type);
+            type = typeAnotationNode.type;
+            
+            if(node.Expr != null){
+                ExpressionNode Expr = (ExpressionNode)Visit(node.Expr);
+                exprType = Expr.type;
+                if(type != exprType)
+                {
+                    Errors.Add($"Type mismatch in field {node.Id.value}");
+                }
+
+                AstNode test = Visit(node.Expr);
+                if(Visit(test) is IdentifyerNode){
+                    //make this look through the scope to find the type of the identifier
+                    
+                }
+
+            }
+
+            node.type = type;
+            return node;
+        }
+
+        public override AstNode VisitInt(IntNode node)
+        {
+            node.type = TypeEnum.Int;
+            return node;
+        }
+
+        public override AstNode VisitBool(BoolNode node)
+        {
+            node.type = TypeEnum.Bool;
+            return node;
+        }
+
+        public override AstNode VisitFloat(FloatNode node)
+        {
+            node.type = TypeEnum.Float;
+            return node;
+        }
+
+        public override AstNode VisitObject(ObjectNode node)
+        {
+            node.type = TypeEnum.Object;
+            return node;
+        }
+
+        public override AstNode VisitString(StringNode node)
+        {
+            node.type = TypeEnum.String;
+            return node;
+        }
+
 
 
 

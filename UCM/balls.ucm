@@ -1,1 +1,6 @@
-int a = 10;
+int b = 10;
+template a{
+    int l = b;
+    float c;
+    string d = "d";
+}
