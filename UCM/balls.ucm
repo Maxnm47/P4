@@ -1,11 +1,1 @@
-
-template A {
-    int a;
-    string b;
-}
-
-
-A o = {
-    a = 2;
-    b = "hej";
-};
+int a = 10;

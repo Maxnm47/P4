@@ -18,7 +18,7 @@ public abstract class AstNode
 
     public TypeEnum type { get; set; }
 
-    public abstract T? Accept<T>(astVisitor.AstBaseVisitor<T> visitor);
+    public abstract T? Accept<T>(AstBaseVisitor<T> visitor);
 
     public virtual string ToString()
     {
