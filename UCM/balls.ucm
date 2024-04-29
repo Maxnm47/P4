@@ -1,6 +1,4 @@
-int b = 10;
+int rootInt = 10;
 template a{
-    int l = b;
-    float c;
-    string d = "d";
+    int templateInt = rootInt;
 }

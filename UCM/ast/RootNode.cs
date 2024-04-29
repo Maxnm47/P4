@@ -13,9 +13,9 @@ public class RootNode : AstNode
     }
 
     public RootNode(
+        List<FieldNode> fields,
         List<MethodCollectionNode> methodCollections,
-        List<TemplateNode> templates,
-        List<FieldNode> fields)
+        List<TemplateNode> templates)
     {
         this.AddChildren(templates);
         this.AddChildren(methodCollections);

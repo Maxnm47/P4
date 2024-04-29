@@ -30,6 +30,24 @@ namespace UCM.astVisitor
             Scopes.Push(new Dictionary<string, AstNode>());
         }
 
+        public override AstNode VisitRoot(RootNode node)
+        {
+            foreach (var field in node.Fields)
+            {
+                Visit(field);
+            }
+            foreach (var methodCollection in node.MethodCollections)
+            {
+                Visit(methodCollection);
+            }
+            foreach (var template in node.Templates)
+            {
+                Visit(template);
+            }
+
+            return node;
+        }
+
         public override AstNode VisitField(FieldNode node)
         {
             TypeEnum? type;
@@ -57,6 +75,7 @@ namespace UCM.astVisitor
                 Errors.Add($"Variable {key} already declared in this scope");
             }
             else{
+                Console.WriteLine("Adding field to scope");
                 CurrentScope.Add(key, node);
             } 
 
@@ -113,11 +132,14 @@ namespace UCM.astVisitor
 
         public override AstNode VisitIdentifyer(IdentifyerNode node)
         {
-            if (!CurrentScope.ContainsKey(node.value))
+            foreach (var scope in Scopes)
             {
-                Errors.Add($"Variable {node.value} not declared in this scope");
+                if (scope.ContainsKey(node.value))
+                {
+                    return scope[node.value];
+                }
             }
-
+            Errors.Add($"Variable {node.value} not declared in this scope");
             return node;
         }
         public override AstNode VisitTypeAnotation (TypeAnotationNode node)
@@ -159,13 +181,15 @@ namespace UCM.astVisitor
                 ExpressionNode Expr = (ExpressionNode)Visit(node.Expr);
                 exprType = Expr.type;
                 if(type != exprType)
-                {
+                { 
+                    Console.WriteLine(type + " ____" +  exprType);  //hvorfor er den pik???
                     Errors.Add($"Type mismatch in field {node.Id.value}");
                 }
 
                 AstNode test = Visit(node.Expr);
                 if(Visit(test) is IdentifyerNode){
-                    //make this look through the scope to find the type of the identifier
+                    
+                    test = CurrentScope[((IdentifyerNode) test).value];
                     
                 }
 
@@ -204,9 +228,5 @@ namespace UCM.astVisitor
             node.type = TypeEnum.String;
             return node;
         }
-
-
-
-
     }
 }

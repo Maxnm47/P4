@@ -23,7 +23,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         List<MethodCollectionNode> methodCollections = context.functionCollection().Select(methodCollection => (MethodCollectionNode)Visit(methodCollection)).ToList();
         List<TemplateNode> templates = context.templateDefenition().Select(template => (TemplateNode)Visit(template)).ToList();
 
-        return new RootNode(methodCollections, templates, fields);
+        return new RootNode(fields, methodCollections, templates);
     }
 
     public override MethodCollectionNode VisitFunctionCollection(UCMParser.FunctionCollectionContext context)
