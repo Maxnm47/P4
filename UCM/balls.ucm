@@ -1,11 +1,19 @@
 
+
+
 template A {
     int a;
     string b;
 }
 
+template B {
+    A pik;
+}
 
-A o = {
-    a = 2;
-    b = "hej";
+
+B fuck = {
+    pik = {
+        b = 2;
+        a = 2;
+    };
 };

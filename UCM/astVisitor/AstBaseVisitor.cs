@@ -12,6 +12,7 @@ using UCM.ast.statements;
 using UCM.ast.statements.condition;
 using UCM.ast.statements.forLoops;
 using UCM.ast.statements.whileLoop;
+using UCM.typechecker;
 
 namespace UCM.astVisitor
 {

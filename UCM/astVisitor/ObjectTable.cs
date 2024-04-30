@@ -7,76 +7,36 @@ using UCM.typechecker;
 
 namespace UCM.astVisitor
 {
-    public class ObjectTable
-    {
-        public Dictionary<string, TypeInfo> objectTable { get; set; } = new Dictionary<string, TypeInfo>();
-
-    }
-
     public class TypeInfo
     {
         public TypeEnum type;
         public string? fieldKey;
         public string? templateId;
-        public bool isHidden = false;
-        public List<TypeInfo>? subFields;
-
-
-        public TypeInfo(TypeEnum type)
-        {
-            this.type = type;
-            this.fieldKey = null;
-            this.templateId = null;
-            this.subFields = null;
-        }
-
-        public TypeInfo(TypeEnum type, string fieldKey = null, string templateId = null, List<TypeInfo> subFields = null, bool isHidden = false)
+        public bool? isHidden;
+        public TypeInfo? arrayType;
+        public TypeInfo(TypeEnum type, string? fieldKey = null, string? templateId = null, bool? isHidden = null, TypeInfo? arrayType = null)
         {
             this.type = type;
             this.fieldKey = fieldKey;
             this.templateId = templateId;
-            this.subFields = subFields;
             this.isHidden = isHidden;
+            this.arrayType = arrayType;
         }
 
-        public TypeInfo(TypeEnum type, List<TypeInfo> subFields)
+        public override bool Equals(object? obj)
         {
-            this.type = type;
-            this.fieldKey = null;
-            this.templateId = null;
-            this.subFields = subFields;
-        }
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
 
-        public TypeInfo(TypeEnum type, string fieldKey = null)
-        {
-            this.type = type;
-            this.fieldKey = fieldKey;
-            this.templateId = null;
-            this.subFields = null;
-        }
+            TypeInfo other = (TypeInfo)obj;
 
-        public TypeInfo(TypeEnum type, string fieldKey, string templateId)
-        {
-            this.type = type;
-            this.fieldKey = fieldKey;
-            this.templateId = templateId;
-            this.subFields = null;
-        }
-
-        public TypeInfo(TypeEnum type, string fieldKey, string templateId, List<TypeInfo> subFields)
-        {
-            this.type = type;
-            this.fieldKey = fieldKey;
-            this.templateId = templateId;
-            this.subFields = subFields;
-        }
-
-        public TypeInfo(TypeEnum type, string fieldKey, List<TypeInfo> subFields)
-        {
-            this.type = type;
-            this.fieldKey = fieldKey;
-            this.templateId = null;
-            this.subFields = subFields;
+            return type == other.type &&
+                   fieldKey == other.fieldKey &&
+                   templateId == other.templateId &&
+                   isHidden == other.isHidden &&
+                   (arrayType != null && arrayType.Equals(other.arrayType) || arrayType == null && other.arrayType == null);
         }
     }
 }

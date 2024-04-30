@@ -15,5 +15,6 @@ public enum TypeEnum
     Unknown,
     Ok,
     Error,
+    Any,
 }
 
