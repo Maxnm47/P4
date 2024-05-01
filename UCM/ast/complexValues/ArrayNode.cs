@@ -15,6 +15,8 @@ namespace UCM.ast.complexValues
             AddChildren(expressions);
         }
 
+        public List<ExpressionNode> Elements => GetChildren<ExpressionNode>();
+
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
         {
             return visitor.VisitArray(this);

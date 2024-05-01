@@ -1,19 +1,15 @@
 
 
-
 template A {
     int a;
-    string b;
 }
 
 template B {
-    A pik;
+    A hej;
 }
 
-
-B[] fuck = [{
-    pik = {
+B pik = {
+    hej = {
         a = 2;
-        b = "hej";
     };
-}];
+};

@@ -38,64 +38,23 @@ namespace UCM.astVisitor
                 return base.VisitField(fieldNode);
             }
 
-            TypeAnotationNode typeAnotation;
-            if (fieldNode.Type is not null)
-            {
-                typeAnotation = Visit(fieldNode.Type) as TypeAnotationNode;
-                fieldNode.Expr.typeInfo = typeAnotation.typeInfo;
-            }
-            else
-            {
-                typeAnotation = new TypeAnotationNode("unknown", TypeEnum.Undefined);
-                typeAnotation.typeInfo = new TypeInfo(TypeEnum.Undefined);
-                fieldNode.Expr.typeInfo = new TypeInfo(TypeEnum.Unknown);
-            }
+            // Get type info from type anotation if it exits else set type to any
+            TypeInfo typeInfo = (fieldNode.Type is not null) ? (Visit(fieldNode.Type) as TypeAnotationNode).typeInfo : new TypeInfo(TypeEnum.Any);
 
-            fieldNode.Expr.typeInfo.fieldKey = key;
-            ExpressionNode expr = Visit(fieldNode.Expr) as ExpressionNode;
-
-            if (typeAnotation.typeInfo.type == TypeEnum.Undefined)
-            {
-                typeAnotation.typeInfo = expr.typeInfo;
-            }
-
-            expr.typeInfo.fieldKey = key;
-
-            if (!expr!.typeInfo!.Equals(typeAnotation.typeInfo))
-            {
-                if (!(typeAnotation.typeInfo.arrayType != null
-                && typeAnotation.typeInfo.arrayType.type == TypeEnum.Any
-                && expr.typeInfo.type == TypeEnum.Array))
-                {
-
-                    if (expr.typeInfo.arrayType != null && typeAnotation.typeInfo.arrayType != null)
-                    {
-                        Errors.Add($"Type mismatch in field {key}: {typeAnotation.typeInfo.arrayType.type} array != {expr.typeInfo.arrayType.type} array");
-                    }
-                    else
-                    {
-                        Errors.Add($"Type mismatch in field {key}: {typeAnotation.typeInfo.type} != {expr.typeInfo.type}");
-                    }
-                }
-            }
-
-            if (typeAnotation.typeInfo.templateId != null)
-            {
-                fieldNode.typeInfo = typeAnotation.typeInfo;
-                if (!templateTypeChecker.Check(typeAnotation.typeInfo.templateId, fieldNode.Expr.GetChild<ObjectNode>(0)))
-                {
-                    Errors.Add($"Template {typeAnotation.typeInfo.templateId} does not match field {key}");
-                    return base.VisitField(fieldNode);
-                }
-            }
+            // Check if expression type matches the field type
+            ExpressionNode expression = fieldNode.Expr;
+            expression.typeInfo = typeInfo;
+            Visit(expression);
 
 
-            fieldNode.typeInfo = expr.typeInfo;
+            fieldNode.typeInfo = typeInfo.type == TypeEnum.Any ? expression.typeInfo : typeInfo;
             fieldNode.typeInfo.fieldKey = key;
-
             CurrentScope.Add(key, fieldNode);
             return fieldNode;
         }
+
+
+
 
         public override AstNode VisitTypeAnotation(TypeAnotationNode typeAnotationNode)
         {
@@ -110,8 +69,6 @@ namespace UCM.astVisitor
             {
                 typeInfo.arrayType = calcArrayType(typeAnotationNode.value);
             }
-
-
 
             typeAnotationNode.typeInfo = typeInfo;
 
@@ -133,6 +90,13 @@ namespace UCM.astVisitor
 
             objectNode.typeInfo.type = TypeEnum.Object;
 
+            if (objectNode.typeInfo.templateId is not null)
+            {
+                if (!templateTypeChecker.Check(objectNode.typeInfo.templateId, objectNode))
+                {
+                    Errors.Add($"Object does not match template {objectNode.typeInfo.templateId}");
+                }
+            }
 
 
             return objectNode;
@@ -140,11 +104,14 @@ namespace UCM.astVisitor
 
         public override AstNode VisitExpression(ExpressionNode node)
         {
+            // Pass type info to children
             AstNode child = node.children[0];
             child.typeInfo = node.typeInfo;
-            child = Visit(child);
 
-            node.children[0] = child;
+            // Visit the child to see if it maches the type
+            Visit(child);
+
+            // Set type info to the same as the child to propergate pontential errors up the tree
             node.typeInfo = child.typeInfo;
 
             return node;
@@ -152,50 +119,37 @@ namespace UCM.astVisitor
 
         public override AstNode VisitString(StringNode node)
         {
-            node.typeInfo = new TypeInfo(TypeEnum.String);
+            CheckPrimitiveType(node, TypeEnum.String);
             return node;
         }
 
         public override AstNode VisitInt(IntNode node)
         {
-            node.typeInfo = new TypeInfo(TypeEnum.Int);
+            CheckPrimitiveType(node, TypeEnum.Int);
             return node;
         }
 
         public override AstNode VisitFloat(FloatNode node)
         {
-            node.typeInfo = new TypeInfo(TypeEnum.Float);
+            CheckPrimitiveType(node, TypeEnum.Float);
             return node;
         }
 
         public override AstNode VisitBool(BoolNode node)
         {
-            node.typeInfo = new TypeInfo(TypeEnum.Bool);
+            CheckPrimitiveType(node, TypeEnum.Bool);
             return node;
         }
 
         public override AstNode VisitArray(ArrayNode node)
         {
-            TypeInfo arrayType = new TypeInfo(TypeEnum.Unknown);
 
-            foreach (var child in node.children)
+            foreach (ExpressionNode expression in node.Elements)
             {
-                child.typeInfo = node.typeInfo.arrayType;
-                AstNode visitedChild = Visit(child);
-                if (arrayType.type == TypeEnum.Unknown)
-                {
-                    arrayType = visitedChild.typeInfo;
-                }
-                else if (!arrayType.Equals(visitedChild.typeInfo))
-                {
-                    arrayType.type = TypeEnum.Any;
-                    continue;
-                }
-
-
+                // Set type info to the array type
+                expression.typeInfo = node.typeInfo.arrayType;
+                Visit(expression);
             }
-
-            node.typeInfo = new TypeInfo(TypeEnum.Array, arrayType: arrayType);
 
             return node;
         }
@@ -266,6 +220,20 @@ namespace UCM.astVisitor
         }
 
 
+        void CheckPrimitiveType(AstNode node, TypeEnum expectedType)
+        {
+            if (node.typeInfo.type == TypeEnum.Any)
+            {
+                node.typeInfo = new TypeInfo(expectedType);
+                return;
+            }
+
+            if (node.typeInfo.type != expectedType)
+            {
+                Errors.Add($"Type mismatch: Can not set value of type {expectedType} to value of type {node.typeInfo.type}");
+                node.typeInfo.type = TypeEnum.Error;
+            }
+        }
 
         TypeInfo calcArrayType(string rawArrayTypeString)
         {
