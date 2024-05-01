@@ -59,6 +59,7 @@ namespace UCM.astVisitor
                 typeAnotation.typeInfo = expr.typeInfo;
             }
 
+            expr.typeInfo.fieldKey = key;
 
             if (!expr!.typeInfo!.Equals(typeAnotation.typeInfo))
             {
@@ -66,6 +67,7 @@ namespace UCM.astVisitor
                 && typeAnotation.typeInfo.arrayType.type == TypeEnum.Any
                 && expr.typeInfo.type == TypeEnum.Array))
                 {
+
                     if (expr.typeInfo.arrayType != null && typeAnotation.typeInfo.arrayType != null)
                     {
                         Errors.Add($"Type mismatch in field {key}: {typeAnotation.typeInfo.arrayType.type} array != {expr.typeInfo.arrayType.type} array");

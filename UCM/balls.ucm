@@ -13,7 +13,7 @@ template B {
 
 B[] fuck = [{
     pik = {
-        a = 2;
+        a = "ed";
         b = "hej";
     };
 }];
