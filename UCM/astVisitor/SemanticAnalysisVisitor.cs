@@ -14,9 +14,10 @@ namespace UCM.astVisitor
     public class SemanticAnalysisVisitor : AstBaseVisitor<AstNode>
     {
         public Dictionary<string, TemplateNode> TemplateTalbe { get; set; } = [];
+
+        public TemplateTypeChecker templateTypeChecker = new();
         public Stack<Dictionary<string, AstNode>> SymbolTables { get; set; } = new Stack<Dictionary<string, AstNode>>();
         public List<string> Errors { get; set; } = new List<string>();
-
         public Dictionary<string, AstNode> CurrentScope => SymbolTables.Peek();
 
 
@@ -78,26 +79,11 @@ namespace UCM.astVisitor
 
             if (typeAnotation.typeInfo.templateId != null)
             {
-                if (!TemplateTalbe.ContainsKey(typeAnotation.typeInfo.templateId))
+                if (!templateTypeChecker.Check(typeAnotation.typeInfo.templateId, fieldNode)) ;
                 {
-                    Errors.Add($"Template {typeAnotation.typeInfo.templateId} not found");
+                    Errors.Add($"Template {typeAnotation.typeInfo.templateId} does not match field {key}");
                     return base.VisitField(fieldNode);
                 }
-
-                if (expr.GetChild<ObjectNode>(0) is null)
-                {
-                    Errors.Add($"Can only match template {typeAnotation.typeInfo.templateId} with field of type object in field: {key}");
-                    return base.VisitField(fieldNode);
-                }
-
-                TemplateNode template = TemplateTalbe[typeAnotation.typeInfo.templateId];
-
-                if (!TemplateTypeChecker.Check(template, expr.GetChild<ObjectNode>(0)))
-                {
-                    Errors.Add($"Template {typeAnotation.typeInfo.templateId} not compatible with field {key}");
-                    return base.VisitField(fieldNode);
-                }
-
             }
 
 
@@ -233,7 +219,6 @@ namespace UCM.astVisitor
         }
 
 
-        //template
         public override AstNode VisitTemplate(TemplateNode node)
         {
             if (TemplateTalbe.ContainsKey(node.Id.value))
@@ -256,7 +241,7 @@ namespace UCM.astVisitor
                 templateScope.Add(field.Id.value, visitedField);
             }
 
-            TemplateTalbe.Add(node.Id.value, node);
+            templateTypeChecker.AddTemplate(node.Id.value, node);
 
             return base.VisitTemplate(node);
         }
@@ -264,10 +249,11 @@ namespace UCM.astVisitor
         //templateField
         public override AstNode VisitTemplateField(TemplateFieldNode node)
         {
-            base.VisitTemplateField(node);
+            TypeAnotationNode type = Visit(node.Type) as TypeAnotationNode;
 
-            TypeInfo typeInfo = new TypeInfo(node.Type.typeInfo.type, fieldKey: node.Id.value);
-            node.typeInfo = typeInfo;
+
+            node.typeInfo = type.typeInfo;
+            type.typeInfo.fieldKey = node.Id.value;
 
             return node;
         }

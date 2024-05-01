@@ -8,60 +8,39 @@ using UCM.typechecker;
 
 namespace UCM.astVisitor
 {
-    public static class TemplateTypeChecker
+    public class TemplateTypeChecker
     {
-        public static bool Check(TemplateNode templateNode, ObjectNode objectNode, bool partial = false)
-        {
-            if (partial)
-            {
-                return CheckPartialMatch(templateNode, objectNode);
-            }
 
-            return CheckCompleteMatch(templateNode, objectNode);
+        private Dictionary<string, TemplateNode> templateTable = new Dictionary<string, TemplateNode>();
+
+        public void AddTemplate(string templateId, TemplateNode templateNode)
+        {
+            templateTable.Add(templateId, templateNode);
         }
-
-        private static bool CheckPartialMatch(TemplateNode templateNode, ObjectNode objectNode)
+        public bool Check(string templateId, FieldNode field)
         {
-            if (objectNode is null)
+            if (!templateTable.ContainsKey(templateId))
             {
                 return false;
             }
 
-
-            foreach (var field in objectNode.Fields)
+            var templateNode = templateTable[templateId];
+            bool isPartial = field.Hidden is null;
+            if (isPartial)
             {
-                if (!FieldInTemplate(templateNode.Fields, field))
-                {
-                    return false;
-                }
+                return CheckPartialMatch(templateNode, field);
             }
-
-            return true;
+            else
+            {
+                return CheckCompleteMatch(templateNode, field);
+            }
         }
 
-        private static bool CheckCompleteMatch(TemplateNode templateNode, ObjectNode objectNode)
+        private bool CheckPartialMatch(TemplateNode template, FieldNode field)
         {
-            if (!CheckPartialMatch(templateNode, objectNode))
+            foreach (var subField in field.Expr.GetChild<ObjectNode>(0).Fields)
             {
-                return false;
-            }
-
-            foreach (var tField in templateNode.Fields)
-            {
-                if (!FieldInObject(objectNode.Fields, tField))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private static bool FieldInTemplate(List<TemplateFieldNode> tFields, FieldNode fieldNode)
-        {
-            foreach (var tField in tFields)
-            {
-                if (tField.typeInfo.Equals(fieldNode.typeInfo))
+                if (FieldInTemplate(template, subField))
                 {
                     return true;
                 }
@@ -70,7 +49,45 @@ namespace UCM.astVisitor
             return false;
         }
 
-        private static bool FieldInObject(List<FieldNode> fields, TemplateFieldNode tField)
+        private bool CheckCompleteMatch(TemplateNode template, FieldNode field)
+        {
+            if (!CheckPartialMatch(template, field))
+            {
+                return false;
+            }
+
+            List<FieldNode> fields = field.Expr.GetChild<ObjectNode>(0).Fields;
+
+            foreach (var tField in template.Fields)
+            {
+                if (!FieldInObject(fields, tField))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool FieldInTemplate(TemplateNode template, FieldNode fieldNode)
+        {
+            foreach (var tField in template.Fields)
+            {
+                if (tField.typeInfo.Equals(fieldNode.typeInfo))
+                {
+                    return true;
+                }
+
+                if (tField.typeInfo.templateId != null)
+                {
+                    return Check(tField.typeInfo.templateId, fieldNode);
+                }
+            }
+
+            return false;
+        }
+
+        private bool FieldInObject(List<FieldNode> fields, TemplateFieldNode tField)
         {
             foreach (var field in fields)
             {
