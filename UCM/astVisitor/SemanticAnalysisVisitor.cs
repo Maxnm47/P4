@@ -82,7 +82,7 @@ namespace UCM.astVisitor
             if (typeAnotation.typeInfo.templateId != null)
             {
                 fieldNode.typeInfo = typeAnotation.typeInfo;
-                if (!templateTypeChecker.Check(typeAnotation.typeInfo.templateId, fieldNode))
+                if (!templateTypeChecker.Check(typeAnotation.typeInfo.templateId, fieldNode.Expr.GetChild<ObjectNode>(0)))
                 {
                     Errors.Add($"Template {typeAnotation.typeInfo.templateId} does not match field {key}");
                     return base.VisitField(fieldNode);
@@ -126,13 +126,14 @@ namespace UCM.astVisitor
             foreach (FieldNode field in objectNode.Fields)
             {
                 field.typeInfo = new TypeInfo(TypeEnum.Unknown); // Set to unknown to be updated later
-                //field.typeInfo.templateId = objectNode.typeInfo!.templateId;
                 Visit(field);
             }
 
             SymbolTables.Pop();
 
             objectNode.typeInfo.type = TypeEnum.Object;
+
+
 
             return objectNode;
         }
@@ -190,6 +191,8 @@ namespace UCM.astVisitor
                     arrayType.type = TypeEnum.Any;
                     continue;
                 }
+
+
             }
 
             node.typeInfo = new TypeInfo(TypeEnum.Array, arrayType: arrayType);
