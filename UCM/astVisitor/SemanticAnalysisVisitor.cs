@@ -79,7 +79,8 @@ namespace UCM.astVisitor
 
             if (typeAnotation.typeInfo.templateId != null)
             {
-                if (!templateTypeChecker.Check(typeAnotation.typeInfo.templateId, fieldNode)) ;
+                fieldNode.typeInfo = typeAnotation.typeInfo;
+                if (!templateTypeChecker.Check(typeAnotation.typeInfo.templateId, fieldNode))
                 {
                     Errors.Add($"Template {typeAnotation.typeInfo.templateId} does not match field {key}");
                     return base.VisitField(fieldNode);
@@ -176,6 +177,7 @@ namespace UCM.astVisitor
 
             foreach (var child in node.children)
             {
+                child.typeInfo = node.typeInfo.arrayType;
                 AstNode visitedChild = Visit(child);
                 if (arrayType.type == TypeEnum.Unknown)
                 {

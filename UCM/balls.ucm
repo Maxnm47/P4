@@ -11,9 +11,9 @@ template B {
 }
 
 
-B fuck = {
+B[] fuck = [{
     pik = {
         a = 2;
         b = "hej";
     };
-};
+}];

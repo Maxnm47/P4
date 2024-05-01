@@ -25,7 +25,7 @@ namespace UCM.astVisitor
             }
 
             var templateNode = templateTable[templateId];
-            bool isPartial = field.Hidden is null;
+            bool isPartial = field.Hidden is not null;
             if (isPartial)
             {
                 return CheckPartialMatch(templateNode, field);
@@ -40,13 +40,13 @@ namespace UCM.astVisitor
         {
             foreach (var subField in field.Expr.GetChild<ObjectNode>(0).Fields)
             {
-                if (FieldInTemplate(template, subField))
+                if (!FieldInTemplate(template, subField))
                 {
-                    return true;
+                    return false;
                 }
             }
 
-            return false;
+            return true;
         }
 
         private bool CheckCompleteMatch(TemplateNode template, FieldNode field)
@@ -58,12 +58,9 @@ namespace UCM.astVisitor
 
             List<FieldNode> fields = field.Expr.GetChild<ObjectNode>(0).Fields;
 
-            foreach (var tField in template.Fields)
+            if (fields.Count != template.Fields.Count)
             {
-                if (!FieldInObject(fields, tField))
-                {
-                    return false;
-                }
+                return false;
             }
 
             return true;
@@ -86,19 +83,5 @@ namespace UCM.astVisitor
 
             return false;
         }
-
-        private bool FieldInObject(List<FieldNode> fields, TemplateFieldNode tField)
-        {
-            foreach (var field in fields)
-            {
-                if (field.typeInfo.Equals(tField.typeInfo))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
     }
 }
