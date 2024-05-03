@@ -264,6 +264,117 @@ namespace UCM.astVisitor
             return node;
         }
 
+        //subtraction
+        public override AstNode VisitSubtraction(SubtractionNode node)
+        {
+            AstNode left = node.Left;
+            AstNode right = node.Right;
+            left.typeInfo = node.typeInfo;
+            right.typeInfo = node.typeInfo;
+
+            Visit(left);
+            Visit(right);
+
+            if (left.typeInfo.type != right.typeInfo.type)
+            {
+                Errors.Add($"Type mismatch in subtraction: {left.typeInfo.type} != {right.typeInfo.type}");
+                return base.VisitSubtraction(node);
+            }
+
+            if (left.typeInfo.type != TypeEnum.Int && left.typeInfo.type != TypeEnum.Float)
+            {
+                Errors.Add($"Type {left.typeInfo.type} not supported in subtraction");
+                return base.VisitSubtraction(node);
+            }
+
+            node.typeInfo = left.typeInfo;
+
+            return node;
+        }
+
+        //multiplication
+        public override AstNode VisitMultiplication(MultiplicationNode node)
+        {
+            AstNode left = node.Left;
+            AstNode right = node.Right;
+            left.typeInfo = node.typeInfo;
+            right.typeInfo = node.typeInfo;
+
+            Visit(left);
+            Visit(right);
+
+            if (left.typeInfo.type != right.typeInfo.type)
+            {
+                Errors.Add($"Type mismatch in multiplication: {left.typeInfo.type} != {right.typeInfo.type}");
+                return base.VisitMultiplication(node);
+            }
+
+            if (left.typeInfo.type != TypeEnum.Int && left.typeInfo.type != TypeEnum.Float)
+            {
+                Errors.Add($"Type {left.typeInfo.type} not supported in multiplication");
+                return base.VisitMultiplication(node);
+            }
+
+            node.typeInfo = left.typeInfo;
+
+            return node;
+        }
+
+        //division
+        public override AstNode VisitDivision(DivisionNode node)
+        {
+            AstNode left = node.Left;
+            AstNode right = node.Right;
+            left.typeInfo = node.typeInfo;
+            right.typeInfo = node.typeInfo;
+
+            Visit(left);
+            Visit(right);
+
+            if (left.typeInfo.type != right.typeInfo.type)
+            {
+                Errors.Add($"Type mismatch in division: {left.typeInfo.type} != {right.typeInfo.type}");
+                return base.VisitDivision(node);
+            }
+
+            if (left.typeInfo.type != TypeEnum.Int && left.typeInfo.type != TypeEnum.Float)
+            {
+                Errors.Add($"Type {left.typeInfo.type} not supported in division");
+                return base.VisitDivision(node);
+            }
+
+            node.typeInfo = left.typeInfo;
+
+            return node;
+        }
+
+        // Modulo
+        public override AstNode VisitModulo(ModuloNode node)
+        {
+            AstNode left = node.Left;
+            AstNode right = node.Right;
+            left.typeInfo = node.typeInfo;
+            right.typeInfo = node.typeInfo;
+
+            Visit(left);
+            Visit(right);
+
+            if (left.typeInfo.type != right.typeInfo.type)
+            {
+                Errors.Add($"Type mismatch in modulo: {left.typeInfo.type} != {right.typeInfo.type}");
+                return base.VisitModulo(node);
+            }
+
+            if (left.typeInfo.type != TypeEnum.Int)
+            {
+                Errors.Add($"Type {left.typeInfo.type} not supported in modulo");
+                return base.VisitModulo(node);
+            }
+
+            node.typeInfo = left.typeInfo;
+
+            return node;
+        }
 
         public override AstNode VisitTemplate(TemplateNode node)
         {
