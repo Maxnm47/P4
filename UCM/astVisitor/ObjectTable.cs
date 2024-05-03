@@ -7,9 +7,9 @@ namespace UCM.astVisitor
         public TypeEnum type;
         // public string? fieldKey;
         public string? templateId;
-        public bool? isHidden;
+        public bool isHidden = false;
         public TypeInfo? arrayType;
-        public TypeInfo(TypeEnum type, string? templateId = null, bool? isHidden = null, TypeInfo? arrayType = null)
+        public TypeInfo(TypeEnum type, string? templateId = null, bool isHidden = false, TypeInfo? arrayType = null)
         {
             this.type = type;
             // this.fieldKey = fieldKey;

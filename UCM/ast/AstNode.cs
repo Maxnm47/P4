@@ -68,13 +68,14 @@ public abstract class AstNode
         }
     }
 
-    public List<T> GetChildren<T>() where T : AstNode
+    public List<T>? GetChildren<T>() where T : AstNode
     {
-        List<T> result = new List<T>();
+        List<T> result = null;
         foreach (AstNode child in children)
         {
             if (child is T)
             {
+                result ??= new List<T>();
                 result.Add((T)child);
             }
         }

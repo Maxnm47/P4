@@ -16,7 +16,7 @@ namespace UCM.astVisitor
         {
             templateTable.Add(templateId, templateNode);
         }
-        public bool Check(string templateId, ObjectNode objectNode, bool isPartial = false)
+        public bool Check(string templateId, List<FieldNode> fieldNodes, bool isPartial = false)
         {
             if (!templateTable.ContainsKey(templateId))
             {
@@ -27,17 +27,17 @@ namespace UCM.astVisitor
 
             if (isPartial)
             {
-                return CheckPartialMatch(templateNode, objectNode);
+                return CheckPartialMatch(templateNode, fieldNodes);
             }
             else
             {
-                return CheckCompleteMatch(templateNode, objectNode);
+                return CheckCompleteMatch(templateNode, fieldNodes);
             }
         }
 
-        private bool CheckPartialMatch(TemplateNode template, ObjectNode objectNode)
+        private bool CheckPartialMatch(TemplateNode template, List<FieldNode> fieldNodes)
         {
-            foreach (var subField in objectNode.Fields)
+            foreach (var subField in fieldNodes)
             {
                 if (!FieldInTemplate(template.Id.value, subField))
                 {
@@ -48,16 +48,15 @@ namespace UCM.astVisitor
             return true;
         }
 
-        private bool CheckCompleteMatch(TemplateNode template, ObjectNode objectNode)
+        private bool CheckCompleteMatch(TemplateNode template, List<FieldNode> fieldNodes)
         {
-            if (!CheckPartialMatch(template, objectNode))
+            if (!CheckPartialMatch(template, fieldNodes))
             {
                 return false;
             }
 
-            List<FieldNode> fields = objectNode.Fields;
 
-            if (fields.Count != template.Fields.Count)
+            if (fieldNodes.Count != template.Fields.Count)
             {
                 return false;
             }
@@ -83,7 +82,7 @@ namespace UCM.astVisitor
 
                 if (tField.typeInfo.templateId != null)
                 {
-                    return Check(tField.typeInfo.templateId, fieldNode.Expr.GetChild<ObjectNode>(0));
+                    return Check(tField.typeInfo.templateId, fieldNode.Expr.GetChild<ObjectNode>(0).Fields);
                 }
             }
 

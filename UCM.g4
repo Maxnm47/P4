@@ -127,7 +127,7 @@ field:
 arrayElement: expr | loopConstruction;
 array: LBRACKET (arrayElement (COMMA arrayElement)* |) RBRACKET;
 
-arrayAccess: id LBRACKET expr RBRACKET;
+arrayAccess: id (LBRACKET expr RBRACKET)+;
 // Templates
 evaluaterArray: LBRACKET (expr (COMMA expr)* |) RBRACKET;
 

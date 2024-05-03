@@ -1,4 +1,14 @@
 
+template A {
+    int a;
+}
 
+template B {
+    A b;
+}
 
-int a = 2 % 2;
+B b = {
+    b = {
+        a = "hej";
+    };
+};

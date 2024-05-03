@@ -290,5 +290,10 @@ namespace UCM.astVisitor
         {
             return VisitChildren(objectFieldAcessNode);
         }
+
+        public virtual Result VisitArrayAccess(ArrayAccessNode arrayAccessNode)
+        {
+            return VisitChildren(arrayAccessNode);
+        }
     }
 }

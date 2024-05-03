@@ -27,6 +27,29 @@ namespace UCM.astVisitor
             SymbolTables.Push([]);
         }
 
+        public override AstNode VisitRoot(RootNode rootNode)
+        {
+            foreach (AstNode node in rootNode.children)
+            {
+                Visit(node);
+            }
+
+            if (Errors.Count == 0)
+            {
+                return rootNode;
+            }
+
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            foreach (string error in Errors)
+            {
+                Console.WriteLine(error);
+            }
+
+            Console.ResetColor();
+            throw new Exception("Semantic analysis failed");
+        }
+
 
         public override AstNode VisitField(FieldNode fieldNode)
         {
@@ -59,8 +82,8 @@ namespace UCM.astVisitor
                 fieldNode.typeInfo = fieldNode.Type.typeInfo;
             }
 
-
             // Check if expression type matches the field type
+            fieldNode.typeInfo.isHidden = fieldNode.Hidden is not null;
             ExpressionNode expression = fieldNode.Expr;
             expression.typeInfo = fieldNode.typeInfo;
             Visit(expression);
@@ -78,12 +101,12 @@ namespace UCM.astVisitor
         {
             TypeInfo exprectedType = typeAnotationNode.typeInfo;
 
-            if (exprectedType.type == TypeEnum.Unknown)
+            if (exprectedType.type == TypeEnum.Unknown || exprectedType.type == TypeEnum.Any)
             {
                 exprectedType.type = typeAnotationNode.type ?? TypeEnum.Any;
                 if (typeAnotationNode.type == TypeEnum.Object)
                 {
-                    exprectedType.templateId = typeAnotationNode.value;
+                    exprectedType.templateId = typeAnotationNode.value.Equals("object") ? null : typeAnotationNode.value;
                 }
             }
 
@@ -125,18 +148,41 @@ namespace UCM.astVisitor
             Dictionary<string, AstNode> objectScope = new Dictionary<string, AstNode>();
             SymbolTables.Push(objectScope);
 
-            foreach (FieldNode field in objectNode.Fields)
+            List<FieldNode> fields = objectNode.Fields;
+
+            if (objectNode.Id is not null)
+            {
+                ObjectNode adaptedObject = (FindSymbol(objectNode.Id.value) as FieldNode).Expr.GetChild<ObjectNode>(0);
+                if (adaptedObject is null)
+                {
+                    Errors.Add($"Cannot adapt non declaed object {objectNode.Id.value}");
+                    return base.VisitObject(objectNode);
+                }
+
+                foreach (FieldNode field in adaptedObject.Fields)
+                {
+                    if (!fields.Any(f => f.Key.Id.value == field.Key.Id.value))
+                    {
+                        fields.Add(field);
+                    }
+                }
+            }
+
+            foreach (FieldNode field in fields)
             {
                 // Pass potential type info to children
-                field.typeInfo = objectNode.typeInfo;
+                field.typeInfo = new TypeInfo(TypeEnum.Unknown);
+                field.typeInfo.templateId = objectNode.typeInfo.templateId;
                 Visit(field);
             }
+
+
 
             SymbolTables.Pop();
 
             if (objectNode.typeInfo.templateId is not null)
             {
-                if (!templateTypeChecker.Check(objectNode.typeInfo.templateId, objectNode))
+                if (!templateTypeChecker.Check(objectNode.typeInfo.templateId, fields, isPartial: objectNode.typeInfo.isHidden))
                 {
                     Errors.Add($"Object does not match template {objectNode.typeInfo.templateId}");
                 }
@@ -146,6 +192,8 @@ namespace UCM.astVisitor
             {
                 Errors.Add($"Type mismatch: Can not set value of type Object to value of type {objectNode.typeInfo.type}");
             }
+
+            objectNode.typeInfo.type = TypeEnum.Object;
 
             return objectNode;
         }
@@ -233,6 +281,77 @@ namespace UCM.astVisitor
             }
 
             return node;
+        }
+
+        public override AstNode VisitArrayAccess(ArrayAccessNode arrayAccessNode)
+        {
+            IdentifyerNode arrayName = arrayAccessNode.ArrayName;
+            List<ExpressionNode> indexs = arrayAccessNode.Indexs;
+
+            int dimentions = indexs.Count;
+
+            foreach (ExpressionNode index in indexs)
+            {
+                index.typeInfo = new TypeInfo(TypeEnum.Int);
+                Visit(index);
+
+                if (index.typeInfo.type == TypeEnum.Error)
+                {
+                    Errors.Add($"Index must be of type int");
+                }
+            }
+
+
+            FieldNode arrayField = FindSymbol(arrayName.value) as FieldNode;
+
+            if (arrayField is null)
+            {
+                Errors.Add($"Array {arrayName.value} not declared");
+                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.Error);
+                return arrayAccessNode;
+            }
+
+            ArrayNode array = arrayField.Expr.GetChild<ArrayNode>(0);
+
+            if (array.typeInfo.type != TypeEnum.Array)
+            {
+                Errors.Add($"Variable {arrayName.value} is not an array");
+                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.Error);
+                return arrayAccessNode;
+            }
+
+            TypeInfo arrayType = array.typeInfo.arrayType;
+
+            for (int i = 0; i < dimentions - 1; i++)
+            {
+                if (arrayType.type != TypeEnum.Array)
+                {
+                    Errors.Add($"Variable {arrayName.value} is not an array of {dimentions} dimentions");
+                    arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.Error);
+                    return arrayAccessNode;
+                }
+                arrayType = arrayType.arrayType;
+            }
+
+            if (arrayAccessNode.typeInfo.templateId != null && arrayType.templateId != arrayAccessNode.typeInfo.templateId)
+            {
+                Errors.Add($"Type mismatch: array access of type {arrayType.templateId ?? arrayType.type.ToString()} != {arrayAccessNode.typeInfo.templateId}");
+                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.Error);
+                return arrayAccessNode;
+            }
+
+
+            if (!arrayType.Equals(arrayAccessNode.typeInfo) &&
+                arrayAccessNode.typeInfo.type != TypeEnum.Any &&
+                arrayAccessNode.typeInfo.type != TypeEnum.Unknown)
+            {
+                Errors.Add($"Type mismatch: array access of type {arrayType.type} != {arrayAccessNode.typeInfo.type}");
+                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.Error);
+                return arrayAccessNode;
+            }
+
+
+            return arrayAccessNode;
         }
 
         //addition
@@ -420,9 +539,22 @@ namespace UCM.astVisitor
         }
 
 
+        public AstNode FindSymbol(string key)
+        {
+            foreach (var scope in SymbolTables)
+            {
+                if (scope.ContainsKey(key))
+                {
+                    return scope[key];
+                }
+            }
+
+            return null;
+        }
+
         void CheckPrimitiveType(AstNode node, TypeEnum expectedType)
         {
-            if (node.typeInfo.type == TypeEnum.Any)
+            if (node.typeInfo.type == TypeEnum.Any || node.typeInfo.type == TypeEnum.Unknown)
             {
                 node.typeInfo = new TypeInfo(expectedType);
                 return;

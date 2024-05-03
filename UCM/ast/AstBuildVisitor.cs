@@ -685,7 +685,18 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
 
         return array;
+
     }
+
+    public override AstNode VisitArrayAccess([NotNull] UCMParser.ArrayAccessContext context)
+    {
+        List<ExpressionNode> indexs = context.expr().Select(expr => (ExpressionNode)Visit(expr)).ToList();
+
+        IdentifyerNode arrayName = Visit(context.id()) as IdentifyerNode;
+
+        return new ArrayAccessNode(arrayName, indexs);
+    }
+
 
     public override LoopConstructionNode VisitLoopConstruction([NotNull] UCMParser.LoopConstructionContext context)
     {
