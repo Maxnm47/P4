@@ -31,6 +31,19 @@ namespace UCM.astVisitor
         public override AstNode VisitField(FieldNode fieldNode)
         {
             string key = fieldNode.Key.Id is not null ? fieldNode.Key.Id.value : Guid.NewGuid().ToString();
+            fieldNode.typeInfo ??= new TypeInfo(TypeEnum.Any);
+
+            if (fieldNode.typeInfo.templateId != null)
+            {
+                TypeInfo typeInfo = templateTypeChecker.GetFieldType(fieldNode.typeInfo.templateId, key);
+                if (typeInfo == null)
+                {
+                    Errors.Add($"Field {key} is not declared in template {fieldNode.typeInfo.templateId}");
+                    //return base.VisitField(fieldNode);
+                }
+
+                fieldNode.typeInfo = typeInfo ?? new TypeInfo(TypeEnum.Any);
+            }
 
             if (CurrentScope.ContainsKey(key))
             {
@@ -38,17 +51,22 @@ namespace UCM.astVisitor
                 return base.VisitField(fieldNode);
             }
 
-            // Get type info from type anotation if it exits else set type to any
-            TypeInfo typeInfo = (fieldNode.Type is not null) ? (Visit(fieldNode.Type) as TypeAnotationNode).typeInfo : new TypeInfo(TypeEnum.Any);
+            // If type anotated, check if the type anotation is correct and get the more precise type into fieldNode.typeInfo.
+            if (fieldNode.Type is not null)
+            {
+                fieldNode.Type.typeInfo = fieldNode.typeInfo;
+                Visit(fieldNode.Type);
+                fieldNode.typeInfo = fieldNode.Type.typeInfo;
+            }
+
 
             // Check if expression type matches the field type
             ExpressionNode expression = fieldNode.Expr;
-            expression.typeInfo = typeInfo;
+            expression.typeInfo = fieldNode.typeInfo;
             Visit(expression);
 
 
-            fieldNode.typeInfo = typeInfo.type == TypeEnum.Any ? expression.typeInfo : typeInfo;
-            fieldNode.typeInfo.fieldKey = key;
+
             CurrentScope.Add(key, fieldNode);
             return fieldNode;
         }
@@ -58,19 +76,46 @@ namespace UCM.astVisitor
 
         public override AstNode VisitTypeAnotation(TypeAnotationNode typeAnotationNode)
         {
-            TypeInfo typeInfo = new TypeInfo(typeAnotationNode.type ?? TypeEnum.Unknown);
+            TypeInfo exprectedType = typeAnotationNode.typeInfo;
 
-            if (typeInfo.type == TypeEnum.Object && typeAnotationNode.value != "object")
+            if (exprectedType.type == TypeEnum.Unknown)
             {
-                typeInfo.templateId = typeAnotationNode.value;
+                exprectedType.type = typeAnotationNode.type ?? TypeEnum.Any;
+                if (typeAnotationNode.type == TypeEnum.Object)
+                {
+                    exprectedType.templateId = typeAnotationNode.value;
+                }
             }
 
-            if (typeInfo.type == TypeEnum.Array)
+
+            if (typeAnotationNode.type == TypeEnum.Object && typeAnotationNode.value != "object")
             {
-                typeInfo.arrayType = calcArrayType(typeAnotationNode.value);
+                if (!CurrentScope.ContainsKey(typeAnotationNode.value))
+                {
+                    Errors.Add($"Template {typeAnotationNode.value} not declared");
+                    return base.VisitTypeAnotation(typeAnotationNode);
+                }
+
+                if (!typeAnotationNode.value.Equals(exprectedType.templateId))
+                {
+                    Errors.Add($"Type mismatch: {typeAnotationNode.value} != {exprectedType.templateId}");
+                    return base.VisitTypeAnotation(typeAnotationNode);
+                }
             }
 
-            typeAnotationNode.typeInfo = typeInfo;
+            if (typeAnotationNode.type == TypeEnum.Array)
+            {
+                TypeInfo arrayType = calcArrayType(typeAnotationNode.value);
+                if (!arrayType.Equals(exprectedType.arrayType) && exprectedType.arrayType != null && exprectedType.arrayType.type != TypeEnum.Any && exprectedType.arrayType.type != TypeEnum.Unknown)
+                {
+                    Errors.Add($"Type mismatch: {arrayType.type} != {exprectedType.arrayType.type}");
+                    return base.VisitTypeAnotation(typeAnotationNode);
+                }
+
+                exprectedType.type = TypeEnum.Array;
+                exprectedType.arrayType = arrayType;
+
+            }
 
             return typeAnotationNode;
         }
@@ -82,13 +127,12 @@ namespace UCM.astVisitor
 
             foreach (FieldNode field in objectNode.Fields)
             {
-                field.typeInfo = new TypeInfo(TypeEnum.Unknown); // Set to unknown to be updated later
+                // Pass potential type info to children
+                field.typeInfo = objectNode.typeInfo;
                 Visit(field);
             }
 
             SymbolTables.Pop();
-
-            objectNode.typeInfo.type = TypeEnum.Object;
 
             if (objectNode.typeInfo.templateId is not null)
             {
@@ -98,8 +142,45 @@ namespace UCM.astVisitor
                 }
             }
 
+            if (objectNode.typeInfo.type != TypeEnum.Object && objectNode.typeInfo.type != TypeEnum.Any)
+            {
+                Errors.Add($"Type mismatch: Can not set value of type Object to value of type {objectNode.typeInfo.type}");
+            }
 
             return objectNode;
+        }
+        public override AstNode VisitIdentifyer(IdentifyerNode node)
+        {
+            TypeInfo actualType = new TypeInfo(TypeEnum.Undefined);
+
+            foreach (var scope in SymbolTables)
+            {
+                if (scope.ContainsKey(node.value))
+                {
+                    actualType = scope[node.value].typeInfo;
+                    continue;
+                }
+            }
+
+            if (actualType.type == TypeEnum.Undefined)
+            {
+                Errors.Add($"Variable {node.value} not declared");
+                return base.VisitIdentifyer(node);
+            }
+
+            if (actualType.type == TypeEnum.Template)
+            {
+                return base.VisitIdentifyer(node);
+            }
+
+            if (!actualType.Equals(node.typeInfo))
+            {
+                Errors.Add($"Type mismatch: {actualType.type} != {node.typeInfo.type}");
+                return base.VisitIdentifyer(node);
+            }
+
+
+            return node;
         }
 
         public override AstNode VisitExpression(ExpressionNode node)
@@ -157,9 +238,13 @@ namespace UCM.astVisitor
         //addition
         public override AstNode VisitAddition(AdditionNode node)
         {
-            AstNode left = Visit(node.Left);
-            AstNode right = Visit(node.Right);
+            AstNode left = node.Left;
+            AstNode right = node.Right;
+            left.typeInfo = node.typeInfo;
+            right.typeInfo = node.typeInfo;
 
+            Visit(left);
+            Visit(right);
 
             if (left.typeInfo.type != right.typeInfo.type)
             {
@@ -204,17 +289,21 @@ namespace UCM.astVisitor
 
             templateTypeChecker.AddTemplate(node.Id.value, node);
 
+            node.typeInfo = new TypeInfo(TypeEnum.Template);
+            CurrentScope.Add(node.Id.value, node);
+
             return base.VisitTemplate(node);
         }
 
         //templateField
         public override AstNode VisitTemplateField(TemplateFieldNode node)
         {
-            TypeAnotationNode type = Visit(node.Type) as TypeAnotationNode;
+            node.typeInfo = new TypeInfo(TypeEnum.Unknown);
+            AstNode type = node.Type;
+            type.typeInfo = node.typeInfo;
 
-
+            Visit(type);
             node.typeInfo = type.typeInfo;
-            type.typeInfo.fieldKey = node.Id.value;
 
             return node;
         }

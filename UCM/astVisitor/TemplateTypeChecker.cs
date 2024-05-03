@@ -12,7 +12,6 @@ namespace UCM.astVisitor
     {
 
         private Dictionary<string, TemplateNode> templateTable = new Dictionary<string, TemplateNode>();
-
         public void AddTemplate(string templateId, TemplateNode templateNode)
         {
             templateTable.Add(templateId, templateNode);
@@ -40,7 +39,7 @@ namespace UCM.astVisitor
         {
             foreach (var subField in objectNode.Fields)
             {
-                if (!FieldInTemplate(template, subField))
+                if (!FieldInTemplate(template.Id.value, subField))
                 {
                     return false;
                 }
@@ -66,11 +65,18 @@ namespace UCM.astVisitor
             return true;
         }
 
-        private bool FieldInTemplate(TemplateNode template, FieldNode fieldNode)
+        public bool FieldInTemplate(string templateName, FieldNode fieldNode)
         {
+            if (!templateTable.ContainsKey(templateName))
+            {
+                return false;
+            }
+
+            TemplateNode template = templateTable[templateName];
+
             foreach (var tField in template.Fields)
             {
-                if (tField.typeInfo.Equals(fieldNode.typeInfo))
+                if (tField.typeInfo.Equals(fieldNode.typeInfo) && tField.Id.value == fieldNode.Key.Id.value)
                 {
                     return true;
                 }
@@ -82,6 +88,26 @@ namespace UCM.astVisitor
             }
 
             return false;
+        }
+
+        public TypeInfo GetFieldType(string templateName, string fieldKey)
+        {
+            if (!templateTable.ContainsKey(templateName))
+            {
+                return null;
+            }
+
+            TemplateNode template = templateTable[templateName];
+
+            foreach (var tField in template.Fields)
+            {
+                if (tField.Id.value == fieldKey)
+                {
+                    return tField.typeInfo;
+                }
+            }
+
+            return null;
         }
     }
 }

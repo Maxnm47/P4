@@ -16,5 +16,6 @@ public enum TypeEnum
     Ok,
     Error,
     Any,
+    Template,
 }
 

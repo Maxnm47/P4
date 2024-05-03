@@ -1,15 +1,3 @@
 
 
-template A {
-    int a;
-}
 
-template B {
-    A hej;
-}
-
-B pik = {
-    hej = {
-        a = 2;
-    };
-};
