@@ -1,0 +1,10 @@
+
+hidden string fieldName = "fieldName";
+
+template A{
+    string (fieldName);
+}
+
+A a = {
+    (fieldName) = "This is a dynamic string name";
+};

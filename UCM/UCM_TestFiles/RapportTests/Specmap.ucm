@@ -1,0 +1,22 @@
+template Specmap {
+    string service_display_name;
+    Api_display_names api_display_names;
+}
+
+template Api_display_names {
+    string resource_manager;
+}
+
+ hidden string[][] objects = [["addons", "Addons"],
+ ["adhybridhealthservice", "AD Hybrid Health Services"],
+ ["adp", "Autonomous Development Platform"]];
+
+
+for (i in range(0,3)) {
+    Specmap (objects[i][0]) = {
+        service_display_name = objects[i][1];
+        Api_display_names api_display_names = {
+            resource_manager = objects[i][1];
+        };
+    };
+};

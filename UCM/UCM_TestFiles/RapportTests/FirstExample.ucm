@@ -1,0 +1,13 @@
+int[] intArray = [2, 3];
+
+object this_is_an_object = {
+    string name = "pipelines 1";
+    bool active = true;
+    int port = 6001;
+    float ip = 1235.1235;
+};
+
+string name = "pipelines 2";
+bool active = false;
+int port = 6002;
+float ip = 9825.1238;

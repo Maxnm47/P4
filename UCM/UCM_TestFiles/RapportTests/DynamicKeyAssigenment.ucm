@@ -1,0 +1,14 @@
+template Pipeline{
+    string name;
+    bool active;
+    int port;
+}
+
+hidden bool[] activeArray = [true, true, false];
+for (i in range(1, 4)) {
+    Pipeline ($"pipe `i´") = {
+        string name = $"pipeline `i´";
+        bool active = activeArray[i-1];
+        int port = 6000+i;
+    };
+}
