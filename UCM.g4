@@ -213,7 +213,7 @@ forLoop:
 // List construction
 loopConstructContent: (field | expr)*;
 loopConstruction:
-	FOR LPAREN id IN expr RPAREN LCURLY loopConstructContent RCURLY;
+	FOR LPAREN type? id IN expr RPAREN LCURLY loopConstructContent RCURLY;
 
 //return
 return_: RETURN expr? SEMI;

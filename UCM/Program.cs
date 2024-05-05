@@ -29,7 +29,6 @@ class Program
         SemanticAnalysisVisitor semanticAnalyser = new SemanticAnalysisVisitor();
         semanticAnalyser.Visit(ast);
 
-        semanticAnalyser.Errors.ForEach(Console.WriteLine);
 
         // Console.WriteLine("AST done");
         // Console.WriteLine(ast.ToString());

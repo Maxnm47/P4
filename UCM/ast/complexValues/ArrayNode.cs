@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UCM.ast.loopConstruction;
 
 namespace UCM.ast.complexValues
 {
@@ -15,7 +16,9 @@ namespace UCM.ast.complexValues
             AddChildren(expressions);
         }
 
-        public List<ExpressionNode> Elements => GetChildren<ExpressionNode>();
+        public List<ExpressionNode>? Elements => GetChildren<ExpressionNode>();
+
+        public List<LoopConstructionNode>? LoopConstructionNodes => GetChildren<LoopConstructionNode>();
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
         {

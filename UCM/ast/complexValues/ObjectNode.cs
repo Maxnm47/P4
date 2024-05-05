@@ -1,3 +1,4 @@
+using UCM.ast.loopConstruction;
 using UCM.typechecker;
 
 namespace UCM.ast
@@ -9,7 +10,8 @@ namespace UCM.ast
 
         }
 
-        public List<FieldNode> Fields => GetChildren<FieldNode>();
+        public List<FieldNode>? Fields => GetChildren<FieldNode>();
+        public List<LoopConstructionNode>? Loops => GetChildren<LoopConstructionNode>();
         public IdentifyerNode? Id => GetChild<IdentifyerNode>(0);
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)

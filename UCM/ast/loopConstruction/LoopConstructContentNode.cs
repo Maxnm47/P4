@@ -11,8 +11,8 @@ namespace UCM.ast.loopConstruction
         {
         }
 
-        List<FieldNode>? Fields => GetChildren<FieldNode>();
-        List<ExpressionNode>? Expressions => GetChildren<ExpressionNode>();
+        public List<FieldNode>? Fields => GetChildren<FieldNode>();
+        public List<ExpressionNode>? Expressions => GetChildren<ExpressionNode>();
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
         {

@@ -682,6 +682,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
                 AstNode expr = Visit(child);
                 array.AddChild(expr);
             }
+
+            if (child is UCMParser.LoopConstructionContext)
+            {
+                AstNode x = Visit(child);
+                array.AddChild(x);
+            }
         }
 
         return array;
@@ -701,12 +707,12 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override LoopConstructionNode VisitLoopConstruction([NotNull] UCMParser.LoopConstructionContext context)
     {
         Console.WriteLine("Visiting ListConstruction: " + context.GetText());
-
+        TypeAnotationNode type = (TypeAnotationNode)Visit(context.type());
         IdentifyerNode entity = (IdentifyerNode)Visit(context.id());
         ExpressionNode array = (ExpressionNode)Visit(context.expr());
         LoopConstructContentNode evaluationContent = (LoopConstructContentNode)Visit(context.loopConstructContent());
 
-        return new LoopConstructionNode(entity, array, evaluationContent);
+        return new LoopConstructionNode(type, entity, array, evaluationContent);
     }
 
     public override LoopConstructContentNode VisitLoopConstructContent([NotNull] UCMParser.LoopConstructContentContext context)
@@ -718,8 +724,8 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         {
             if (child is UCMParser.ExprContext || child is UCMParser.FieldContext)
             {
-                AstNode statementList = Visit(child);
-                loopConstructContent.AddChild(statementList);
+                AstNode content = Visit(child);
+                loopConstructContent.AddChild(content);
             }
         }
 

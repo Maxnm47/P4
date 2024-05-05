@@ -1,14 +1,2 @@
 
-template A {
-    int a;
-}
-
-template B {
-    A b;
-}
-
-B b = {
-    b = {
-        a = "hej";
-    };
-};
+int ($"pik `2´ hej") = 2;

@@ -21,6 +21,7 @@ namespace UCM.astVisitor
         public virtual Result Visit(AstNode node)
         {
             Console.WriteLine(node.GetType());
+            node.typeInfo ??= new TypeInfo(TypeEnum.Unknown);
             return node.Accept(this);
         }
 
@@ -29,6 +30,7 @@ namespace UCM.astVisitor
             Result? result = default(Result);
             foreach (AstNode child in node.children)
             {
+                child.typeInfo ??= new TypeInfo(TypeEnum.Unknown);
                 Result? nextResult = child.Accept(this);
                 if (nextResult != null)
                 {

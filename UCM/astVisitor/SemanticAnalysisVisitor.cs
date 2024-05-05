@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using UCM.ast;
 using UCM.ast.complexValues;
+using UCM.ast.loopConstruction;
 using UCM.ast.numExpr;
 using UCM.ast.root;
 using UCM.ast.statements;
@@ -53,8 +55,24 @@ namespace UCM.astVisitor
 
         public override AstNode VisitField(FieldNode fieldNode)
         {
-            string key = fieldNode.Key.Id is not null ? fieldNode.Key.Id.value : Guid.NewGuid().ToString();
+            bool hasDynamicKey = fieldNode.Key.Id is null;
+            string key = hasDynamicKey ? Guid.NewGuid().ToString() : fieldNode.Key.Id.value;
+
             fieldNode.typeInfo ??= new TypeInfo(TypeEnum.Any);
+
+            if (hasDynamicKey)
+            {
+                ExpressionNode keyExpression = fieldNode.Key.Expr;
+                keyExpression.typeInfo = new TypeInfo(TypeEnum.String);
+                Visit(keyExpression);
+
+                if (keyExpression.typeInfo.type == TypeEnum.Error)
+                {
+                    Errors.Add("Dynamic keys must be of type string");
+                    return fieldNode;
+                }
+            }
+
 
             if (fieldNode.typeInfo.templateId != null)
             {
@@ -63,6 +81,12 @@ namespace UCM.astVisitor
                 {
                     Errors.Add($"Field {key} is not declared in template {fieldNode.typeInfo.templateId}");
                     //return base.VisitField(fieldNode);
+                }
+
+                if (hasDynamicKey)
+                {
+                    Errors.Add("Dynamic keys can not be used in template typed objects");
+                    return fieldNode;
                 }
 
                 fieldNode.typeInfo = typeInfo ?? new TypeInfo(TypeEnum.Any);
@@ -145,9 +169,6 @@ namespace UCM.astVisitor
 
         public override AstNode VisitObject(ObjectNode objectNode)
         {
-            Dictionary<string, AstNode> objectScope = new Dictionary<string, AstNode>();
-            SymbolTables.Push(objectScope);
-
             List<FieldNode> fields = objectNode.Fields;
 
             if (objectNode.Id is not null)
@@ -168,7 +189,10 @@ namespace UCM.astVisitor
                 }
             }
 
-            foreach (FieldNode field in fields)
+
+            SymbolTables.Push([]);
+
+            foreach (FieldNode field in fields ?? [])
             {
                 // Pass potential type info to children
                 field.typeInfo = new TypeInfo(TypeEnum.Unknown);
@@ -178,7 +202,22 @@ namespace UCM.astVisitor
 
 
 
+            if (objectNode.Loops is not null && objectNode.typeInfo.templateId is not null)
+            {
+                Errors.Add("Template objects can not have loops");
+                SymbolTables.Pop();
+                return objectNode;
+            }
+
+            foreach (LoopConstructionNode loop in objectNode.Loops ?? [])
+            {
+                loop.typeInfo = new TypeInfo(TypeEnum.Field);
+                loop.typeInfo.templateId = objectNode.typeInfo.templateId;
+                Visit(loop);
+            }
+
             SymbolTables.Pop();
+
 
             if (objectNode.typeInfo.templateId is not null)
             {
@@ -252,6 +291,12 @@ namespace UCM.astVisitor
             return node;
         }
 
+        public override AstNode VisitAugmentedString(AugmentedStringNode node)
+        {
+            CheckPrimitiveType(node, TypeEnum.String);
+            return node;
+        }
+
         public override AstNode VisitInt(IntNode node)
         {
             CheckPrimitiveType(node, TypeEnum.Int);
@@ -272,15 +317,107 @@ namespace UCM.astVisitor
 
         public override AstNode VisitArray(ArrayNode node)
         {
-
-            foreach (ExpressionNode expression in node.Elements)
+            if (node.typeInfo.type != TypeEnum.Array)
             {
-                // Set type info to the array type
-                expression.typeInfo = node.typeInfo.arrayType;
-                Visit(expression);
+                Errors.Add($"Type mismatch: Can not set value of type Array to value of type {node.typeInfo.type}");
+                return node;
             }
 
+            foreach (AstNode elemment in node.children)
+            {
+                // Set type info to the array type
+                elemment.typeInfo = node.typeInfo.arrayType;
+                Visit(elemment);
+            }
+
+
             return node;
+        }
+
+
+        public override AstNode VisitLoopConstruction(LoopConstructionNode loopConstructionNode)
+        {
+            LoopConstructContentNode evaluationContent = loopConstructionNode.EvaluationContent;
+            List<FieldNode>? fields = evaluationContent.Fields;
+            List<ExpressionNode>? expressions = evaluationContent.Expressions;
+
+            ExpressionNode arrayExprssion = loopConstructionNode.Array;
+            arrayExprssion.typeInfo = new TypeInfo(TypeEnum.Array, arrayType: new TypeInfo(TypeEnum.Unknown));
+
+            SymbolTables.Push([]);
+
+            IdentifyerNode entity = loopConstructionNode.Entity;
+            TypeAnotationNode? entityType = loopConstructionNode.EntityType;
+
+            if (entityType is not null)
+            {
+                entityType.typeInfo = new TypeInfo(TypeEnum.Unknown);
+                Visit(entityType);
+                entity.typeInfo = entityType.typeInfo;
+                arrayExprssion.typeInfo.arrayType = entityType.typeInfo;
+            }
+
+            Visit(arrayExprssion);
+            entity.typeInfo = arrayExprssion.typeInfo.arrayType;
+
+            CurrentScope.Add(entity.value, entity);
+
+            if (fields == null && expressions == null)
+            {
+                Errors.Add("Loop construct must have at least one field or expression");
+                SymbolTables.Pop();
+                return loopConstructionNode;
+            }
+
+            if (fields != null && expressions != null)
+            {
+                Errors.Add("Loop construct can not have both fields and expressions");
+                SymbolTables.Pop();
+                return loopConstructionNode;
+            }
+
+            if (fields != null && loopConstructionNode.typeInfo.type != TypeEnum.Field)
+            {
+                Errors.Add("Loop construct in array must have expressions not fields");
+                SymbolTables.Pop();
+                return loopConstructionNode;
+            }
+
+            if (expressions != null && loopConstructionNode.typeInfo.type == TypeEnum.Field)
+            {
+                Errors.Add("Loop construct in object must have fields not expressions");
+                SymbolTables.Pop();
+                return loopConstructionNode;
+            }
+
+
+
+            if (fields != null)
+            {
+                foreach (FieldNode field in fields)
+                {
+                    field.typeInfo = new TypeInfo(TypeEnum.Unknown);
+                    field.typeInfo.templateId = loopConstructionNode.typeInfo.templateId;
+                    Visit(field);
+                    loopConstructionNode.typeInfo = field.typeInfo;
+                }
+            }
+
+
+            if (expressions != null)
+            {
+                foreach (ExpressionNode expression in expressions)
+                {
+                    expression.typeInfo = loopConstructionNode.typeInfo;
+                    Visit(expression);
+                    loopConstructionNode.typeInfo = expression.typeInfo;
+                }
+            }
+
+
+            SymbolTables.Pop();
+
+            return loopConstructionNode;
         }
 
         public override AstNode VisitArrayAccess(ArrayAccessNode arrayAccessNode)

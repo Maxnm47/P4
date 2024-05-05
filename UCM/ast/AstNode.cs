@@ -54,8 +54,12 @@ public abstract class AstNode
         return str;
     }
 
-    public void AddChild<T>(T node) where T : AstNode
+    public void AddChild<T>(T? node) where T : AstNode
     {
+        if (node == null)
+        {
+            return;
+        }
         node.parent = this;
         children.Add(node);
     }

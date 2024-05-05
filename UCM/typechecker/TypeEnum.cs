@@ -17,5 +17,6 @@ public enum TypeEnum
     Error,
     Any,
     Template,
+    Field,
 }
 
