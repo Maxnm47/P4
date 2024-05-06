@@ -12,18 +12,18 @@ hidden Pipeline hiddenPipeline = {
 
 Pipeline[] pipelines = [
     hiddenPipeline {
-        name += "1";
+        name = name + "1";
         active = true;
-        port += 1;
+        port = port + 1;
     },
     hiddenPipeline {
-        name += "2"
+        name = name + "2" 
         active = true;
-        port += 2;
+        port = port + 2;
     },    
     hiddenPipeline {
-        name += "3";
+        name = name + "3";
         active = false;
-        port += 3;
-    },
+        port = port + 3;
+    }
 ];

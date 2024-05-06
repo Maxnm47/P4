@@ -156,12 +156,12 @@ objectFieldAcess: id (DOT id)+;
 // Expressions
 expr:
 	value
+	| numExpr
 	| id
 	| objectFieldAcess
 	| arrayAccess
 	| methodCall
 	| boolExpr
-	| numExpr
 	| stringExpr;
 
 stringExpr:
@@ -169,6 +169,7 @@ stringExpr:
 	| id
 	| arrayAccess
 	| methodCall
+	| objectFieldAcess
 	| augmentedString
 	| string;
 
@@ -177,6 +178,7 @@ numExpr:
 	//| THIS_KEYWORD // this  may ruin everything in the semantics :)))
 	| id
 	| methodCall
+	| objectFieldAcess
 	| arrayAccess
 	| MINUS numExpr
 	| numExpr (MULT | DIV | MOD) numExpr

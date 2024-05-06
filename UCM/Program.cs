@@ -10,11 +10,11 @@ class Program
     static void Main(string[] args)
     {
         //testing
-        string rootPath = args.Length > 0 ? args[0] : "UCM_TestFiles";
-        ExecuteUcmFiles(rootPath);
+        // string rootPath = args.Length > 0 ? args[0] : "UCM_TestFiles";
+        // ExecuteUcmFiles(rootPath);
 
-        // string rootPath = "balls.ucm";
-        // ExecuteUcmFile(rootPath);
+        string rootPath = "balls.ucm";
+        ExecuteUcmFile(rootPath);
     }
 
     static void ExecuteUcmFiles(string directoryPath)

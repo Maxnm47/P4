@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using UCM.ast;
+using UCM.ast.boolExpr;
 using UCM.ast.complexValues;
 using UCM.ast.loopConstruction;
 using UCM.ast.numExpr;
@@ -334,6 +338,48 @@ namespace UCM.astVisitor
             return node;
         }
 
+        public override AstNode VisitObjectFieldAcess(ObjectFieldAcessNode objectAccessNode)
+        {
+            List<IdentifyerNode> identifiers = objectAccessNode.Id;
+
+            AstNode currentNode = FindSymbol(identifiers[0].value);
+
+            if (currentNode == null || !(currentNode is FieldNode fieldNode))
+            {
+                Errors.Add($"Object {identifiers[0].value} not declared");
+                return objectAccessNode;
+            }
+
+            for (int i = 1; i < identifiers.Count; i++)
+            {
+                if (!(currentNode is FieldNode currentField) || !(currentField.Expr.GetChild<ObjectNode>(0) is ObjectNode currentObject))
+                {
+                    Errors.Add($"Identifier {identifiers[i - 1].value} does not refer to an object with fields");
+                    return objectAccessNode;
+                }
+
+                bool fieldFound = false;
+                foreach (var field in currentObject.Fields)
+                {
+                    if (field.Key.Id != null && field.Key.Id.value == identifiers[i].value)
+                    {
+                        currentNode = field;
+                        fieldFound = true;
+                        break;
+                    }
+                }
+
+                if (!fieldFound)
+                {
+                    Errors.Add($"Field {identifiers[i].value} not found in object {identifiers[i - 1].value}");
+                    return objectAccessNode;
+                }
+            }
+
+            objectAccessNode.typeInfo = currentNode.typeInfo;
+        
+            return objectAccessNode;
+        }
 
         public override AstNode VisitLoopConstruction(LoopConstructionNode loopConstructionNode)
         {

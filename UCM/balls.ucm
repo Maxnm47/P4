@@ -1,1 +1,9 @@
-int ($"pik `2´ hej") = 2;
+object a = {
+    object b = {
+        float c = 10;
+    };
+};
+
+int d = a.d.c;
+
+
