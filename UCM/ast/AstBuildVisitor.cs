@@ -766,7 +766,6 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             }
             else if (child is UCMParser.StringExprContext stringExprContext)
             {
-
                 ExpressionNode expr = (ExpressionNode)Visit(stringExprContext);
                 augmentedStringNode.AddChild(expr);
             }
