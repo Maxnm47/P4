@@ -1,0 +1,19 @@
+Template B{
+    int a;
+    float c;
+}
+
+B[] b = [
+    {
+        a = 1
+        float c = 1.0
+    },
+    {
+        a = 2
+        float c = 2.0
+    }
+    {
+        a = 3 
+        float c = 3.0
+    }
+];

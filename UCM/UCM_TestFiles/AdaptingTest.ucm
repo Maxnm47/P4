@@ -1,0 +1,12 @@
+template A{
+    int a;
+}
+
+A a = {
+    int a = 10;
+};
+
+b = a {
+    int a = 10;
+    int b = 10;
+};

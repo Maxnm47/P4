@@ -1,5 +1,0 @@
-template A{
-    int a;
-    string b;
-}
-
