@@ -231,7 +231,7 @@ namespace UCM.astVisitor
                 }
             }
 
-            if (objectNode.typeInfo.type != TypeEnum.Object && objectNode.typeInfo.type != TypeEnum.Any)
+            if (objectNode.typeInfo.type != TypeEnum.Object && objectNode.typeInfo.type != TypeEnum.Any && objectNode.typeInfo.type != TypeEnum.Unknown)
             {
                 Errors.Add($"Type mismatch: Can not set value of type Object to value of type {objectNode.typeInfo.type}");
             }
@@ -269,7 +269,6 @@ namespace UCM.astVisitor
                 Errors.Add($"Type mismatch: {actualType.type} != {node.typeInfo.type}");
                 return base.VisitIdentifyer(node);
             }
-
 
             return node;
         }
@@ -321,7 +320,9 @@ namespace UCM.astVisitor
 
         public override AstNode VisitArray(ArrayNode node)
         {
-            if (node.typeInfo.type != TypeEnum.Array)
+            TypeInfo? elementType = null;
+
+            if (node.typeInfo.type != TypeEnum.Array && node.typeInfo.type != TypeEnum.Any && node.typeInfo.type != TypeEnum.Unknown)
             {
                 Errors.Add($"Type mismatch: Can not set value of type Array to value of type {node.typeInfo.type}");
                 return node;
@@ -332,8 +333,20 @@ namespace UCM.astVisitor
                 // Set type info to the array type
                 elemment.typeInfo = node.typeInfo.arrayType;
                 Visit(elemment);
+                TypeInfo tempElementType = elemment.typeInfo;
+
+                if (elementType is null)
+                {
+                    elementType = tempElementType;
+                }
+                else if (!elementType.Equals(tempElementType))
+                {
+                    elementType.type = TypeEnum.Any;
+                }
             }
 
+            node.typeInfo.arrayType = elementType ?? new TypeInfo(TypeEnum.Any);
+            node.typeInfo.type = TypeEnum.Array;
 
             return node;
         }

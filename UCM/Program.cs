@@ -45,7 +45,7 @@ class Program
 
         // Create parser
         UCMParser parser = new UCMParser(tokens);
-        UCMParser.RootContext parseTree = parser.root(); 
+        UCMParser.RootContext parseTree = parser.root();
 
         // Build AST
         AstBuildVisitor astBuildVisitor = new AstBuildVisitor();

@@ -10,6 +10,7 @@ using UCM.ast.statements.whileLoop;
 using UCM.ast.loopConstruction;
 using System.Runtime.CompilerServices;
 using UCM.scope;
+using UCM.typechecker;
 
 namespace UCM.ast;
 
@@ -707,7 +708,10 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override LoopConstructionNode VisitLoopConstruction([NotNull] UCMParser.LoopConstructionContext context)
     {
         Console.WriteLine("Visiting ListConstruction: " + context.GetText());
-        TypeAnotationNode type = (TypeAnotationNode)Visit(context.type());
+
+
+        TypeAnotationNode? type = (context.type() != null) ? (TypeAnotationNode)Visit(context.type()) : null;
+
         IdentifyerNode entity = (IdentifyerNode)Visit(context.id());
         ExpressionNode array = (ExpressionNode)Visit(context.expr());
         LoopConstructContentNode evaluationContent = (LoopConstructContentNode)Visit(context.loopConstructContent());
