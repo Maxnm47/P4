@@ -38,7 +38,7 @@ namespace UCM.astJunior
             return str;
         }
 
-        public string ToString(string indent)
+        public virtual string ToString(string indent)
         {
             string str = indent + this.GetType().Name + " ( \n";
 

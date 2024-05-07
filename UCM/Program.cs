@@ -51,7 +51,7 @@ class Program
         // Build AST
         AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
         AstNode ast = astBuildVisitor.VisitRoot(parseTree);
-
+        Console.WriteLine(ast.ToString());
         // Semantic Analysis
         SemanticAnalysisVisitor semanticAnalyser = new SemanticAnalysisVisitor();
         semanticAnalyser.Visit(ast);

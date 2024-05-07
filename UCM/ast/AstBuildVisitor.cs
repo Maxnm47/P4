@@ -11,6 +11,7 @@ using UCM.ast.loopConstruction;
 using System.Runtime.CompilerServices;
 using UCM.scope;
 using UCM.typechecker;
+using System.Globalization;
 
 namespace UCM.ast;
 
@@ -629,7 +630,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override FloatNode VisitFloat(UCMParser.FloatContext context)
     {
         Console.WriteLine("Visiting Float: " + context.GetText());
-        return new FloatNode(float.Parse(context.GetText()));
+        return new FloatNode(float.Parse(context.GetText(), CultureInfo.InvariantCulture));
     }
 
 

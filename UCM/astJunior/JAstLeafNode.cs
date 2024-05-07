@@ -7,11 +7,21 @@ namespace UCM.astJunior
 {
     public abstract class JAstLeafNode<T> : JAstNode
     {
-        T Value { get; set; }
+        public T Value { get; set; }
 
         public JAstLeafNode(T value)
         {
             Value = value;
+        }
+
+        public override string ToString()
+        {
+            return this.GetType().Name + ": " + Value;
+        }
+
+        public override string ToString(string indent)
+        {
+            return indent + ToString();
         }
     }
 }
