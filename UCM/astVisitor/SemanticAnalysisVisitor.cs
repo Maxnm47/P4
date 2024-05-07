@@ -67,15 +67,24 @@ namespace UCM.astVisitor
             if (hasDynamicKey)
             {
                 ExpressionNode keyExpression = fieldNode.Key.Expr;
-                keyExpression.typeInfo = new TypeInfo(TypeEnum.String);
+                keyExpression.typeInfo = new TypeInfo(TypeEnum.Unknown);
                 Visit(keyExpression);
 
                 if (keyExpression.typeInfo.type == TypeEnum.Error)
                 {
-                    Errors.Add("Dynamic keys must be of type string");
+                    Errors.Add("Error in dynamic key asignment");
+                    return fieldNode;
+                }
+
+                if (keyExpression.typeInfo.type == TypeEnum.Array ||
+                    keyExpression.typeInfo.type == TypeEnum.Object)
+                {
+                    Errors.Add("Dynamic key can not be of type array or objec");
                     return fieldNode;
                 }
             }
+
+
 
 
             if (fieldNode.typeInfo.templateId != null)
@@ -89,7 +98,7 @@ namespace UCM.astVisitor
 
                 if (hasDynamicKey)
                 {
-                    Errors.Add("Dynamic keys can not be used in template typed objects");
+                    Errors.Add("Dynamic keys can not be used inside template typed objects");
                     return fieldNode;
                 }
 
@@ -174,6 +183,7 @@ namespace UCM.astVisitor
         public override AstNode VisitObject(ObjectNode objectNode)
         {
             List<FieldNode> fields = objectNode.Fields;
+            SymbolTables.Push([]);
 
             if (objectNode.Id is not null)
             {
@@ -181,6 +191,7 @@ namespace UCM.astVisitor
                 if (adaptedObject is null)
                 {
                     Errors.Add($"Cannot adapt non declaed object {objectNode.Id.value}");
+                    SymbolTables.Pop();
                     return base.VisitObject(objectNode);
                 }
 
@@ -193,8 +204,6 @@ namespace UCM.astVisitor
                 }
             }
 
-
-            SymbolTables.Push([]);
 
             foreach (FieldNode field in fields ?? [])
             {
@@ -301,7 +310,20 @@ namespace UCM.astVisitor
 
         public override AstNode VisitAugmentedString(AugmentedStringNode node)
         {
-            CheckPrimitiveType(node, TypeEnum.String);
+            foreach (AstNode child in node.children)
+            {
+                if (child is StringNode)
+                {
+                    child.typeInfo ??= new TypeInfo(TypeEnum.Unknown);
+                    CheckPrimitiveType(child, TypeEnum.String);
+                }
+
+                if (child is ExpressionNode)
+                {
+                    Visit(child);
+                }
+            }
+
             return node;
         }
 
@@ -551,6 +573,7 @@ namespace UCM.astVisitor
                 return arrayAccessNode;
             }
 
+            arrayAccessNode.typeInfo = arrayType;
 
             return arrayAccessNode;
         }

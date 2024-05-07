@@ -18,5 +18,7 @@ namespace UCM.astJunior
             return visitor.VisitField(this);
         }
 
+        public JKeyNode Key => Children.OfType<JKeyNode>().First();
+        public JAstNode Value => Children.OfType<JAstNode>().ElementAt(1);
     }
 }

@@ -12,7 +12,7 @@ using UCM.typechecker;
 
 namespace UCM.astVisitor
 {
-    public class IntermediateGenerationVisitor : AstBaseVisitor<JAstNode>
+    public class IntermediateGenerationVisitor : AstBaseVisitor<JAstNode?>
     {
         public Stack<Dictionary<string, JAstNode>> SymbolTable = [];
 
@@ -23,24 +23,71 @@ namespace UCM.astVisitor
             SymbolTable.Push([]);
         }
 
-        public override JFieldNode VisitField(FieldNode node)
+        public override JAstNode VisitRoot(RootNode node)
+        {
+            List<JFieldNode> fields = new List<JFieldNode>();
+            foreach (AstNode child in node.children)
+            {
+                if (child is FieldNode fieldNode)
+                {
+                    JFieldNode? field = VisitField(fieldNode);
+                    if (field != null)
+                    {
+                        fields.Add(field);
+                    }
+                }
+            }
+
+            return new JObjectNode(fields);
+        }
+
+        public override JFieldNode? VisitField(FieldNode node)
         {
             JKeyNode key = Visit(node.Key) as JKeyNode;
             JAstNode value = Visit(node.Expr);
-
             CurrentScope.Add(key.Value, value);
+
+            bool isHidden = node.Hidden != null;
+            if (isHidden)
+            {
+                return null;
+            }
+
             return new JFieldNode(key, value);
         }
 
         public override JObjectNode VisitObject(ObjectNode objectNode)
         {
             List<JFieldNode> fields = new List<JFieldNode>();
+            SymbolTable.Push([]);
+
+            bool isAdapted = objectNode.Id != null;
+
+            if (isAdapted)
+            {
+                JObjectNode parrentObject = FindSymbol(objectNode.Id!.value) as JObjectNode;
+
+                foreach (JFieldNode field in parrentObject!.Fields)
+                {
+                    fields.Add(field);
+                }
+            }
+
+
 
             foreach (AstNode child in objectNode.children)
             {
                 if (child is FieldNode fieldNode)
                 {
-                    fields.Add(VisitField(fieldNode));
+                    JFieldNode? field = VisitField(fieldNode) as JFieldNode;
+                    if (field != null)
+                    {
+                        if (isAdapted)
+                        {
+                            fields.RemoveAll(f => f.Key.Value == field.Key.Value);
+                        }
+                        fields.Add(field);
+                    }
                 }
 
                 if (child is LoopConstructionNode loopConstructionNode)
@@ -48,6 +95,8 @@ namespace UCM.astVisitor
                     fields.AddRange(VisitObjectLoopConstruction(loopConstructionNode));
                 }
             }
+
+            SymbolTable.Pop();
 
             return new JObjectNode(fields);
         }
@@ -57,12 +106,36 @@ namespace UCM.astVisitor
         // and with more profereable retrurn type.
         public List<JFieldNode> VisitObjectLoopConstruction(LoopConstructionNode loopConstructionNode)
         {
-            return null;
+            JArrayNode array = Visit(loopConstructionNode.Array) as JArrayNode;
+            List<JFieldNode> fields = new List<JFieldNode>();
+
+            SymbolTable.Push([]);
+            CurrentScope.Add(loopConstructionNode.Entity.value, null);
+            foreach (JAstNode child in array.Elements)
+            {
+                CurrentScope[loopConstructionNode.Entity.value] = child;
+                fields.Add(Visit(loopConstructionNode.EvaluationContent) as JFieldNode);
+            }
+
+            SymbolTable.Pop();
+            return fields;
         }
 
         public List<JAstNode> VisitArrayLoopConstruction(LoopConstructionNode loopConstructionNode)
         {
-            return null;
+            JArrayNode array = Visit(loopConstructionNode.Array) as JArrayNode;
+            List<JAstNode> evaluatedElements = new List<JAstNode>();
+
+            SymbolTable.Push([]);
+            CurrentScope.Add(loopConstructionNode.Entity.value, null);
+            foreach (JAstNode child in array.Elements)
+            {
+                CurrentScope[loopConstructionNode.Entity.value] = child;
+                evaluatedElements.Add(Visit(loopConstructionNode.EvaluationContent));
+            }
+
+            SymbolTable.Pop();
+            return evaluatedElements;
         }
 
         public override JAstNode VisitIdentifyer(IdentifyerNode node)
@@ -98,24 +171,35 @@ namespace UCM.astVisitor
             return new JArrayNode(elements);
         }
 
-        // public override JAstNode VisitArrayAccess(ArrayAccessNode arrayAccessNode)
-        // {
-        //     int dimentions = arrayAccessNode.Indexs.Count;
-        //     JArrayNode array = FindSymbol(arrayAccessNode.ArrayName.value) as JArrayNode;
+        public override JAstNode VisitArrayAccess(ArrayAccessNode arrayAccessNode)
+        {
+            int dimentions = arrayAccessNode.Indexs.Count;
+            JArrayNode array = FindSymbol(arrayAccessNode.ArrayName.value) as JArrayNode;
 
-        //     for (int dim = 0; dim < dimentions; dim++)
-        //     {
-        //         JAstNode index = Visit(arrayAccessNode.Indexs[dim]);
-        //         if (index is JIntNode intNode)
-        //         {
-        //             array = array.GetElement(intNode.Value) as JArrayNode;
-        //         }
-        //         else
-        //         {
-        //             throw new Exception("Array index not implemented yet");
-        //         }
-        //     }
-        // }
+            for (int dim = 0; dim < dimentions - 1; dim++)
+            {
+                int _index = (Visit(arrayAccessNode.Indexs[dim]) as JIntNode).Value;
+
+                try
+                {
+                    array = array.Elements[_index] as JArrayNode;
+                }
+                catch
+                {
+                    throw new IndexOutOfRangeException($"Array index {_index} out of range in array: {arrayAccessNode.ArrayName.value}.");
+                }
+            }
+
+            int index = (Visit(arrayAccessNode.Indexs[dimentions - 1]) as JIntNode).Value;
+            try
+            {
+                return array.Elements[index];
+            }
+            catch
+            {
+                throw new IndexOutOfRangeException($"Array index {index} out of range in array: {arrayAccessNode.ArrayName.value}.");
+            }
+        }
 
         public override JKeyNode VisitFieldId(FieldId node)
         {
@@ -132,7 +216,17 @@ namespace UCM.astVisitor
             }
 
             // Add for int and float
-            throw new Exception("Key type not implemented yet");
+            if (expr is JIntNode intNode)
+            {
+                return new JKeyNode(intNode.Value.ToString());
+            }
+
+            if (expr is JFloatNode floatNode)
+            {
+                return new JKeyNode(floatNode.Value.ToString());
+            }
+
+            throw new Exception("Key type not suported");
         }
 
         public override JAstNode VisitAddition(AdditionNode node)
@@ -180,6 +274,46 @@ namespace UCM.astVisitor
         public override JStringNode VisitString(StringNode node)
         {
             return new JStringNode(node.value);
+        }
+
+        public override JBoolNode VisitBool(BoolNode node)
+        {
+            return new JBoolNode(node.value);
+        }
+
+        public override JAstNode VisitAugmentedString(AugmentedStringNode augmentedStringNode)
+        {
+            string result = "";
+
+            foreach (AstNode child in augmentedStringNode.children)
+            {
+                if (child is StringNode stringNode)
+                {
+                    JStringNode jStringNode = Visit(stringNode) as JStringNode;
+                    result += jStringNode.Value;
+                }
+
+                if (child is ExpressionNode expressionNode)
+                {
+                    JAstNode expr = Visit(expressionNode);
+                    if (expr is JStringNode stringExprNode)
+                    {
+                        result += stringExprNode.Value;
+                    }
+
+                    if (expr is JIntNode intExprNode)
+                    {
+                        result += intExprNode.Value.ToString();
+                    }
+
+                    if (expr is JFloatNode floatExprNode)
+                    {
+                        result += floatExprNode.Value.ToString();
+                    }
+                }
+            }
+
+            return new JStringNode(result);
         }
 
         public JAstNode FindSymbol(string key)
