@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.XPath;
 using UCM.ast;
 using UCM.ast.numExpr;
 using UCM.ast.statements;
@@ -25,7 +26,6 @@ namespace UCM.astVisitor
         {
             JKeyNode key = Visit(node.Key) as JKeyNode;
             JAstNode value = Visit(node.Expr);
-
             return new JFieldNode(key, value);
         }
 
@@ -51,33 +51,37 @@ namespace UCM.astVisitor
         {
             JAstNode left = Visit(node.Left);
             JAstNode right = Visit(node.Right);
-
-            if (node.typeInfo.type == TypeEnum.Int)
-            {
-                int leftValue = ((JIntNode)left).Value;
-                int rightValue = ((JIntNode)right).Value;
-
-                return new JIntNode(leftValue + rightValue);
-            }
-
-            if (node.typeInfo.type == TypeEnum.Float)
-            {
-                float leftValue = ((JFloatNode)left).Value;
-                float rightValue = ((JFloatNode)right).Value;
-
-                return new JFloatNode(leftValue + rightValue);
-            }
-
-            if (node.typeInfo.type == TypeEnum.String)
-            {
-                string leftValue = ((JStringNode)left).Value;
-                string rightValue = ((JStringNode)right).Value;
-
-                return new JStringNode(leftValue + rightValue);
-            }
+            return binOp(node.typeInfo, left, right, "+");
 
             throw new Exception("Addition type not implemented yet");
         }
+
+        public override JAstNode VisitMultiplication(MultiplicationNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+            return binOp(node.typeInfo, left, right, "*");
+
+            throw new Exception("Addition type not implemented yet");
+        }
+
+        public override JAstNode VisitDivision(DivisionNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+            return binOp(node.typeInfo, left, right, "/");
+
+            throw new Exception("Division failed");
+        }
+
+        public override JAstNode VisitSubtraction(SubtractionNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+            return binOp(node.typeInfo, left, right, "-");
+
+            throw new Exception("subtraction failed");
+        } 
 
         public override JAstNode VisitInt(IntNode node)
         {
@@ -93,5 +97,65 @@ namespace UCM.astVisitor
         {
             return new JStringNode(node.value);
         }
+        private JAstNode binOp(TypeInfo typeInfo, JAstNode left, JAstNode right, string op)
+        {
+            if (typeInfo.type == TypeEnum.Int)
+            {
+                int leftValue = ((JIntNode)left).Value;
+                int rightValue = ((JIntNode)right).Value;
+
+                switch (op)
+                {
+                    case "+":
+                        return new JIntNode(leftValue + rightValue);
+                    case "-":
+                        return new JIntNode(leftValue - rightValue);
+                    case "*":
+                        return new JIntNode(leftValue * rightValue);
+                    case "/":
+                        if(rightValue == 0)
+                            throw new Exception("Division by zero");
+                        return new JIntNode(leftValue / rightValue); 
+                    default:
+                        throw new Exception($"Invalid operation {op} for type Int");
+                }
+            }
+
+            if (typeInfo.type == TypeEnum.Float)
+            {
+                float leftValue = ((JFloatNode)left).Value;
+                float rightValue = ((JFloatNode)right).Value;
+
+                switch (op)
+                {
+                    case "+":
+                        return new JFloatNode(leftValue + rightValue);
+                    case "-":
+                        return new JFloatNode(leftValue - rightValue);
+                    case "*":
+                        return new JFloatNode(leftValue * rightValue);
+                    case "/":
+                        if(rightValue == 0)
+                            throw new Exception("Division by zero");
+                        return new JFloatNode(leftValue / rightValue); 
+                    default:
+                        throw new Exception($"Invalid operation {op} for type Float");
+                }
+            }
+
+            if (typeInfo.type == TypeEnum.String)
+            {
+                if (op == "+")
+                {
+                    string leftValue = ((JStringNode)left).Value;
+                    string rightValue = ((JStringNode)right).Value;
+                    return new JStringNode(leftValue + rightValue);
+                }
+                throw new Exception($"Invalid operation {op} for type String");
+            }
+
+            throw new Exception($"Cannot {op} {typeInfo.type}");
+        }
+
     }
 }
