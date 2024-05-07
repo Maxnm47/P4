@@ -115,7 +115,7 @@ namespace UCM.astVisitor
             ExpressionNode expression = fieldNode.Expr;
             expression.typeInfo = fieldNode.typeInfo;
             Visit(expression);
-
+            fieldNode.typeInfo = expression.typeInfo;
 
 
             CurrentScope.Add(key, fieldNode);
@@ -251,6 +251,11 @@ namespace UCM.astVisitor
                     actualType = scope[node.value].typeInfo;
                     continue;
                 }
+            }
+
+            if (node.typeInfo.type == TypeEnum.Any || node.typeInfo.type == TypeEnum.Unknown)
+            {
+                node.typeInfo = actualType;
             }
 
             if (actualType.type == TypeEnum.Undefined)
@@ -390,7 +395,7 @@ namespace UCM.astVisitor
             }
 
             objectAccessNode.typeInfo = currentNode.typeInfo;
-        
+
             return objectAccessNode;
         }
 

@@ -15,7 +15,7 @@ namespace UCM.astJunior
                 Children.Add(child);
         }
 
-        public void AddChildren(List<JAstNode> children)
+        public void AddChildren<T>(List<T> children) where T : JAstNode
         {
             this.Children.AddRange(children);
         }
