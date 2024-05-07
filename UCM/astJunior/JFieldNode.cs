@@ -14,8 +14,6 @@ namespace UCM.astJunior
             AddChild(value);
         }
 
-        public JKeyNode Key => GetChild(0) as JKeyNode;
-        public JAstNode Value => GetChild(1);
         public override T Accept<T>(JAstVisitor<T> visitor)
         {
             return visitor.VisitField(this);

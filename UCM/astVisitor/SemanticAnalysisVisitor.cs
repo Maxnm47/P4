@@ -415,8 +415,11 @@ namespace UCM.astVisitor
                     return objectAccessNode;
                 }
             }
-
-            objectAccessNode.typeInfo = currentNode.typeInfo;
+            if (!(objectAccessNode.typeInfo.type == currentNode.typeInfo?.type))
+            {
+                Errors.Add($"Type mismatch: {objectAccessNode.typeInfo.type} != {currentNode.typeInfo?.type}");
+                return objectAccessNode;
+            }
 
             return objectAccessNode;
         }
