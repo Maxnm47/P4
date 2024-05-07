@@ -3,6 +3,7 @@ using System.IO;
 using Antlr4.Runtime;
 using UCM;
 using UCM.ast;
+using UCM.astJunior;
 using UCM.astVisitor;
 
 class Program
@@ -54,6 +55,11 @@ class Program
         // Semantic Analysis
         SemanticAnalysisVisitor semanticAnalyser = new SemanticAnalysisVisitor();
         semanticAnalyser.Visit(ast);
+
+        // Intermediate Generation
+        JAstNode intermediateAst = new IntermediateGenerationVisitor().Visit(ast);
+
+        Console.WriteLine(intermediateAst.ToString());
 
     }
 }
