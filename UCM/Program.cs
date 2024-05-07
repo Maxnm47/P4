@@ -1,10 +1,13 @@
 ﻿using System;
 using System.IO;
 using Antlr4.Runtime;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UCM;
 using UCM.ast;
 using UCM.astJunior;
 using UCM.astVisitor;
+using UCM.JSONGeneration;
 
 class Program
 {
@@ -61,5 +64,11 @@ class Program
 
         Console.WriteLine(intermediateAst.ToString());
 
+        string jsonString = new JSONGenerator().Visit(intermediateAst);
+        JObject jsonObject = JObject.Parse(jsonString);
+        jsonString = jsonObject.ToString(Formatting.Indented);
+
+
+        Console.WriteLine(jsonString);
     }
 }

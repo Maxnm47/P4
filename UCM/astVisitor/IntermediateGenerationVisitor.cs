@@ -293,6 +293,15 @@ namespace UCM.astVisitor
             throw new Exception("subtraction failed");
         }
 
+        public override JAstNode VisitAddition(AdditionNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+            return binOp(node.typeInfo, left, right, "+");
+
+            throw new Exception("Addition failed");
+        }
+
 
         public override JIntNode VisitInt(IntNode node)
         {

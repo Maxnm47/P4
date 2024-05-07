@@ -1,9 +1,11 @@
-object a = {
-    object b = {
-        object l = {
-            float c = 10.0;
-        };
-    };
-};
+template A{
+    int a;
+    float b;
+    string c;
+}
 
-float d = a.b.l.c;
+A aA = {
+    a = 10;
+    b = 20.0;
+    c = "string";
+};

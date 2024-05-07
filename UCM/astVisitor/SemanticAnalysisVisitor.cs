@@ -324,6 +324,7 @@ namespace UCM.astVisitor
                 }
             }
 
+            node.typeInfo.type = TypeEnum.String;
             return node;
         }
 
