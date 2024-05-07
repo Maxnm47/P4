@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using UCM.ast;
 using UCM.ast.complexValues;
 using UCM.ast.loopConstruction;
@@ -228,38 +231,68 @@ namespace UCM.astVisitor
 
             throw new Exception("Key type not suported");
         }
+        public override JAstNode VisitObjectFieldAcess(ObjectFieldAcessNode objectFieldAccessNode)
+        {
+            JObjectNode currentObject = FindSymbol(objectFieldAccessNode.Id[0].value) as JObjectNode;
 
-        public override JAstNode VisitAddition(AdditionNode node)
+            if (currentObject == null)
+            {
+                throw new Exception($"Object not found: {objectFieldAccessNode.Id[0].value}");
+            }
+
+            JAstNode currentNode = currentObject;
+
+            for (int i = 1; i < objectFieldAccessNode.Id.Count; i++)
+            {
+                if (!(currentNode is JObjectNode objectNode))
+                {
+                    throw new Exception("Expected an object node.");
+                }
+
+                JFieldNode field = objectNode.Fields.FirstOrDefault(f => f.Key.Value == objectFieldAccessNode.Id[i].value);
+                if (field == null)
+                {
+                    throw new Exception($"Field not found: {objectFieldAccessNode.Id[i].value}");
+                }
+
+                currentNode = field.Value;
+            }
+
+            if (currentNode == null)
+            {
+                throw new Exception("Node not found at the end of the specified path.");
+            }
+
+            return currentNode;
+        }
+
+        public override JAstNode VisitMultiplication(MultiplicationNode node)
         {
             JAstNode left = Visit(node.Left);
             JAstNode right = Visit(node.Right);
-
-            if (node.typeInfo.type == TypeEnum.Int)
-            {
-                int leftValue = ((JIntNode)left).Value;
-                int rightValue = ((JIntNode)right).Value;
-
-                return new JIntNode(leftValue + rightValue);
-            }
-
-            if (node.typeInfo.type == TypeEnum.Float)
-            {
-                float leftValue = ((JFloatNode)left).Value;
-                float rightValue = ((JFloatNode)right).Value;
-
-                return new JFloatNode(leftValue + rightValue);
-            }
-
-            if (node.typeInfo.type == TypeEnum.String)
-            {
-                string leftValue = ((JStringNode)left).Value;
-                string rightValue = ((JStringNode)right).Value;
-
-                return new JStringNode(leftValue + rightValue);
-            }
+            return binOp(node.typeInfo, left, right, "*");
 
             throw new Exception("Addition type not implemented yet");
         }
+
+        public override JAstNode VisitDivision(DivisionNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+            return binOp(node.typeInfo, left, right, "/");
+
+            throw new Exception("Division failed");
+        }
+
+        public override JAstNode VisitSubtraction(SubtractionNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+            return binOp(node.typeInfo, left, right, "-");
+
+            throw new Exception("subtraction failed");
+        }
+
 
         public override JIntNode VisitInt(IntNode node)
         {
@@ -328,5 +361,66 @@ namespace UCM.astVisitor
 
             throw new Exception("Variable not found: shoudl have been handleded by typechecker");
         }
+
+        private JAstNode binOp(TypeInfo typeInfo, JAstNode left, JAstNode right, string op)
+        {
+            if (typeInfo.type == TypeEnum.Int)
+            {
+                int leftValue = ((JIntNode)left).Value;
+                int rightValue = ((JIntNode)right).Value;
+
+                switch (op)
+                {
+                    case "+":
+                        return new JIntNode(leftValue + rightValue);
+                    case "-":
+                        return new JIntNode(leftValue - rightValue);
+                    case "*":
+                        return new JIntNode(leftValue * rightValue);
+                    case "/":
+                        if (rightValue == 0)
+                            throw new Exception("Division by zero");
+                        return new JIntNode(leftValue / rightValue);
+                    default:
+                        throw new Exception($"Invalid operation {op} for type Int");
+                }
+            }
+
+            if (typeInfo.type == TypeEnum.Float)
+            {
+                float leftValue = ((JFloatNode)left).Value;
+                float rightValue = ((JFloatNode)right).Value;
+
+                switch (op)
+                {
+                    case "+":
+                        return new JFloatNode(leftValue + rightValue);
+                    case "-":
+                        return new JFloatNode(leftValue - rightValue);
+                    case "*":
+                        return new JFloatNode(leftValue * rightValue);
+                    case "/":
+                        if (rightValue == 0)
+                            throw new Exception("Division by zero");
+                        return new JFloatNode(leftValue / rightValue);
+                    default:
+                        throw new Exception($"Invalid operation {op} for type Float");
+                }
+            }
+
+            if (typeInfo.type == TypeEnum.String)
+            {
+                if (op == "+")
+                {
+                    string leftValue = ((JStringNode)left).Value;
+                    string rightValue = ((JStringNode)right).Value;
+                    return new JStringNode(leftValue + rightValue);
+                }
+                throw new Exception($"Invalid operation {op} for type String");
+            }
+
+            throw new Exception($"Cannot {op} {typeInfo.type}");
+        }
+
     }
 }

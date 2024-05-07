@@ -14,6 +14,10 @@ namespace UCM.astJunior
             if (child != null)
                 Children.Add(child);
         }
+        public JAstNode GetChild(int index)
+        {
+            return Children[index];
+        }   
 
         public void AddChildren<T>(List<T> children) where T : JAstNode
         {

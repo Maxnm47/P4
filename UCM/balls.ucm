@@ -1,3 +1,12 @@
+object a = {
+    object b = {
+        object l = {
+            string c = "10.0";
+        };
+    };
+};
+
+string d = a.b.l.c;
 
 hidden b = "dud";
 
