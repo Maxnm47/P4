@@ -191,6 +191,7 @@ boolExpr:
 	| id
 	| methodCall
 	| NOT boolExpr
+	| numExpr compExpr numExpr
 	| boolExpr compExpr boolExpr
 	| boolExpr AND boolExpr
 	| boolExpr OR boolExpr
