@@ -517,17 +517,58 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
         else if (context.compExpr().EQ() != null)
         {
-            return new EqualNode(
-                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
-                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
-            );
+            AstNode left = null;
+            AstNode right = null;
+
+            for (int i = 0; i < context.ChildCount; i++)
+            {
+                var child = context.GetChild(i);
+
+                if(child is UCMParser.BoolExprContext)
+                {
+                    if (left == null)
+                        left = Visit(child as UCMParser.BoolExprContext);
+                    else
+                        right = Visit(child as UCMParser.BoolExprContext);
+                }
+                else if(child is UCMParser.NumExprContext)
+                {
+                    if (left == null)
+                        left = Visit(child as UCMParser.NumExprContext);
+                    else
+                        right = Visit(child as UCMParser.NumExprContext);
+                }
+            }
+
+            return new EqualNode(left, right);
         }
+
         else if (context.compExpr().NEQ() != null)
         {
-            return new NotEqualNode(
-                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
-                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
-            );
+            AstNode left = null;
+            AstNode right = null;
+
+            for (int i = 0; i < context.ChildCount; i++)
+            {
+                var child = context.GetChild(i);
+
+                if(child is UCMParser.BoolExprContext)
+                {
+                    if (left == null)
+                        left = Visit(child as UCMParser.BoolExprContext);
+                    else
+                        right = Visit(child as UCMParser.BoolExprContext);
+                }
+                else if(child is UCMParser.NumExprContext)
+                {
+                    if (left == null)
+                        left = Visit(child as UCMParser.NumExprContext);
+                    else
+                        right = Visit(child as UCMParser.NumExprContext);
+                }
+            }
+
+            return new NotEqualNode(left, right);
         }
 
         return default;
