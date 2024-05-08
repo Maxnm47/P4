@@ -1,11 +1,10 @@
-template A{
-    int a;
-    float b;
-    string c;
-}
 
-A aA = {
-    a = 10;
-    b = 20.0;
-    c = "string";
+
+arr = [1., 2., 3., 4.];
+
+hej = {
+    for (float i in arr)
+    {
+        (i * i / 2.0) = i > 2.0;
+    }
 };

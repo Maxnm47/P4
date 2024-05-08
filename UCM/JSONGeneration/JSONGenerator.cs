@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using UCM.astJunior;
@@ -25,7 +26,7 @@ namespace UCM.JSONGeneration
 
         public override string VisitFloat(JFloatNode floatNode)
         {
-            return floatNode.Value.ToString();
+            return floatNode.Value.ToString(CultureInfo.InvariantCulture);
         }
 
         public override string VisitBool(JBoolNode boolNode)

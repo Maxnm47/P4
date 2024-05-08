@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -226,7 +227,7 @@ namespace UCM.astVisitor
 
             if (expr is JFloatNode floatNode)
             {
-                return new JKeyNode(floatNode.Value.ToString());
+                return new JKeyNode(floatNode.Value.ToString(CultureInfo.InvariantCulture));
             }
 
             throw new Exception("Key type not suported");
