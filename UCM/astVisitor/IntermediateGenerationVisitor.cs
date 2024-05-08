@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using UCM.ast;
+using UCM.ast.boolExpr;
 using UCM.ast.complexValues;
 using UCM.ast.loopConstruction;
 using UCM.ast.numExpr;
@@ -322,6 +323,160 @@ namespace UCM.astVisitor
         public override JBoolNode VisitBool(BoolNode node)
         {
             return new JBoolNode(node.value);
+        }
+        private JBoolNode evaluateBoolean<T>(T left, T right, string op) where T : IComparable
+        {
+            int comparison = left.CompareTo(right); //husk compareTo returnere 0 hvis de er ens
+            switch (op)
+            {
+                case ">":
+                    return new JBoolNode(comparison > 0);
+                case "<":
+                    return new JBoolNode(comparison < 0);
+                case ">=":
+                    return new JBoolNode(comparison >= 0);
+                case "<=":
+                    return new JBoolNode(comparison <= 0);
+                case "==":
+                    return new JBoolNode(comparison == 0);
+                case "!=":
+                    return new JBoolNode(comparison != 0);
+                default:
+                    throw new Exception($"Invalid operation {op}");
+            }
+        }
+        public override JAstNode VisitGreaterThan(GreaterThanNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+
+            if (left is JIntNode leftInt && right is JIntNode rightInt)
+            {
+                return evaluateBoolean(leftInt.Value, rightInt.Value, ">");
+            }
+
+            if (left is JFloatNode leftFloat && right is JFloatNode rightFloat)
+            {
+                return evaluateBoolean(leftFloat.Value, rightFloat.Value, ">");
+            }
+
+            throw new Exception("Invalid operation for type");
+        }
+
+        public override JAstNode VisitLessThan(LessThanNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+
+            if (left is JIntNode leftInt && right is JIntNode rightInt)
+            {
+                return evaluateBoolean(leftInt.Value, rightInt.Value, "<");
+            }
+
+            if (left is JFloatNode leftFloat && right is JFloatNode rightFloat)
+            {
+                return evaluateBoolean(leftFloat.Value, rightFloat.Value, "<");
+            }
+
+            throw new Exception("Invalid operation for type");
+        }
+
+        public override JAstNode VisitGreaterThanOrEqual(GreaterThanOrEqualNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+
+            if (left is JIntNode leftInt && right is JIntNode rightInt)
+            {
+                return evaluateBoolean(leftInt.Value, rightInt.Value, ">=");
+            }
+
+            if (left is JFloatNode leftFloat && right is JFloatNode rightFloat)
+            {
+                return evaluateBoolean(leftFloat.Value, rightFloat.Value, ">=");
+            }
+
+            throw new Exception("Invalid operation for type");
+        }
+
+        public override JAstNode VisitLessThanOrEqual(LessThanOrEqualNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+
+            if (left is JIntNode leftInt && right is JIntNode rightInt)
+            {
+                return evaluateBoolean(leftInt.Value, rightInt.Value, "<=");
+            }
+
+            if (left is JFloatNode leftFloat && right is JFloatNode rightFloat)
+            {
+                return evaluateBoolean(leftFloat.Value, rightFloat.Value, "<=");
+            }
+
+            throw new Exception("Invalid operation for type");
+        }
+
+        public override JAstNode VisitEqual(EqualNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+
+            if (left is JIntNode leftInt && right is JIntNode rightInt)
+            {
+                return evaluateBoolean(leftInt.Value, rightInt.Value, "==");
+            }
+
+            if (left is JFloatNode leftFloat && right is JFloatNode rightFloat)
+            {
+                return evaluateBoolean(leftFloat.Value, rightFloat.Value, "==");
+            }
+
+            if (left is JBoolNode leftBool && right is JBoolNode rightBool)
+            {
+                return new JBoolNode(leftBool.Value == rightBool.Value);
+            }
+
+            throw new Exception("Invalid operation for type");
+        }
+
+        public override JAstNode VisitNotEqual(NotEqualNode node)
+        {
+            JAstNode left = Visit(node.Left);
+            JAstNode right = Visit(node.Right);
+
+            if (left is JIntNode leftInt && right is JIntNode rightInt)
+            {
+                return evaluateBoolean(leftInt.Value, rightInt.Value, "!=");
+            }
+
+            if (left is JFloatNode leftFloat && right is JFloatNode rightFloat)
+            {
+                return evaluateBoolean(leftFloat.Value, rightFloat.Value, "!=");
+            }
+
+            if (left is JBoolNode leftBool && right is JBoolNode rightBool)
+            {
+                return new JBoolNode(leftBool.Value != rightBool.Value);
+            }
+
+            throw new Exception("Invalid operation for type");
+        }
+
+        public override JAstNode VisitAnd(AndNode node)
+        {
+            return base.VisitAnd(node);
+        }
+
+        public override JAstNode VisitOr(OrNode node)
+        {
+            return base.VisitOr(node);
+        }
+
+        public override JAstNode VisitNot(NotNode node)
+        {
+
+            return base.VisitNot(node);
         }
 
         public override JAstNode VisitAugmentedString(AugmentedStringNode augmentedStringNode)
