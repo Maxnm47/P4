@@ -124,10 +124,10 @@ field:
 	HIDDEN_? type? fieldId (ASSIGN | compoundasign) expr SEMI;
 
 // Arrays
-arrayElement: expr | loopConstruction;
+arrayElement: expr | loopConstruction | range;
 range: expr COMMA COMMA expr;
 array:
-	LBRACKET (range | (arrayElement (COMMA arrayElement)*) |) RBRACKET;
+	LBRACKET ((arrayElement (COMMA arrayElement)*) |) RBRACKET;
 
 arrayAccess: id (LBRACKET expr RBRACKET)+;
 // Templates

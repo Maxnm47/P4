@@ -1332,6 +1332,9 @@ public partial class UCMParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public LoopConstructionContext loopConstruction() {
 			return GetRuleContext<LoopConstructionContext>(0);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public RangeContext range() {
+			return GetRuleContext<RangeContext>(0);
+		}
 		public ArrayElementContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -1350,36 +1353,30 @@ public partial class UCMParser : Parser {
 		ArrayElementContext _localctx = new ArrayElementContext(Context, State);
 		EnterRule(_localctx, 40, RULE_arrayElement);
 		try {
-			State = 213;
+			State = 214;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case NULL:
-			case MINUS:
-			case NOT:
-			case LPAREN:
-			case LCURLY:
-			case LBRACKET:
-			case BOOL:
-			case INT:
-			case FLOAT:
-			case SIMPLE_STRING:
-			case STRING_START:
-			case ID:
+			switch ( Interpreter.AdaptivePredict(TokenStream,18,Context) ) {
+			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
 				State = 211;
 				expr();
 				}
 				break;
-			case FOR:
+			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 212;
 				loopConstruction();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
+			case 3:
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 213;
+				range();
+				}
+				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -1424,13 +1421,13 @@ public partial class UCMParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 215;
-			expr();
 			State = 216;
-			Match(COMMA);
+			expr();
 			State = 217;
 			Match(COMMA);
 			State = 218;
+			Match(COMMA);
+			State = 219;
 			expr();
 			}
 		}
@@ -1448,9 +1445,6 @@ public partial class UCMParser : Parser {
 	public partial class ArrayContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LBRACKET() { return GetToken(UCMParser.LBRACKET, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RBRACKET() { return GetToken(UCMParser.RBRACKET, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public RangeContext range() {
-			return GetRuleContext<RangeContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public ArrayElementContext[] arrayElement() {
 			return GetRuleContexts<ArrayElementContext>();
 		}
@@ -1482,18 +1476,24 @@ public partial class UCMParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 220;
+			State = 221;
 			Match(LBRACKET);
 			State = 231;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,20,Context) ) {
-			case 1:
-				{
-				State = 221;
-				range();
-				}
-				break;
-			case 2:
+			switch (TokenStream.LA(1)) {
+			case FOR:
+			case NULL:
+			case MINUS:
+			case NOT:
+			case LPAREN:
+			case LCURLY:
+			case LBRACKET:
+			case BOOL:
+			case INT:
+			case FLOAT:
+			case SIMPLE_STRING:
+			case STRING_START:
+			case ID:
 				{
 				{
 				State = 222;
@@ -1517,10 +1517,12 @@ public partial class UCMParser : Parser {
 				}
 				}
 				break;
-			case 3:
+			case RBRACKET:
 				{
 				}
 				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 			State = 233;
 			Match(RBRACKET);
@@ -3940,8 +3942,8 @@ public partial class UCMParser : Parser {
 		1,13,1,14,1,14,1,14,1,15,1,15,1,15,1,15,1,16,1,16,3,16,181,8,16,1,17,1,
 		17,1,18,3,18,186,8,18,1,18,1,18,1,18,5,18,191,8,18,10,18,12,18,194,9,18,
 		1,18,1,18,1,19,3,19,199,8,19,1,19,3,19,202,8,19,1,19,1,19,1,19,3,19,207,
-		8,19,1,19,1,19,1,19,1,20,1,20,3,20,214,8,20,1,21,1,21,1,21,1,21,1,21,1,
-		22,1,22,1,22,1,22,1,22,5,22,226,8,22,10,22,12,22,229,9,22,1,22,3,22,232,
+		8,19,1,19,1,19,1,19,1,20,1,20,1,20,3,20,215,8,20,1,21,1,21,1,21,1,21,1,
+		21,1,22,1,22,1,22,1,22,5,22,226,8,22,10,22,12,22,229,9,22,1,22,3,22,232,
 		8,22,1,22,1,22,1,23,1,23,1,23,1,23,1,23,4,23,241,8,23,11,23,12,23,242,
 		1,24,1,24,1,24,1,24,5,24,249,8,24,10,24,12,24,252,9,24,1,24,3,24,255,8,
 		24,1,24,1,24,1,25,1,25,1,25,1,25,3,25,263,8,25,1,25,1,25,3,25,267,8,25,
@@ -3974,7 +3976,7 @@ public partial class UCMParser : Parser {
 		1,0,0,0,8,123,1,0,0,0,10,125,1,0,0,0,12,140,1,0,0,0,14,142,1,0,0,0,16,
 		145,1,0,0,0,18,150,1,0,0,0,20,154,1,0,0,0,22,158,1,0,0,0,24,167,1,0,0,
 		0,26,169,1,0,0,0,28,171,1,0,0,0,30,174,1,0,0,0,32,180,1,0,0,0,34,182,1,
-		0,0,0,36,185,1,0,0,0,38,198,1,0,0,0,40,213,1,0,0,0,42,215,1,0,0,0,44,220,
+		0,0,0,36,185,1,0,0,0,38,198,1,0,0,0,40,214,1,0,0,0,42,216,1,0,0,0,44,221,
 		1,0,0,0,46,235,1,0,0,0,48,244,1,0,0,0,50,258,1,0,0,0,52,270,1,0,0,0,54,
 		273,1,0,0,0,56,288,1,0,0,0,58,308,1,0,0,0,60,310,1,0,0,0,62,319,1,0,0,
 		0,64,323,1,0,0,0,66,340,1,0,0,0,68,355,1,0,0,0,70,364,1,0,0,0,72,386,1,
@@ -4012,12 +4014,12 @@ public partial class UCMParser : Parser {
 		201,1,0,0,0,200,202,3,8,4,0,201,200,1,0,0,0,201,202,1,0,0,0,202,203,1,
 		0,0,0,203,206,3,32,16,0,204,207,5,41,0,0,205,207,3,14,7,0,206,204,1,0,
 		0,0,206,205,1,0,0,0,207,208,1,0,0,0,208,209,3,68,34,0,209,210,5,36,0,0,
-		210,39,1,0,0,0,211,214,3,68,34,0,212,214,3,88,44,0,213,211,1,0,0,0,213,
-		212,1,0,0,0,214,41,1,0,0,0,215,216,3,68,34,0,216,217,5,38,0,0,217,218,
-		5,38,0,0,218,219,3,68,34,0,219,43,1,0,0,0,220,231,5,34,0,0,221,232,3,42,
-		21,0,222,227,3,40,20,0,223,224,5,38,0,0,224,226,3,40,20,0,225,223,1,0,
-		0,0,226,229,1,0,0,0,227,225,1,0,0,0,227,228,1,0,0,0,228,232,1,0,0,0,229,
-		227,1,0,0,0,230,232,1,0,0,0,231,221,1,0,0,0,231,222,1,0,0,0,231,230,1,
+		210,39,1,0,0,0,211,215,3,68,34,0,212,215,3,88,44,0,213,215,3,42,21,0,214,
+		211,1,0,0,0,214,212,1,0,0,0,214,213,1,0,0,0,215,41,1,0,0,0,216,217,3,68,
+		34,0,217,218,5,38,0,0,218,219,5,38,0,0,219,220,3,68,34,0,220,43,1,0,0,
+		0,221,231,5,34,0,0,222,227,3,40,20,0,223,224,5,38,0,0,224,226,3,40,20,
+		0,225,223,1,0,0,0,226,229,1,0,0,0,227,225,1,0,0,0,227,228,1,0,0,0,228,
+		232,1,0,0,0,229,227,1,0,0,0,230,232,1,0,0,0,231,222,1,0,0,0,231,230,1,
 		0,0,0,232,233,1,0,0,0,233,234,5,35,0,0,234,45,1,0,0,0,235,240,3,26,13,
 		0,236,237,5,34,0,0,237,238,3,68,34,0,238,239,5,35,0,0,239,241,1,0,0,0,
 		240,236,1,0,0,0,241,242,1,0,0,0,242,240,1,0,0,0,242,243,1,0,0,0,243,47,
@@ -4106,7 +4108,7 @@ public partial class UCMParser : Parser {
 		536,3,38,19,0,534,536,3,88,44,0,535,531,1,0,0,0,535,532,1,0,0,0,535,533,
 		1,0,0,0,535,534,1,0,0,0,536,539,1,0,0,0,537,535,1,0,0,0,537,538,1,0,0,
 		0,538,99,1,0,0,0,539,537,1,0,0,0,58,106,112,119,123,127,131,135,145,150,
-		158,167,180,185,190,192,198,201,206,213,227,231,242,250,254,262,266,276,
+		158,167,180,185,190,192,198,201,206,214,227,231,242,250,254,262,266,276,
 		281,283,294,304,308,323,332,336,345,355,364,371,386,394,396,413,425,427,
 		445,453,475,477,483,495,502,515,518,522,526,535,537
 	};
