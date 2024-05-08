@@ -1,0 +1,8 @@
+
+
+arrrrrrrr = {
+    for (int i in [10,,20])
+    {
+        ($"pik: `i´") = i * i;
+    }
+};

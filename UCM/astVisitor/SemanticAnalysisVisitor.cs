@@ -150,7 +150,7 @@ namespace UCM.astVisitor
 
             if (typeAnotationNode.type == TypeEnum.Object && typeAnotationNode.value != "object")
             {
-                if (!CurrentScope.ContainsKey(typeAnotationNode.value))
+                if (!templateTypeChecker.HasBeenDeclared(typeAnotationNode.value))
                 {
                     Errors.Add($"Template {typeAnotationNode.value} not declared");
                     return base.VisitTypeAnotation(typeAnotationNode);
@@ -377,6 +377,28 @@ namespace UCM.astVisitor
             node.typeInfo.type = TypeEnum.Array;
 
             return node;
+        }
+
+        public override RangeNode VisitRange(RangeNode rangeNode)
+        {
+            ExpressionNode start = rangeNode.Start;
+            ExpressionNode end = rangeNode.End;
+
+            start.typeInfo = new TypeInfo(TypeEnum.Int);
+            end.typeInfo = new TypeInfo(TypeEnum.Int);
+
+            Visit(start);
+            Visit(end);
+
+            if (start.typeInfo.type != TypeEnum.Int || end.typeInfo.type != TypeEnum.Int)
+            {
+                Errors.Add("Range must have start and end of type int");
+                return rangeNode;
+            }
+
+            rangeNode.typeInfo = new TypeInfo(TypeEnum.Int);
+
+            return rangeNode;
         }
 
         public override AstNode VisitObjectFieldAcess(ObjectFieldAcessNode objectAccessNode)
@@ -725,7 +747,7 @@ namespace UCM.astVisitor
 
         public override AstNode VisitTemplate(TemplateNode node)
         {
-            if (TemplateTalbe.ContainsKey(node.Id.value))
+            if (templateTypeChecker.HasBeenDeclared(node.Id.value))
             {
                 Errors.Add($"Template {node.Id.value} already declared");
                 return base.VisitTemplate(node);

@@ -297,5 +297,10 @@ namespace UCM.astVisitor
         {
             return VisitChildren(arrayAccessNode);
         }
+
+        public virtual Result VisitRange(RangeNode rangeNode)
+        {
+            return VisitChildren(rangeNode);
+        }
     }
 }

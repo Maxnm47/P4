@@ -675,6 +675,8 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     }
 
 
+
+
     /* ------------------------ Complex Types ------------------------ */
     public override ObjectNode VisitObject(UCMParser.ObjectContext context)
     {
@@ -731,10 +733,24 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
                 AstNode x = Visit(child);
                 array.AddChild(x);
             }
+
+            if (child is UCMParser.RangeContext)
+            {
+                AstNode range = Visit(child);
+                array.AddChild(range);
+            }
         }
 
         return array;
+    }
 
+    public override AstNode VisitRange([NotNull] UCMParser.RangeContext context)
+    {
+        Console.WriteLine("Visiting Range: " + context.GetText());
+        ExpressionNode start = (ExpressionNode)Visit(context.expr(0));
+        ExpressionNode end = (ExpressionNode)Visit(context.expr(1));
+
+        return new RangeNode(start, end);
     }
 
     public override AstNode VisitArrayAccess([NotNull] UCMParser.ArrayAccessContext context)

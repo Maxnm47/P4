@@ -11,10 +11,16 @@ namespace UCM.astVisitor
     public class TemplateTypeChecker
     {
 
+
         private Dictionary<string, TemplateNode> templateTable = new Dictionary<string, TemplateNode>();
         public void AddTemplate(string templateId, TemplateNode templateNode)
         {
             templateTable.Add(templateId, templateNode);
+        }
+
+        public bool HasBeenDeclared(string templateId)
+        {
+            return templateTable.ContainsKey(templateId);
         }
         public bool Check(string templateId, List<FieldNode> fieldNodes, bool isPartial = false)
         {

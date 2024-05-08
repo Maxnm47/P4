@@ -150,6 +150,7 @@ adapting
 object
 field
 arrayElement
+range
 array
 arrayAccess
 evaluaterArray

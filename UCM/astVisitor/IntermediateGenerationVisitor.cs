@@ -171,6 +171,27 @@ namespace UCM.astVisitor
                 {
                     elements.AddRange(VisitArrayLoopConstruction(loopConstructionNode));
                 }
+
+                if (child is RangeNode range)
+                {
+                    return VisitRange(range) as JArrayNode;
+                }
+            }
+
+            return new JArrayNode(elements);
+        }
+
+        public override JAstNode VisitRange(RangeNode rangeNode)
+        {
+            int start = (Visit(rangeNode.Start) as JIntNode).Value;
+            int end = (Visit(rangeNode.End) as JIntNode).Value;
+
+
+            List<JAstNode> elements = [];
+
+            for (int i = start; i < end; i++)
+            {
+                elements.Add(new JIntNode(i));
             }
 
             return new JArrayNode(elements);

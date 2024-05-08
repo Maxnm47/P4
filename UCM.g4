@@ -125,7 +125,9 @@ field:
 
 // Arrays
 arrayElement: expr | loopConstruction;
-array: LBRACKET (arrayElement (COMMA arrayElement)* |) RBRACKET;
+range: expr COMMA COMMA expr;
+array:
+	LBRACKET (range | (arrayElement (COMMA arrayElement)*) |) RBRACKET;
 
 arrayAccess: id (LBRACKET expr RBRACKET)+;
 // Templates
