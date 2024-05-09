@@ -154,7 +154,7 @@ method:
 functionCollectionCall: id DOT;
 methodCall:
 	functionCollectionCall? id LPAREN (expr (COMMA expr)* |) RPAREN;
-objectFieldAcess: id (DOT id)+;
+objectFieldAcess: (id | arrayAccess) (DOT id)+;
 // Expressions
 expr:
 	value

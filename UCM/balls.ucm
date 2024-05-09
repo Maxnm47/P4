@@ -1,8 +1,6 @@
 
+hidden data = [
+    { address = "192.23.13.1"; active = true; }
+];
 
-arrrrrrrr = {
-    for (int i in [-10,,10])
-    {
-        ($"pik: `i´") = i * i;
-    }
-};
+address = data[i].address;

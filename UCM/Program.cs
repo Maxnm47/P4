@@ -8,6 +8,7 @@ using UCM.ast;
 using UCM.astJunior;
 using UCM.astVisitor;
 using UCM.JSONGeneration;
+using UCM.UCMJuniorGeneration;
 
 class Program
 {
@@ -67,8 +68,10 @@ class Program
         string jsonString = new JSONGenerator().Visit(intermediateAst);
         JObject jsonObject = JObject.Parse(jsonString);
         jsonString = jsonObject.ToString(Formatting.Indented);
-
-
+        string ucmJuniorString = new UCMJuniorGenerator().Visit(intermediateAst);
         Console.WriteLine(jsonString);
+        Console.WriteLine(ucmJuniorString);
+
+
     }
 }
