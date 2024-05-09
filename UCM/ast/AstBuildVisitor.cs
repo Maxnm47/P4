@@ -708,12 +708,25 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
     public override ObjectFieldAcessNode VisitObjectFieldAcess(UCMParser.ObjectFieldAcessContext context)
     {
-        List<IdentifyerNode> ids = context.id().
-        Select(id => (IdentifyerNode)Visit(id)).ToList();
-
         Console.WriteLine("Visiting ObjectFieldAcess: " + context.GetText());
+        List<AstNode> ids = new List<AstNode>();
+        foreach (var child in context.children)
+        {
+            if (child is UCMParser.IdContext)
+            {
+                AstNode id = Visit(child);
+                ids.Add(id);
+            }
+            if(child is UCMParser.ArrayAccessContext)
+            {
+                AstNode arrayAccess = Visit(child);
+                ids.Add(arrayAccess);
+            }
+        }
+        
         return new ObjectFieldAcessNode(ids);
     }
+
 
     public override AstNode VisitArray([NotNull] UCMParser.ArrayContext context)
     {

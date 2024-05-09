@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -252,39 +253,50 @@ namespace UCM.astVisitor
 
             throw new Exception("Key type not suported");
         }
+
+
         public override JAstNode VisitObjectFieldAcess(ObjectFieldAcessNode objectFieldAccessNode)
         {
-            JObjectNode currentObject = FindSymbol(objectFieldAccessNode.Id[0].value) as JObjectNode;
+            JAstNode currentNode = null;
+            List<AstNode> identifiers = objectFieldAccessNode.Id;
 
-            if (currentObject == null)
+            foreach (var identifier in identifiers)
             {
-                throw new Exception($"Object not found: {objectFieldAccessNode.Id[0].value}");
-            }
-
-            JAstNode currentNode = currentObject;
-
-            for (int i = 1; i < objectFieldAccessNode.Id.Count; i++)
-            {
-                if (!(currentNode is JObjectNode objectNode))
+                switch (identifier)
                 {
-                    throw new Exception("Expected an object node.");
-                }
+                    case IdentifyerNode identifyer:
+                        JObjectNode currentObject = FindSymbol(identifyer.value) as JObjectNode;
+                        currentNode = currentObject;
 
-                JFieldNode field = objectNode.Fields.FirstOrDefault(f => f.Key.Value == objectFieldAccessNode.Id[i].value);
-                if (field == null)
-                {
-                    throw new Exception($"Field not found: {objectFieldAccessNode.Id[i].value}");
-                }
+                        if (currentObject == null)
+                        {
+                            throw new Exception("Symbol not found or is not a JObjectNode.");
+                        }
 
-                currentNode = field.Value;
+                        
+                        JFieldNode field = null;
+                        for (int i = 0; i < currentObject.Fields.Count; i++)
+                        {
+                            if(currentObject.Fields[i].Key.Value == identifyer.value){
+                                currentObject = (JObjectNode)field.Value;   
+                                currentNode = field.Value;
+                            }
+                        }
+
+                        return currentNode;
+                        
+
+                        
+                    case ArrayAccessNode arrayAccess:
+                        currentNode = Visit(arrayAccess); // Assuming Visit() properly handles ArrayAccessNode
+                        break;
+
+                    default:
+                        throw new Exception("Unsupported node type.");
+                }
             }
 
-            if (currentNode == null)
-            {
-                throw new Exception("Node not found at the end of the specified path.");
-            }
-
-            return currentNode;
+            return currentNode ?? throw new Exception("No valid node processed.");
         }
 
         public override JAstNode VisitMultiplication(MultiplicationNode node)

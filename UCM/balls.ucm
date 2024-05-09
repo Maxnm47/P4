@@ -1,6 +1,15 @@
+#object[] a = [
+#    {
+#        int b = 10;
+#    }
+#];
+#
+#int c = a[0].b;
 
-hidden data = [
-    { address = "192.23.13.1"; active = true; }
-];
+object a = {
+    object b = {
+        int c = 10;
+    };
+};
 
-address = data[i].address;
+int d = a.b.c;

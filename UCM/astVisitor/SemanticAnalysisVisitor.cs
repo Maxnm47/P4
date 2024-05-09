@@ -403,46 +403,72 @@ namespace UCM.astVisitor
 
         public override AstNode VisitObjectFieldAcess(ObjectFieldAcessNode objectAccessNode)
         {
-            List<IdentifyerNode> identifiers = objectAccessNode.Id;
+            List<AstNode> identifiers = objectAccessNode.Id;
 
-            AstNode currentNode = FindSymbol(identifiers[0].value);
-
-            if (currentNode == null || !(currentNode is FieldNode fieldNode))
+            AstNode currentNode = FindSymbol(identifiers[0] is IdentifyerNode idNode ? idNode.value : null);
+            if (currentNode == null)
             {
-                Errors.Add($"Object {identifiers[0].value} not declared");
+                Errors.Add($"Object or field '{identifiers[0]}' not declared");
                 return objectAccessNode;
             }
 
             for (int i = 1; i < identifiers.Count; i++)
             {
-                if (!(currentNode is FieldNode currentField) || !(currentField.Expr.GetChild<ObjectNode>(0) is ObjectNode currentObject))
+                if (identifiers[i] is IdentifyerNode identifierNode)
                 {
-                    Errors.Add($"Identifier {identifiers[i - 1].value} does not refer to an object with fields");
-                    return objectAccessNode;
-                }
-
-                bool fieldFound = false;
-                foreach (var field in currentObject.Fields)
-                {
-                    if (field.Key.Id != null && field.Key.Id.value == identifiers[i].value)
+                    if (!(currentNode is FieldNode currentField) || !(currentField.Expr.GetChild<ObjectNode>(0) is ObjectNode currentObject))
                     {
-                        currentNode = field;
-                        fieldFound = true;
-                        break;
+                        Errors.Add($"Identifier '{identifiers[i - 1]}' does not refer to an object with fields");
+                        return objectAccessNode;
+                    }
+
+                    bool fieldFound = false;
+                    foreach (var field in currentObject.Fields)
+                    {
+                        if (field.Key.Id != null && field.Key.Id.value == identifierNode.value)
+                        {
+                            currentNode = field;
+                            fieldFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!fieldFound)
+                    {
+                        Errors.Add($"Field '{identifierNode.value}' not found in object '{identifiers[i - 1]}'");
+                        return objectAccessNode;
                     }
                 }
-
-                if (!fieldFound)
+                else if (identifiers[i] is ArrayAccessNode arrayAccessNode)
                 {
-                    Errors.Add($"Field {identifiers[i].value} not found in object {identifiers[i - 1].value}");
+                    if (!(currentNode is FieldNode arrayField) || !(arrayField.Expr.GetChild<ArrayNode>(0) is ArrayNode currentArray))
+                    {
+                        Errors.Add($"Identifier '{identifiers[i - 1]}' does not refer to an array");
+                        return objectAccessNode;
+                    }
+
+                    foreach (var index in arrayAccessNode.Indexs)
+                    {
+                        Visit(index); 
+                    }
+
+                    currentNode = currentArray;
+                }
+                else
+                {
+                    Errors.Add($"Unexpected node type '{identifiers[i].GetType().Name}' encountered");
                     return objectAccessNode;
                 }
             }
-            if (!(objectAccessNode.typeInfo.type == currentNode.typeInfo?.type))
+
+            if (objectAccessNode.typeInfo.type != currentNode.typeInfo?.type)
             {
-                Errors.Add($"Type mismatch: {objectAccessNode.typeInfo.type} != {currentNode.typeInfo?.type}");
+                Errors.Add($"Type mismatch: expected '{objectAccessNode.typeInfo.type}', found '{currentNode.typeInfo?.type}'");
                 return objectAccessNode;
             }
+
+
+            objectAccessNode.typeInfo = currentNode.typeInfo;
 
             return objectAccessNode;
         }
@@ -797,6 +823,8 @@ namespace UCM.astVisitor
                 {
                     return scope[key];
                 }
+                //check is scope contains array of objects then loop
+
             }
 
             return null;
