@@ -1,11 +1,3 @@
-#object[] a = [
-#    {
-#        int b = 10;
-#    }
-#];
-#
-#int c = a[0].b;
-
 object a = {
     object b = {
         int c = 10;
