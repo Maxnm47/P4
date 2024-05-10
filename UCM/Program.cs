@@ -14,27 +14,9 @@ class Program
 {
     static void Main(string[] args)
     {
-        //testing
-        // string rootPath = args.Length > 0 ? args[0] : "UCM_TestFiles";
-        // ExecuteUcmFiles(rootPath);
 
         string rootPath = "balls.ucm";
         ExecuteUcmFile(rootPath);
-    }
-
-    static void ExecuteUcmFiles(string directoryPath)
-    {
-        // Recursively handle all subdirectories
-        foreach (var subdirectory in Directory.GetDirectories(directoryPath))
-        {
-            ExecuteUcmFiles(subdirectory);
-        }
-
-        // Execute each .ucm file in the current directory
-        foreach (var filePath in Directory.GetFiles(directoryPath, "*.ucm"))
-        {
-            ExecuteUcmFile(filePath);
-        }
     }
 
     static void ExecuteUcmFile(string filePath)
