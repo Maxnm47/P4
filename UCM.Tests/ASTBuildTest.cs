@@ -1,87 +1,103 @@
 using Antlr4.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UCM.ErrorListener;
-using UCM.Exceptions;
 using UCM;
 using UCM.ast;
-using System.Security.Cryptography;
+using UCM.ast.numExpr;
+using UCM.typechecker;
 
 [TestClass]
 public class ASTBuildTest
 {
-    [TestMethod]
-    public void VisitRootTest(AstBuildVisitor astBuildVisitor, UCMParser.RootContext parseTree)
+    private AstBuildVisitor visitor;
+    private UCMLexer lexer;
+    private UCMParser parser;
+
+    [TestInitialize]
+    public void Setup()
     {
-        try
-        {
-            string input1 = "int a = 10;";
-            AstNode returnedNode = astBuildVisitor.VisitRoot(parseTree);
-            RootNode casted = (RootNode)returnedNode;
-            Assert.AreEqual(1, casted.Fields.Count);
+        visitor = new AstBuildVisitor();  // Initialize visitor
+    }
 
-            string input2 = "int a = 10; int b = 11";
-            AstNode returnedNode2 = astBuildVisitor.VisitRoot(parseTree);
-            RootNode casted2 = (RootNode)returnedNode2;
-            Assert.AreEqual(2, casted2.Fields.Count);
+    private AstNode GetNode(string program)
+    {
+        var stream = CharStreams.fromString(program);
+        lexer = new UCMLexer(stream);
+        var tokens = new CommonTokenStream(lexer);
+        parser = new UCMParser(tokens);
+        var parseTree = parser.root();
+        return visitor.VisitRoot(parseTree);
+    }
 
-            string input3 = """
-        template a{
-            int a;
-        }
+    private FieldNode ParseAndVisitField(string input)
+    {
+        var stream = CharStreams.fromString(input);
+        lexer = new UCMLexer(stream);
+        var tokens = new CommonTokenStream(lexer);
+        parser = new UCMParser(tokens);
+        var context = parser.field();  // Ensure there is a 'field' rule in the grammar
+        return visitor.VisitField(context) as FieldNode;
+    }
 
+    [TestMethod]
+    public void VisitRootTest()
+    {
+        string program1 = "int a = 10;";
+        string program2 = "int a = 10; int b = 11;";
+        string program3 = """
+        template a{ 
+            int a; 
+        } 
         int b = 10;
         """;
-            AstNode returnedNode3 = astBuildVisitor.VisitRoot(parseTree);
-            RootNode casted3 = (RootNode)returnedNode3;
-            Assert.AreEqual(1, casted3.Fields.Count);
-            Assert.AreEqual(1, casted3.Templates.Count);
-            Assert.AreEqual(0, casted3.MethodCollections.Count);
-        }
-        catch (InvalidCastException ex)
-        {
-            Console.WriteLine($"Casting error: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error: {ex.Message}");
-        }
+
+        AssertFieldCount(program1, 1);
+        AssertFieldCount(program2, 2);
+        AssertCompositeCount(program3);
     }
 
-    private void AssertFalse(string program)
+    [TestMethod]
+    public void VisitFieldTest()
     {
-        ICharStream stream = CharStreams.fromString(program);
+        string input1 = "int x = 5;";
+        FieldNode fieldNode1 = ParseAndVisitField(input1);
 
-        // Create tokens
-        UCMLexer lexer = new UCMLexer(stream);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        AssertFieldProperties(fieldNode1, TypeEnum.Int, "x", 5);
 
-        // Create parser
-        UCMParser parser = new UCMParser(tokens);
-        UCMParser.RootContext parseTree = parser.root();
+        string input = "int x = 1 + 1;";
+        FieldNode fieldNode = ParseAndVisitField(input);
 
-        AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
-        AstNode ast = astBuildVisitor.VisitRoot(parseTree);
-
-
-
-
-
+        AssertFieldAdditionNode(fieldNode, TypeEnum.Int, "x");
     }
-    private void AssertTrue(string program)
+
+    private void AssertFieldProperties(FieldNode field, TypeEnum expectedType, string expectedId, int expectedExprValue)
     {
-        ICharStream stream = CharStreams.fromString(program);
-
-        // Create tokens
-        UCMLexer lexer = new UCMLexer(stream);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-        // Create parser
-        UCMParser parser = new UCMParser(tokens);
-        UCMParser.RootContext parseTree = parser.root();
-
-        AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
-        AstNode ast = astBuildVisitor.VisitRoot(parseTree);
+        Assert.IsNotNull(field);
+        Assert.AreEqual(expectedType, ((TypeAnotationNode)field.Type).type);
+        Assert.AreEqual(expectedId, field.Key.Id.value);
+        Assert.AreEqual(expectedExprValue, field.Expr.GetChild<IntNode>(0).value);
     }
 
+    private void AssertFieldAdditionNode(FieldNode field, TypeEnum expectedType, string expectedId)
+    {
+        Assert.IsNotNull(field);
+        Assert.AreEqual(expectedType, ((TypeAnotationNode)field.Type).type);
+        Assert.AreEqual(expectedId, field.Key.Id.value);
+        AdditionNode additionNode = field.Expr.GetChild<AdditionNode>(0);
+        Assert.IsNotNull(additionNode);
+    }
 
+    private void AssertFieldCount(string program, int expectedCount)
+    {
+        var node = GetNode(program);
+        var rootNode = (RootNode)node;
+        Assert.AreEqual(expectedCount, rootNode.Fields.Count);
+    }
+
+    private void AssertCompositeCount(string program)
+    {
+        var node = GetNode(program);
+        var rootNode = (RootNode)node;
+        Assert.AreEqual(1, rootNode.Fields.Count);
+        Assert.AreEqual(1, rootNode.Templates.Count);
+    }
 }
