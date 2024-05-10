@@ -37,6 +37,51 @@ public class ASTBuildTest
         var context = parser.field();  // Ensure there is a 'field' rule in the grammar
         return visitor.VisitField(context) as FieldNode;
     }
+    //template tests
+    [TestMethod]
+    public void VisitTemplateTest()
+    {
+        
+        
+    }
+
+    //primitives
+    [TestMethod]
+    public void VisitIntTest()
+    {
+        string program = "int a = 10;";
+        var node = GetNode(program);
+        var rootNode = (RootNode)node;
+        var fieldNode = rootNode.Fields[0];
+        Assert.AreEqual(TypeEnum.Int, ((TypeAnotationNode)fieldNode.Type).type);
+        Assert.AreEqual("a", fieldNode.Key.Id.value);
+        Assert.AreEqual(10, fieldNode.Expr.GetChild<IntNode>(0).value);
+    }
+
+    [TestMethod]
+    public void VisitFloatTest()
+    {
+        string program = "float a = 10.0;";
+        var node = GetNode(program);
+        var rootNode = (RootNode)node;
+        var fieldNode = rootNode.Fields[0];
+        Assert.AreEqual(TypeEnum.Float, ((TypeAnotationNode)fieldNode.Type).type);
+        Assert.AreEqual("a", fieldNode.Key.Id.value);
+        Assert.AreEqual(10.0, fieldNode.Expr.GetChild<FloatNode>(0).value);
+    }
+
+    [TestMethod]
+    public void VisitStringTest()
+    {
+        string program = "string a = \"Hello\";";
+        var node = GetNode(program);
+        var rootNode = (RootNode)node;
+        var fieldNode = rootNode.Fields[0];
+        Assert.AreEqual(TypeEnum.String, ((TypeAnotationNode)fieldNode.Type).type);
+        Assert.AreEqual("a", fieldNode.Key.Id.value);
+        Assert.AreEqual("Hello", fieldNode.Expr.GetChild<StringNode>(0).value);
+    }
+
 
     [TestMethod]
     public void VisitRootTest()
