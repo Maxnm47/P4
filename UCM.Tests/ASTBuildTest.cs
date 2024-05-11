@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UCM;
 using UCM.ast;
 using UCM.ast.numExpr;
+using UCM.ast.root;
 using UCM.typechecker;
 
 [TestClass]
@@ -41,8 +42,34 @@ public class ASTBuildTest
     [TestMethod]
     public void VisitTemplateTest()
     {
-        
-        
+        string program = "template A{ int b; }";
+        var node = GetNode(program);
+        var rootNode = (RootNode)node;
+        var templateNode = rootNode.Templates[0];
+        Assert.AreEqual("A", templateNode.Id.value);
+        Assert.AreEqual(1, templateNode.Fields.Count);
+    }
+
+    [TestMethod]
+    public void VisitNestedTemplateTest()
+    {
+        string program = """
+        template B{
+            int c;
+        }
+
+        template A{ 
+            B b;
+        }
+        """;
+        var node = GetNode(program);
+        var rootNode = (RootNode)node;
+        var templateNode = rootNode.Templates[1];
+        Assert.AreEqual("A", templateNode.Id.value);
+        Assert.AreEqual(1, templateNode.Fields.Count);
+        var fieldNode = templateNode.Fields[0];
+        Assert.AreEqual("b", fieldNode.Id.value);
+        Assert.AreEqual("B", fieldNode.Type.value);
     }
 
     //primitives
@@ -56,6 +83,30 @@ public class ASTBuildTest
         Assert.AreEqual(TypeEnum.Int, ((TypeAnotationNode)fieldNode.Type).type);
         Assert.AreEqual("a", fieldNode.Key.Id.value);
         Assert.AreEqual(10, fieldNode.Expr.GetChild<IntNode>(0).value);
+    }
+
+    [TestMethod]
+    public void VisitTemplateDefintionTest()
+    {
+        string program = """
+        template A{
+                int b;
+            }
+        A a = {
+            b = 10;
+        };
+        """;
+        var node = GetNode(program);
+        var rootNode = (RootNode)node;
+        var fieldNode = rootNode.Fields[0];
+        Assert.AreEqual("a", fieldNode.Key.Id.value);
+        Assert.AreEqual("A", fieldNode.Type.value);
+        var templateObject = fieldNode.Expr.GetChild<ObjectNode>(0);
+        var field = templateObject.Fields[0];
+        Assert.AreEqual("b", field.Key.Id.value);
+        Assert.AreEqual(10, field.Expr.GetChild<IntNode>(0).value);
+        
+
     }
 
     [TestMethod]
