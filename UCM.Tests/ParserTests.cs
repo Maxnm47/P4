@@ -141,7 +141,12 @@ public class ParserTests
         AssertTrue(input1);
     }
 
-    
+    [TestMethod]
+    public void MissingSemicolonTest()
+    {
+        string input1 = "int a = 10";
+        AssertFalse(input1);
+    }
 
     private void AssertFalse(string program)
     {
