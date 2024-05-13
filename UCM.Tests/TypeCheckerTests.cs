@@ -80,7 +80,6 @@ public class TypeCheckerTest
 
     }
     
-
     [TestMethod]
     public void CorrectlyTypedString()
     {
@@ -238,6 +237,17 @@ public class TypeCheckerTest
         Assert.AreEqual(10, field.Expr.GetChild<IntNode>(0).value);
 
         Assert.AreEqual(TypeEnum.Int, field.Expr.GetChild<IntNode>(0).typeInfo.type);   
+    }
+
+    [TestMethod]
+    public void AnyarrayTest(){
+        string program = "[]a = [10, 1.0, \"1\", true];";
+        RootNode root = (RootNode)GetTypeCheckedAst(program);
+        var arrayNode = root.Fields[0].Expr.GetChild<ArrayNode>(0);
+        Assert.AreEqual(10, arrayNode.Elements[0].GetChild<IntNode>(0).value);
+        Assert.AreEqual(1.0, arrayNode.Elements[1].GetChild<FloatNode>(0).value);
+        Assert.AreEqual("1", arrayNode.Elements[2].GetChild<StringNode>(0).value);
+        Assert.AreEqual(true, arrayNode.Elements[3].GetChild<BoolNode>(0).value);
     }
 
 }

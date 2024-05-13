@@ -181,5 +181,60 @@ namespace UCM.Tests
             ";
             Assert.ThrowsException<System.Exception>(() => GenerateIntermediateRepresentation(code));
         }
+
+        [TestMethod]
+        public void AnyarrayTest(){
+            string code = @"
+                any[] a = [1,2.1,3];
+            ";
+            JAstNode result = GenerateIntermediateRepresentation(code);
+            Assert.IsInstanceOfType(result, typeof(JObjectNode));
+            JObjectNode rootNode = result as JObjectNode;
+            JFieldNode a = rootNode.Fields[0];
+            Assert.AreEqual("a", a.Key.Value);
+            Assert.IsInstanceOfType(a.Value, typeof(JArrayNode));
+            JArrayNode array = a.Value as JArrayNode;
+            Assert.AreEqual(3, array.Elements.Count);
+            Assert.IsInstanceOfType(array.Elements[0], typeof(JIntNode));
+            Assert.IsInstanceOfType(array.Elements[1], typeof(JFloatNode));
+            Assert.IsInstanceOfType(array.Elements[2], typeof(JIntNode));
+
+            //value assesement
+            JIntNode intNode = array.Elements[0] as JIntNode;
+            Assert.AreEqual(1, intNode.Value);
+            JFloatNode floatNode = array.Elements[1] as JFloatNode;
+            Assert.AreEqual(2.1, floatNode.Value, 0.0001); // The third parameter is the delta
+
+            intNode = array.Elements[2] as JIntNode;
+            Assert.AreEqual(3, intNode.Value);
+
+        }
+
+        public void AnyArrayTest2(){
+            string code = @"
+                any[] a = [1,2.0,3];
+            ";
+            JAstNode result = GenerateIntermediateRepresentation(code);
+            Assert.IsInstanceOfType(result, typeof(JObjectNode));
+            JObjectNode rootNode = result as JObjectNode;
+            JFieldNode a = rootNode.Fields[0];
+            Assert.AreEqual("a", a.Key.Value);
+            Assert.IsInstanceOfType(a.Value, typeof(JArrayNode));
+            JArrayNode array = a.Value as JArrayNode;
+            Assert.AreEqual(3, array.Elements.Count);
+            Assert.IsInstanceOfType(array.Elements[0], typeof(JIntNode));
+            Assert.IsInstanceOfType(array.Elements[1], typeof(JFloatNode));
+            Assert.IsInstanceOfType(array.Elements[2], typeof(JIntNode));
+
+            //value assesement
+            JIntNode intNode = array.Elements[0] as JIntNode;
+            Assert.AreEqual(1, intNode.Value);
+            JFloatNode floatNode = array.Elements[1] as JFloatNode;
+            Assert.AreEqual(2.0, floatNode.Value, 0.0001); // The third parameter is the delta
+
+            intNode = array.Elements[2] as JIntNode;
+            Assert.AreEqual(3, intNode.Value);
+
+        }
     }
 }
