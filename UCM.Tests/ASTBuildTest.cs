@@ -1,7 +1,11 @@
+using System.Linq.Expressions;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Atn;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UCM;
 using UCM.ast;
+using UCM.ast.complexValues;
+using UCM.ast.loopConstruction;
 using UCM.ast.numExpr;
 using UCM.ast.root;
 using UCM.typechecker;
@@ -71,6 +75,31 @@ public class ASTBuildTest
         Assert.AreEqual("b", fieldNode.Id.value);
         Assert.AreEqual("B", fieldNode.Type.value);
     }
+
+    [TestMethod]
+    public void VisitLoopConstructTest()
+    {
+        string program = """
+            object a = {
+                for(int i in [1,2,3]){
+                   int (i) = i +1;
+                }
+            };
+        """;
+        var node = GetNode(program);
+        var rootNode = (RootNode)node;
+        var fieldNode = rootNode.Fields[0];
+        var objectNode = fieldNode.Expr.GetChild<ObjectNode>(0);
+        LoopConstructionNode loopNode = objectNode.Loops[0];
+        ArrayNode array =  loopNode.Array.GetChild<ArrayNode>(0);
+        Assert.AreEqual(3, array.Elements.Count);
+
+        
+        // var arrayNde =  loopNode.Expressions[0].GetChild<ArrayNode>;
+        
+        
+    }
+
 
     //primitives
     [TestMethod]
