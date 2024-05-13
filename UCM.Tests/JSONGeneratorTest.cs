@@ -120,6 +120,19 @@ namespace UCM.Tests
             Assert.AreEqual(expectedJson, result);
         }
 
+        public void TestIdentifyerAnyTypeArray(){
+            JFieldNode jFieldNode = new JFieldNode(new JKeyNode("a"), new JArrayNode(new List<JAstNode>
+            {
+                new JFloatNode((float)1.1),
+                new JIntNode(2),
+                new JStringNode("3")
+            }));
+
+            string result = jsonGenerator.VisitField(jFieldNode);
+            string expectedJson = "\"a\": [1.1, 2, \"3\"]";
+            Assert.AreEqual(expectedJson, result);
+        }
+
 
     }
 }
