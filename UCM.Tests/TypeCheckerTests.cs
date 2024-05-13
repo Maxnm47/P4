@@ -64,6 +64,24 @@ public class TypeCheckerTest
     }
 
     [TestMethod]
+    public void CorrectlyTypedAndValuedFloatArray(){
+        string program = "float[] x = [1.0, 2.0, 3.0];";
+        RootNode root = (RootNode)GetTypeCheckedAst(program);
+        ArrayNode arrayNode = root.Fields[0].Expr.GetChild<ArrayNode>(0);
+        Assert.AreEqual(1.0, arrayNode.Elements[0].GetChild<FloatNode>(0).value);
+        Assert.AreEqual(2.0, arrayNode.Elements[1].GetChild<FloatNode>(0).value);
+        Assert.AreEqual(3.0, arrayNode.Elements[2].GetChild<FloatNode>(0).value);
+        Assert.AreEqual(TypeEnum.Float, arrayNode.Elements[0].typeInfo.type);
+        Assert.AreEqual(TypeEnum.Float, arrayNode.Elements[1].typeInfo.type);
+        Assert.AreEqual(TypeEnum.Float, arrayNode.Elements[2].typeInfo.type);
+        Assert.AreEqual(TypeEnum.Float, arrayNode.Elements[0].GetChild<FloatNode>(0).typeInfo.type);
+        Assert.AreEqual(TypeEnum.Float, arrayNode.Elements[1].GetChild<FloatNode>(0).typeInfo.type);
+        Assert.AreEqual(TypeEnum.Float, arrayNode.Elements[2].GetChild<FloatNode>(0).typeInfo.type);
+
+    }
+    
+
+    [TestMethod]
     public void CorrectlyTypedString()
     {
         string program = "string x = \"Hello\";";
