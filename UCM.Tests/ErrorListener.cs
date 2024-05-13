@@ -1,7 +1,6 @@
 using Antlr4.Runtime;
 using UCM.Exceptions;
-namespace UCM.ErrorListener;
-
+namespace UCM.ErrorListeners;
 public class ErrorStrategy : DefaultErrorStrategy
 {
     public override void ReportError(Parser recognizer, RecognitionException e)
