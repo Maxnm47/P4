@@ -24,6 +24,11 @@ namespace UCM.UCMJuniorGeneration
             return intNode.Value.ToString();
         }
 
+        public override string VisitNull(JNullNode jNullNode)
+        {
+            return "null";
+        }
+
         public override string VisitFloat(JFloatNode floatNode)
         {
             return floatNode.Value.ToString(CultureInfo.InvariantCulture);

@@ -443,6 +443,8 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
     }
 
+    
+
     /* ------------------------ Exxpresions ------------------------ */
     public override ExpressionNode VisitExpr(UCMParser.ExprContext context)
     {
@@ -454,7 +456,10 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             AstNode childNode = Visit(child);
             expr.AddChild(childNode);
         }
-
+        if(expr.children.Count == 0)
+        {
+            expr.AddChild(new NullNode("null"));
+        }
         return expr;
     }
 
@@ -660,6 +665,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
     }
 
+     
 
     public override IntNode VisitInt(UCMParser.IntContext context)
     {

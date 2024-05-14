@@ -46,10 +46,18 @@ namespace UCM.astVisitor
             return new JObjectNode(fields);
         }
 
+
+        public override JNullNode VisitNull(NullNode node)
+        {
+            return new JNullNode("null");
+        }
         public override JFieldNode? VisitField(FieldNode node)
         {
             JKeyNode key = Visit(node.Key) as JKeyNode;
             JAstNode value = Visit(node.Expr);
+            if(value is null){
+                value = new JNullNode("null");
+            }
             CurrentScope.Add(key.Value, value);
 
             bool isHidden = node.Hidden != null;
@@ -58,6 +66,7 @@ namespace UCM.astVisitor
                 return null;
             }
 
+            
             return new JFieldNode(key, value);
         }
 

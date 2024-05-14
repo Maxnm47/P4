@@ -26,7 +26,13 @@ namespace UCM.JSONGeneration
 
         public override string VisitFloat(JFloatNode floatNode)
         {
-            return floatNode.Value.ToString(CultureInfo.InvariantCulture);
+            //this is causing the float 1.0 to become 1, how can i make it 1.0?
+            return floatNode.Value.ToString("0.0", CultureInfo.InvariantCulture);
+        }
+
+        public override string VisitNull(JNullNode nullNode)
+        {
+            return "null";
         }
 
         public override string VisitBool(JBoolNode boolNode)

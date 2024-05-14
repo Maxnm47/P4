@@ -41,6 +41,10 @@ namespace UCM.astVisitor
             return result;
         }
 
+        public virtual Result VisitNull(NullNode node)
+        {
+            return VisitChildren(node);
+        }
         public virtual Result VisitField(FieldNode node)
         {
             return VisitChildren(node);

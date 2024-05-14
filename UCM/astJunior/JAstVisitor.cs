@@ -12,6 +12,11 @@ namespace UCM.astJunior
             return node.Accept(this);
         }
 
+        public virtual Result VisitNull(JNullNode jNullNode)
+        {
+            return VisitChildren(jNullNode);
+        }
+
         public Result VisitChildren(JAstNode node)
         {
             Result? result = default;
