@@ -236,5 +236,5 @@ namespace UCM.Tests
             Assert.AreEqual(3, intNode.Value);
 
         }
-    }
+    }    
 }
