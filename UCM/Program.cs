@@ -9,12 +9,13 @@ using UCM.astJunior;
 using UCM.astVisitor;
 using UCM.JSONGeneration;
 using UCM.UCMJuniorGeneration;
+using UCM.ErrorListeners;
+using UCM.Exceptions;
 
 class Program
 {
     static void Main(string[] args)
     {
-
         string rootPath = "balls.ucm";
         ExecuteUcmFile(rootPath);
     }
@@ -29,15 +30,27 @@ class Program
         // Create tokens
         UCMLexer lexer = new UCMLexer(stream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
+        lexer.RemoveErrorListeners();
+        lexer.AddErrorListener(new ErrorListener());
 
         // Create parser
         UCMParser parser = new UCMParser(tokens);
         UCMParser.RootContext parseTree = parser.root();
+        parser.RemoveErrorListeners();
+        parser.AddErrorListener(new ErrorListener());
+        parser.ErrorHandler = new ErrorStrategy();
+
+        if(parser.NumberOfSyntaxErrors > 0)
+        {
+            Console.WriteLine("Syntax errors encountered.");
+            return;
+        }
 
         // Build AST
         AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
         AstNode ast = astBuildVisitor.VisitRoot(parseTree);
         Console.WriteLine(ast.ToString());
+
         // Semantic Analysis
         SemanticAnalysisVisitor semanticAnalyser = new SemanticAnalysisVisitor();
         semanticAnalyser.Visit(ast);
@@ -53,7 +66,5 @@ class Program
         string ucmJuniorString = new UCMJuniorGenerator().Visit(intermediateAst);
         Console.WriteLine(jsonString);
         Console.WriteLine(ucmJuniorString);
-
-
     }
 }
