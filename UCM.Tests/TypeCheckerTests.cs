@@ -1,3 +1,4 @@
+using System.IO.Pipes;
 using System.Linq.Expressions;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Atn;
@@ -105,22 +106,26 @@ public class TypeCheckerTest
     {
         string program = "int x = 5;";
         RootNode root = (RootNode)GetTypeCheckedAst(program);
+        IntNode intnode = root.Fields[0].Expr.GetChild<IntNode>(0);
+        Assert.AreEqual(TypeEnum.Int, intnode.typeInfo.type);
+        Assert.IsInstanceOfType(root.Fields[0].Expr.GetChild<AstNode>(0), typeof(IntNode));
         Assert.AreEqual(5, root.Fields[0].Expr.GetChild<IntNode>(0).value);
     }
 
     [TestMethod]
     public void TestIncorrectTypes()
     {
-        string program = "int x = 5.0;"; 
+        string program = "int x = \"hello!\";"; 
         try
         {
             RootNode root = (RootNode)GetTypeCheckedAst(program);
             var field =  root.Fields[0].Expr.GetChild<IntNode>(0);
+            IntNode intnode = root.Fields[0].Expr.GetChild<IntNode>(0);
+            Assert.AreEqual(TypeEnum.Int, intnode.typeInfo.type);
             Assert.AreEqual(5, field.value);
         }
         catch (Exception ex)
         {
-            // EXTREMELY HACKY
             Assert.AreEqual("Semantic analysis failed", ex.Message);
         }
     }

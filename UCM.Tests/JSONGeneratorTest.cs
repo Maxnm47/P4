@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UCM.JSONGeneration;
-using UCM.astJunior;  // Ensure this namespace correctly points to where your JAstNode definitions are.
+using UCM.astJunior;  
 
 namespace UCM.Tests
 {

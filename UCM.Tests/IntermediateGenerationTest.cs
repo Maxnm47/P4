@@ -114,7 +114,6 @@ namespace UCM.Tests
 
             JIntNode innerxValue = innerx.Value as JIntNode;
             Assert.AreEqual(10, innerxValue.Value);
-
         }
 
 
