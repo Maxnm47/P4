@@ -107,17 +107,16 @@ public class TypeCheckerTest
         RootNode root = (RootNode)GetTypeCheckedAst(program);
         Assert.AreEqual(5, root.Fields[0].Expr.GetChild<IntNode>(0).value);
     }
+
     [TestMethod]
     public void TestIncorrectTypes()
     {
-        string program = "int x = 5.0;"; // This should lead to a type mismatch error
+        string program = "int x = 5.0;"; 
         try
         {
             RootNode root = (RootNode)GetTypeCheckedAst(program);
             var field =  root.Fields[0].Expr.GetChild<IntNode>(0);
             Assert.AreEqual(5, field.value);
-
-
         }
         catch (Exception ex)
         {

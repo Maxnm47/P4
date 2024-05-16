@@ -52,6 +52,9 @@ public class ASTBuildTest
         var templateNode = rootNode.Templates[0];
         Assert.AreEqual("A", templateNode.Id.value);
         Assert.AreEqual(1, templateNode.Fields.Count);
+        var fieldNode = templateNode.Fields[0];
+        Assert.AreEqual("b", fieldNode.Id.value);
+        Assert.AreEqual("Int", fieldNode.Type.value);
     }
 
     [TestMethod]
@@ -81,7 +84,7 @@ public class ASTBuildTest
     {
         string program = """
             object a = {
-                for(int i in [1,2,3]){
+                for(int i in [0,1,2]){
                    int (i) = i +1;
                 }
             };
@@ -92,12 +95,7 @@ public class ASTBuildTest
         var objectNode = fieldNode.Expr.GetChild<ObjectNode>(0);
         LoopConstructionNode loopNode = objectNode.Loops[0];
         ArrayNode array =  loopNode.Array.GetChild<ArrayNode>(0);
-        Assert.AreEqual(3, array.Elements.Count);
-
-        
-        // var arrayNde =  loopNode.Expressions[0].GetChild<ArrayNode>;
-        
-        
+        Assert.AreEqual(3, array.Elements.Count); 
     }
 
 
@@ -134,8 +132,6 @@ public class ASTBuildTest
         var field = templateObject.Fields[0];
         Assert.AreEqual("b", field.Key.Id.value);
         Assert.AreEqual(10, field.Expr.GetChild<IntNode>(0).value);
-        
-
     }
 
     [TestMethod]
