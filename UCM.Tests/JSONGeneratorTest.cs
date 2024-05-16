@@ -18,13 +18,13 @@ namespace UCM.Tests
         [TestMethod]
         public void TestGenerateSimpleObject()
         {
-            JObjectNode objectNode = new JObjectNode(new List<JFieldNode>
+            JFieldNode jFieldNode = new JFieldNode(new JKeyNode("a"), new JObjectNode(new List<JFieldNode>
             {
-                new JFieldNode(new JKeyNode("id"), new JIntNode(123))
-            });
+                new JFieldNode(new JKeyNode("b"), new JIntNode(1)),
+            }));
 
-            string result = jsonGenerator.VisitObject(objectNode);
-            string expectedJson = "{\"id\": 123}";
+            string result = jsonGenerator.VisitField(jFieldNode);
+            string expectedJson = "\"a\": {\"b\": 1}";
             Assert.AreEqual(expectedJson, result);
         }
         //unit test
