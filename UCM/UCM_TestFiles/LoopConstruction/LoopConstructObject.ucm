@@ -1,5 +1,0 @@
-object a = {
-    for(int x in [0,1,2,3]){        
-        int d = 10 + x;
-    }
-};

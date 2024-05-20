@@ -84,9 +84,6 @@ namespace UCM.astVisitor
                 }
             }
 
-
-
-
             if (fieldNode.typeInfo.templateId != null)
             {
                 TypeInfo typeInfo = templateTypeChecker.GetFieldType(fieldNode.typeInfo.templateId, key);
