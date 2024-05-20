@@ -16,55 +16,81 @@ class Program
 {
     static void Main(string[] args)
     {
-        string rootPath = "balls.ucm";
-        ExecuteUcmFile(rootPath);
-    }
-
-    static void ExecuteUcmFile(string filePath)
-    {
-        Console.WriteLine("Executing file: " + filePath);
-        string input = File.ReadAllText(filePath);
-
-        ICharStream stream = CharStreams.fromString(input);
-
-        // Create tokens
-        UCMLexer lexer = new UCMLexer(stream);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        lexer.RemoveErrorListeners();
-        lexer.AddErrorListener(new ErrorListener());
-
-        // Create parser
-        UCMParser parser = new UCMParser(tokens);
-        UCMParser.RootContext parseTree = parser.root();
-        parser.RemoveErrorListeners();
-        parser.AddErrorListener(new ErrorListener());
-        parser.ErrorHandler = new ErrorStrategy();
-
-        if(parser.NumberOfSyntaxErrors > 0)
+        if (args.Length == 0)
         {
-            Console.WriteLine("Syntax errors encountered.");
+            Console.WriteLine("Please provide the path to the UCM file.");
             return;
         }
 
-        // Build AST
-        AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
-        AstNode ast = astBuildVisitor.VisitRoot(parseTree);
-        Console.WriteLine(ast.ToString());
+        string inputFile = args[0];
+        string outputFile = null;
 
-        // Semantic Analysis
-        SemanticAnalysisVisitor semanticAnalyser = new SemanticAnalysisVisitor();
-        semanticAnalyser.Visit(ast);
+        // Check if '-json' option is present
+        if (Array.IndexOf(args, "-json") != -1)
+        {
+            outputFile = Path.ChangeExtension(inputFile, ".json");
+        }
 
-        // Intermediate Generation
-        JAstNode intermediateAst = new IntermediateGenerationVisitor().Visit(ast);
+        ExecuteUcmFile(inputFile, outputFile);
+    }
 
-        Console.WriteLine(intermediateAst.ToString());
+    static void ExecuteUcmFile(string filePath, string outputFile)
+    {
+        Console.WriteLine("Executing file: " + filePath);
+        try
+        {
+            string input = File.ReadAllText(filePath);
+            ICharStream stream = CharStreams.fromString(input);
 
-        string jsonString = new JSONGenerator().Visit(intermediateAst);
-        JObject jsonObject = JObject.Parse(jsonString);
-        jsonString = jsonObject.ToString(Formatting.Indented);
-        string ucmJuniorString = new UCMJuniorGenerator().Visit(intermediateAst);
-        Console.WriteLine(jsonString);
-        Console.WriteLine(ucmJuniorString);
+            // Create tokens
+            UCMLexer lexer = new UCMLexer(stream);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            lexer.RemoveErrorListeners();
+            lexer.AddErrorListener(new ErrorListener());
+
+            // Create parser
+            UCMParser parser = new UCMParser(tokens);
+            UCMParser.RootContext parseTree = parser.root();
+            parser.RemoveErrorListeners();
+            parser.AddErrorListener(new ErrorListener());
+            parser.ErrorHandler = new ErrorStrategy();
+
+            if (parser.NumberOfSyntaxErrors > 0)
+            {
+                Console.WriteLine("Syntax errors encountered.");
+                return;
+            }
+
+            // Build AST
+            AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
+            AstNode ast = astBuildVisitor.VisitRoot(parseTree);
+
+            // Semantic Analysis
+            SemanticAnalysisVisitor semanticAnalyser = new SemanticAnalysisVisitor();
+            semanticAnalyser.Visit(ast);
+
+            // Intermediate Generation
+            JAstNode intermediateAst = new IntermediateGenerationVisitor().Visit(ast);
+
+            string jsonString = new JSONGenerator().Visit(intermediateAst);
+            JObject jsonObject = JObject.Parse(jsonString);
+            jsonString = jsonObject.ToString(Formatting.Indented);
+
+            // Output handling
+            if (!string.IsNullOrEmpty(outputFile))
+            {
+                File.WriteAllText(outputFile, jsonString);
+                Console.WriteLine($"JSON output written to {outputFile}");
+            }
+            else
+            {
+                Console.WriteLine(jsonString);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Failed to process the file:");
+            Console.WriteLine(ex.Message);
+        }
     }
 }
