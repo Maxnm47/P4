@@ -55,7 +55,8 @@ namespace UCM.astVisitor
         {
             JKeyNode key = Visit(node.Key) as JKeyNode;
             JAstNode value = Visit(node.Expr);
-            if(value is null){
+            if (value is null)
+            {
                 value = new JNullNode("null");
             }
             CurrentScope.Add(key.Value, value);
@@ -66,7 +67,7 @@ namespace UCM.astVisitor
                 return null;
             }
 
-            
+
             return new JFieldNode(key, value);
         }
 
@@ -262,46 +263,63 @@ namespace UCM.astVisitor
 
             throw new Exception("Key type not suported");
         }
-
-
         public override JAstNode VisitObjectFieldAcess(ObjectFieldAcessNode objectFieldAccessNode)
         {
             JAstNode currentNode = null;
             List<AstNode> identifiers = objectFieldAccessNode.Id;
 
-            foreach (var identifier in identifiers)
+            if (identifiers.Count == 0)
             {
-                switch (identifier)
-                {
-                    case IdentifyerNode identifyer:
-                        JObjectNode currentObject = FindSymbol(identifyer.value) as JObjectNode;
-                        currentNode = currentObject;
+                throw new Exception("Identifier list is empty.");
+            }
 
+            JObjectNode currentObject = null;
+
+            for (int i = 0; i < identifiers.Count; i++)
+            {
+                var identifier = identifiers[i];
+
+                if (identifier is IdentifyerNode identifyer)
+                {
+                    if (i == 0) // First identifier, find the symbol
+                    {
+                        currentObject = FindSymbol(identifyer.value) as JObjectNode;
+                        currentNode = currentObject;
+                    }
+                    else 
+                    {
                         if (currentObject == null)
                         {
-                            throw new Exception("Symbol not found or is not a JObjectNode.");
+                            throw new Exception("Current object is null.");
                         }
 
-                        
                         JFieldNode field = null;
-                        for (int i = 0; i < currentObject.Fields.Count; i++)
+                        for (int j = 0; j < currentObject.Fields.Count; j++)
                         {
-                            if(currentObject.Fields[i].Key.Value == identifyer.value){
-                                currentObject = (JObjectNode)field.Value;   
-                                currentNode = field.Value;
+                            if (currentObject.Fields[j].Key.Value == identifyer.value)
+                            {
+                                field = currentObject.Fields[j];
+                                return field.Value;
                             }
                         }
 
-                        return currentNode;
-                        
+                        if (field == null)
+                        {
+                            throw new Exception("Field not found in object.");
+                        }
 
-                        
-                    case ArrayAccessNode arrayAccess:
-                        currentNode = Visit(arrayAccess); // Assuming Visit() properly handles ArrayAccessNode
-                        break;
-
-                    default:
-                        throw new Exception("Unsupported node type.");
+                        currentNode = field.Value as JObjectNode;
+                        currentObject = currentNode as JObjectNode;
+                    }
+                }
+                else if (identifier is ArrayAccessNode arrayAccess)
+                {
+                    currentNode = Visit(arrayAccess);
+                    currentObject = currentNode as JObjectNode;
+                }
+                else
+                {
+                    throw new Exception("Unsupported node type.");
                 }
             }
 

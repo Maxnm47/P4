@@ -1,0 +1,30 @@
+template Pipeline{
+    string name;
+    bool active;
+    int port;
+}
+
+hidden Pipeline hiddenPipeline = {
+    name = "pipeline";
+    port = 6000;
+};
+
+
+Pipeline[] pipelines = 
+[
+    hiddenPipeline{
+        name = hiddenPipeline.name + "1";
+        active = true;
+        port = hiddenPipeline.port + 1;
+    },
+    {
+        name = hiddenPipeline.name + "2";
+        active = true;
+        port = hiddenPipeline.port + 2;
+    },
+    {
+        name = hiddenPipeline.name + "3";
+        active = true;
+        port = hiddenPipeline.port + 3;
+    }
+];

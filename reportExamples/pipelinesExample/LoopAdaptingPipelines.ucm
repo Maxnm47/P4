@@ -15,3 +15,14 @@ pipelines = {
         };
     }
 };
+
+#adapting example
+Pipeline[] pipelinesAdapting = [
+    for (i in [1,,4]){
+        hiddenPipeline {
+            name = $"`i´";
+            active = true;
+            port = i;
+        }
+    }
+];
