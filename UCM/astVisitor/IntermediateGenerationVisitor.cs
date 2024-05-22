@@ -125,7 +125,6 @@ namespace UCM.astVisitor
             List<JFieldNode> fields = new List<JFieldNode>();
 
             SymbolTable.Push([]);
-            CurrentScope.Add(loopConstructionNode.Entity.value, null);
             foreach (JAstNode child in array.Elements)
             {
                 CurrentScope[loopConstructionNode.Entity.value] = child;
@@ -286,7 +285,7 @@ namespace UCM.astVisitor
                         currentObject = FindSymbol(identifyer.value) as JObjectNode;
                         currentNode = currentObject;
                     }
-                    else 
+                    else
                     {
                         if (currentObject == null)
                         {
