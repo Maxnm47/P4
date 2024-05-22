@@ -12,7 +12,7 @@ using UCM.ast.statements;
 using UCM.ast.statements.condition;
 using UCM.ast.statements.forLoops;
 using UCM.ast.statements.whileLoop;
-using UCM.typechecker;
+using UCM.TypeEnum;
 
 namespace UCM.astVisitor
 {
@@ -21,7 +21,7 @@ namespace UCM.astVisitor
         public virtual Result Visit(AstNode node)
         {
             Console.WriteLine(node.GetType());
-            node.typeInfo ??= new TypeInfo(TypeEnum.Unknown);
+            node.typeInfo ??= new TypeInfo(TypeEnum.TypeEnum.Unknown);
             return node.Accept(this);
         }
 
@@ -30,7 +30,7 @@ namespace UCM.astVisitor
             Result? result = default(Result);
             foreach (AstNode child in node.children)
             {
-                child.typeInfo ??= new TypeInfo(TypeEnum.Unknown);
+                child.typeInfo ??= new TypeInfo(TypeEnum.TypeEnum.Unknown);
                 Result? nextResult = child.Accept(this);
                 if (nextResult != null)
                 {

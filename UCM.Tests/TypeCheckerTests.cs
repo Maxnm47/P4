@@ -15,16 +15,16 @@ namespace UCM.astVisitor;
 [TestClass]
 public class TypeCheckerTest
 {
-    private SemanticAnalysisVisitor typeChecker;
-    private AstBuildVisitor visitor; 
+    private TypeChecker typeChecker;
+    private AstBuildVisitor visitor;
     private UCMLexer lexer;
     private UCMParser parser;
 
     [TestInitialize]
     public void Setup()
     {
-        typeChecker = new SemanticAnalysisVisitor();
-        visitor = new AstBuildVisitor(); 
+        typeChecker = new TypeChecker();
+        visitor = new AstBuildVisitor();
     }
 
     private AstNode GetNode(string program)
@@ -65,7 +65,8 @@ public class TypeCheckerTest
     }
 
     [TestMethod]
-    public void CorrectlyTypedAndValuedFloatArray(){
+    public void CorrectlyTypedAndValuedFloatArray()
+    {
         string program = "float[] x = [1.0, 2.0, 3.0];";
         RootNode root = (RootNode)GetTypeCheckedAst(program);
         ArrayNode arrayNode = root.Fields[0].Expr.GetChild<ArrayNode>(0);
@@ -80,7 +81,7 @@ public class TypeCheckerTest
         Assert.AreEqual(TypeEnum.Float, arrayNode.Elements[2].GetChild<FloatNode>(0).typeInfo.type);
 
     }
-    
+
     [TestMethod]
     public void CorrectlyTypedString()
     {
@@ -115,11 +116,11 @@ public class TypeCheckerTest
     [TestMethod]
     public void TestIncorrectTypes()
     {
-        string program = "int x = \"hello!\";"; 
+        string program = "int x = \"hello!\";";
         try
         {
             RootNode root = (RootNode)GetTypeCheckedAst(program);
-            var field =  root.Fields[0].Expr.GetChild<IntNode>(0);
+            var field = root.Fields[0].Expr.GetChild<IntNode>(0);
             IntNode intnode = root.Fields[0].Expr.GetChild<IntNode>(0);
             Assert.AreEqual(TypeEnum.Int, intnode.typeInfo.type);
             Assert.AreEqual(5, field.value);
@@ -133,19 +134,20 @@ public class TypeCheckerTest
     [TestMethod]
     public void TestCorrectTypesInObject()
     {
-        string program = "object a = {int x = 5; int y = 10;};"; 
+        string program = "object a = {int x = 5; int y = 10;};";
         RootNode root = (RootNode)GetTypeCheckedAst(program);
         var objectNode = root.Fields[0].Expr.GetChild<ObjectNode>(0);
         Assert.AreEqual(5, objectNode.Fields[0].Expr.GetChild<IntNode>(0).value);
         Assert.AreEqual(10, objectNode.Fields[1].Expr.GetChild<IntNode>(0).value);
 
         Assert.AreEqual(TypeEnum.Int, objectNode.Fields[0].Expr.GetChild<IntNode>(0).typeInfo.type);
-        Assert.AreEqual(TypeEnum.Int, objectNode.Fields[1].Expr.GetChild<IntNode>(0).typeInfo.type);        
+        Assert.AreEqual(TypeEnum.Int, objectNode.Fields[1].Expr.GetChild<IntNode>(0).typeInfo.type);
     }
 
     [TestMethod]
-    public void testIncorrectTypesInObject(){
-        string program = "object a = {int x = 5; int y = 10.0;};"; 
+    public void testIncorrectTypesInObject()
+    {
+        string program = "object a = {int x = 5; int y = 10.0;};";
         try
         {
             RootNode root = (RootNode)GetTypeCheckedAst(program);
@@ -154,7 +156,7 @@ public class TypeCheckerTest
             Assert.AreEqual(10, objectNode.Fields[1].Expr.GetChild<IntNode>(0).value);
 
             Assert.AreEqual(TypeEnum.Int, objectNode.Fields[0].Expr.GetChild<IntNode>(0).typeInfo.type);
-            Assert.AreEqual(TypeEnum.Int, objectNode.Fields[1].Expr.GetChild<IntNode>(0).typeInfo.type);        
+            Assert.AreEqual(TypeEnum.Int, objectNode.Fields[1].Expr.GetChild<IntNode>(0).typeInfo.type);
         }
         catch (Exception ex)
         {
@@ -166,7 +168,7 @@ public class TypeCheckerTest
     [TestMethod]
     public void TestCorrectTypesInArray()
     {
-        string program = "int[] a = [1,2,3];"; 
+        string program = "int[] a = [1,2,3];";
         RootNode root = (RootNode)GetTypeCheckedAst(program);
         var arrayNode = root.Fields[0].Expr.GetChild<ArrayNode>(0);
         Assert.AreEqual(1, arrayNode.Elements[0].GetChild<IntNode>(0).value);
@@ -179,8 +181,9 @@ public class TypeCheckerTest
     }
 
     [TestMethod]
-    public void TestIncorrectArrayTypes(){
-        string program = "int[] a = [1,2.0,3];"; 
+    public void TestIncorrectArrayTypes()
+    {
+        string program = "int[] a = [1,2.0,3];";
         try
         {
             RootNode root = (RootNode)GetTypeCheckedAst(program);
@@ -203,7 +206,7 @@ public class TypeCheckerTest
     [TestMethod]
     public void TestCorrectTypesInLoop()
     {
-        string program = "object a = {for(int i in [1,2,3]){int x = i;}};"; 
+        string program = "object a = {for(int i in [1,2,3]){int x = i;}};";
         RootNode root = (RootNode)GetTypeCheckedAst(program);
         var objectNode = root.Fields[0].Expr.GetChild<ObjectNode>(0);
         var loopNode = objectNode.Loops[0];
@@ -221,7 +224,8 @@ public class TypeCheckerTest
     }
 
     [TestMethod]
-    public void TestTemplateObject(){
+    public void TestTemplateObject()
+    {
         string program = """
         template A{
                 int b;
@@ -240,11 +244,12 @@ public class TypeCheckerTest
         Assert.AreEqual("b", field.Key.Id.value);
         Assert.AreEqual(10, field.Expr.GetChild<IntNode>(0).value);
 
-        Assert.AreEqual(TypeEnum.Int, field.Expr.GetChild<IntNode>(0).typeInfo.type);   
+        Assert.AreEqual(TypeEnum.Int, field.Expr.GetChild<IntNode>(0).typeInfo.type);
     }
 
     [TestMethod]
-    public void AnyarrayTest(){
+    public void AnyarrayTest()
+    {
         string program = "[]a = [10, 1.0, \"1\", true];";
         RootNode root = (RootNode)GetTypeCheckedAst(program);
         var arrayNode = root.Fields[0].Expr.GetChild<ArrayNode>(0);

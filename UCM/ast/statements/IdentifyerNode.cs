@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UCM.astVisitor;
-using UCM.typechecker;
+using UCM.TypeEnum;
 
 namespace UCM.ast;
 
@@ -13,7 +13,7 @@ public class IdentifyerNode : AstLeafNode<string>
     {
     }
 
-    public IdentifyerNode(string value, TypeEnum type) : base(value, type)
+    public IdentifyerNode(string value, TypeEnum.TypeEnum type) : base(value, type)
     {
     }
 

@@ -13,7 +13,7 @@ using UCM.ast.loopConstruction;
 using UCM.ast.numExpr;
 using UCM.ast.statements;
 using UCM.astJunior;
-using UCM.typechecker;
+using UCM.TypeEnum;
 
 namespace UCM.astVisitor
 {
@@ -432,7 +432,7 @@ namespace UCM.astVisitor
 
         private JAstNode binOp(TypeInfo typeInfo, JAstNode left, JAstNode right, string op)
         {
-            if (typeInfo.type == TypeEnum.Int)
+            if (typeInfo.type == TypeEnum.TypeEnum.Int)
             {
                 int leftValue = ((JIntNode)left).Value;
                 int rightValue = ((JIntNode)right).Value;
@@ -454,7 +454,7 @@ namespace UCM.astVisitor
                 }
             }
 
-            if (typeInfo.type == TypeEnum.Float)
+            if (typeInfo.type == TypeEnum.TypeEnum.Float)
             {
                 float leftValue = ((JFloatNode)left).Value;
                 float rightValue = ((JFloatNode)right).Value;
@@ -476,7 +476,7 @@ namespace UCM.astVisitor
                 }
             }
 
-            if (typeInfo.type == TypeEnum.String)
+            if (typeInfo.type == TypeEnum.TypeEnum.String)
             {
                 if (op == "+")
                 {

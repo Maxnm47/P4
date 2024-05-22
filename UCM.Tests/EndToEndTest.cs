@@ -73,8 +73,8 @@ public class EndToEndTest
 
 
         // Semantic Analysis TEST SEMANTIC ANALYSIS
-        SemanticAnalysisVisitor semanticAnalyser = new SemanticAnalysisVisitor();
-        RootNode typeCheckedField = (RootNode)semanticAnalyser.VisitRoot(ASTrootNode as RootNode);
+        TypeChecker typeChecker = new TypeChecker();
+        RootNode typeCheckedField = (RootNode)typeChecker.VisitRoot(ASTrootNode as RootNode);
         //check the fields
         Assert.AreEqual("a", typeCheckedField.Fields[0].Key.Id.value);
         Assert.IsInstanceOfType(typeCheckedField.Fields[0].Type, typeof(TypeAnotationNode));
@@ -202,8 +202,8 @@ public class EndToEndTest
 
 
         // Semantic Analysis TEST SEMANTIC ANALYSIS
-        SemanticAnalysisVisitor semanticAnalyser = new SemanticAnalysisVisitor();
-        var semanticNode = semanticAnalyser.Visit(ast);
+        TypeChecker typeChecker = new TypeChecker();
+        var semanticNode = typeChecker.Visit(ast);
         var typeCheckedField = (RootNode)semanticNode;
         //check the fields
         Assert.AreEqual("myObj", typeCheckedField.Fields[0].Key.Id.value);
@@ -332,8 +332,8 @@ public class EndToEndTest
         
 
         // Semantic Analysis TEST SEMANTIC ANALYSIS
-        SemanticAnalysisVisitor semanticAnalyser = new SemanticAnalysisVisitor();
-        RootNode TypeCheckedNode = (RootNode)semanticAnalyser.Visit(ASTrootNode);
+        TypeChecker typeChecker = new TypeChecker();
+        RootNode TypeCheckedNode = (RootNode)typeChecker.Visit(ASTrootNode);
         //check the template
         Assert.AreEqual("A", TypeCheckedNode.Templates[0].Id.value);
         Assert.AreEqual(1, TypeCheckedNode.Templates[0].Fields.Count);

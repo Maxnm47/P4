@@ -10,7 +10,7 @@ using UCM.ast.statements.whileLoop;
 using UCM.ast.loopConstruction;
 using System.Runtime.CompilerServices;
 using UCM.scope;
-using UCM.typechecker;
+using UCM.TypeEnum;
 using System.Globalization;
 
 namespace UCM.ast;
@@ -166,7 +166,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         var type = (isTyped) ?
             (TypeAnotationNode)Visit(context.type()) :
-            new TypeAnotationNode(typechecker.TypeEnum.None.ToString(), typechecker.TypeEnum.None);
+            new TypeAnotationNode(TypeEnum.TypeEnum.None.ToString(), TypeEnum.TypeEnum.None);
         var id = (IdentifyerNode)Visit(context.id());
         var expr = (ExpressionNode)Visit(context.expr());
 
@@ -246,30 +246,30 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         if (context.GetText() == "void")
         {
-            return new TypeAnotationNode(typechecker.TypeEnum.Void.ToString(), typechecker.TypeEnum.Void);
+            return new TypeAnotationNode(TypeEnum.TypeEnum.Void.ToString(), TypeEnum.TypeEnum.Void);
         }
         else if (context.GetText() == "string")
         {
-            return new TypeAnotationNode(typechecker.TypeEnum.String.ToString(), typechecker.TypeEnum.String);
+            return new TypeAnotationNode(TypeEnum.TypeEnum.String.ToString(), TypeEnum.TypeEnum.String);
         }
         else if (context.GetText() == "int")
         {
-            return new TypeAnotationNode(typechecker.TypeEnum.Int.ToString(), typechecker.TypeEnum.Int);
+            return new TypeAnotationNode(TypeEnum.TypeEnum.Int.ToString(), TypeEnum.TypeEnum.Int);
         }
         else if (context.GetText() == "float")
         {
-            return new TypeAnotationNode(typechecker.TypeEnum.Float.ToString(), typechecker.TypeEnum.Float);
+            return new TypeAnotationNode(TypeEnum.TypeEnum.Float.ToString(), TypeEnum.TypeEnum.Float);
         }
         else if (context.GetText() == "bool")
         {
-            return new TypeAnotationNode(typechecker.TypeEnum.Bool.ToString(), typechecker.TypeEnum.Bool);
+            return new TypeAnotationNode(TypeEnum.TypeEnum.Bool.ToString(), TypeEnum.TypeEnum.Bool);
         }
         else if (context.complexType() != null)
         {
             return (TypeAnotationNode)Visit(context.complexType());
         }
 
-        return new TypeAnotationNode(context.GetText(), typechecker.TypeEnum.Undefined);
+        return new TypeAnotationNode(context.GetText(), TypeEnum.TypeEnum.Undefined);
     }
 
     public override TypeAnotationNode VisitComplexType(UCMParser.ComplexTypeContext context)
@@ -278,14 +278,14 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         if (context.object_t() != null)
         {
-            return new TypeAnotationNode(context.object_t().GetText(), typechecker.TypeEnum.Object);
+            return new TypeAnotationNode(context.object_t().GetText(), TypeEnum.TypeEnum.Object);
         }
         else if (context.array_t() != null)
         {
-            return new TypeAnotationNode(context.array_t().GetText(), typechecker.TypeEnum.Array);
+            return new TypeAnotationNode(context.array_t().GetText(), TypeEnum.TypeEnum.Array);
         }
 
-        return new TypeAnotationNode(context.GetText(), typechecker.TypeEnum.Undefined);
+        return new TypeAnotationNode(context.GetText(), TypeEnum.TypeEnum.Undefined);
     }
 
     public override AstNode VisitMethod(UCMParser.MethodContext context)
@@ -444,7 +444,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
     }
 
-    
+
 
     /* ------------------------ Exxpresions ------------------------ */
     public override ExpressionNode VisitExpr(UCMParser.ExprContext context)
@@ -457,7 +457,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             AstNode childNode = Visit(child);
             expr.AddChild(childNode);
         }
-        if(expr.children.Count == 0)
+        if (expr.children.Count == 0)
         {
             expr.AddChild(new NullNode("null"));
         }
@@ -530,14 +530,14 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             {
                 var child = context.GetChild(i);
 
-                if(child is UCMParser.BoolExprContext)
+                if (child is UCMParser.BoolExprContext)
                 {
                     if (left == null)
                         left = Visit(child as UCMParser.BoolExprContext);
                     else
                         right = Visit(child as UCMParser.BoolExprContext);
                 }
-                else if(child is UCMParser.NumExprContext)
+                else if (child is UCMParser.NumExprContext)
                 {
                     if (left == null)
                         left = Visit(child as UCMParser.NumExprContext);
@@ -558,14 +558,14 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             {
                 var child = context.GetChild(i);
 
-                if(child is UCMParser.BoolExprContext)
+                if (child is UCMParser.BoolExprContext)
                 {
                     if (left == null)
                         left = Visit(child as UCMParser.BoolExprContext);
                     else
                         right = Visit(child as UCMParser.BoolExprContext);
                 }
-                else if(child is UCMParser.NumExprContext)
+                else if (child is UCMParser.NumExprContext)
                 {
                     if (left == null)
                         left = Visit(child as UCMParser.NumExprContext);
@@ -666,7 +666,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
     }
 
-     
+
 
     public override IntNode VisitInt(UCMParser.IntContext context)
     {
@@ -724,13 +724,13 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
                 AstNode id = Visit(child);
                 ids.Add(id);
             }
-            if(child is UCMParser.ArrayAccessContext)
+            if (child is UCMParser.ArrayAccessContext)
             {
                 AstNode arrayAccess = Visit(child);
                 ids.Add(arrayAccess);
             }
         }
-        
+
         return new ObjectFieldAcessNode(ids);
     }
 

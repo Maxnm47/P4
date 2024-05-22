@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UCM.ast;
 using UCM.ast.root;
-using UCM.typechecker;
+using UCM.TypeEnum;
 
 namespace UCM.astVisitor
 {

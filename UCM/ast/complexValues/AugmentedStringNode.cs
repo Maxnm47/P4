@@ -1,5 +1,5 @@
 
-using UCM.typechecker;
+using UCM.TypeEnum;
 
 namespace UCM.ast
 {

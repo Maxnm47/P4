@@ -201,7 +201,7 @@ class Program
 //         Console.WriteLine(ast.ToString());
 
 //         // Semantic Analysis
-//         SemanticAnalysisVisitor semanticAnalyser = new SemanticAnalysisVisitor();
+//         TypeChecker semanticAnalyser = new TypeChecker();
 //         semanticAnalyser.Visit(ast);
 
 //         // Intermediate Generation

@@ -1,15 +1,15 @@
-using UCM.typechecker;
+using UCM.TypeEnum;
 
 namespace UCM.astVisitor
 {
     public class TypeInfo
     {
-        public TypeEnum type;
+        public TypeEnum.TypeEnum type;
         // public string? fieldKey;
         public string? templateId;
         public bool isHidden = false;
         public TypeInfo? arrayType;
-        public TypeInfo(TypeEnum type, string? templateId = null, bool isHidden = false, TypeInfo? arrayType = null)
+        public TypeInfo(TypeEnum.TypeEnum type, string? templateId = null, bool isHidden = false, TypeInfo? arrayType = null)
         {
             this.type = type;
             // this.fieldKey = fieldKey;

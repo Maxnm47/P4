@@ -1,4 +1,4 @@
-using UCM.typechecker;
+using UCM.TypeEnum;
 
 namespace UCM.ast
 {
@@ -7,7 +7,7 @@ namespace UCM.ast
         public BoolNode(bool value) :
             base(value)
         {
-            type = TypeEnum.Bool;
+            type = TypeEnum.TypeEnum.Bool;
         }
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
