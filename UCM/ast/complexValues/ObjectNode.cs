@@ -1,5 +1,5 @@
 using UCM.ast.loopConstruction;
-using UCM.TypeEnum;
+using UCM.typeEnum;
 
 namespace UCM.ast
 {

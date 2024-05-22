@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UCM;
-using UCM.TypeEnum;
+using UCM.typeEnum;
 using UCM.ast;
 
 
@@ -18,7 +18,7 @@ public abstract class AstLeafNode<T> : AstNode
         this.value = value;
     }
 
-    public AstLeafNode(T value, TypeEnum.TypeEnum type)
+    public AstLeafNode(T value, TypeEnum type)
     {
         this.value = value;
         this.type = type;

@@ -10,7 +10,7 @@ using UCM.ast.statements.whileLoop;
 using UCM.ast.loopConstruction;
 using System.Runtime.CompilerServices;
 using UCM.scope;
-using UCM.TypeEnum;
+using UCM.typeEnum;
 using System.Globalization;
 
 namespace UCM.ast;
@@ -166,7 +166,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         var type = (isTyped) ?
             (TypeAnotationNode)Visit(context.type()) :
-            new TypeAnotationNode(TypeEnum.TypeEnum.None.ToString(), TypeEnum.TypeEnum.None);
+            new TypeAnotationNode(TypeEnum.None.ToString(), TypeEnum.None);
         var id = (IdentifyerNode)Visit(context.id());
         var expr = (ExpressionNode)Visit(context.expr());
 
@@ -246,30 +246,30 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         if (context.GetText() == "void")
         {
-            return new TypeAnotationNode(TypeEnum.TypeEnum.Void.ToString(), TypeEnum.TypeEnum.Void);
+            return new TypeAnotationNode(TypeEnum.Void.ToString(), TypeEnum.Void);
         }
         else if (context.GetText() == "string")
         {
-            return new TypeAnotationNode(TypeEnum.TypeEnum.String.ToString(), TypeEnum.TypeEnum.String);
+            return new TypeAnotationNode(TypeEnum.String.ToString(), TypeEnum.String);
         }
         else if (context.GetText() == "int")
         {
-            return new TypeAnotationNode(TypeEnum.TypeEnum.Int.ToString(), TypeEnum.TypeEnum.Int);
+            return new TypeAnotationNode(TypeEnum.Int.ToString(), TypeEnum.Int);
         }
         else if (context.GetText() == "float")
         {
-            return new TypeAnotationNode(TypeEnum.TypeEnum.Float.ToString(), TypeEnum.TypeEnum.Float);
+            return new TypeAnotationNode(TypeEnum.Float.ToString(), TypeEnum.Float);
         }
         else if (context.GetText() == "bool")
         {
-            return new TypeAnotationNode(TypeEnum.TypeEnum.Bool.ToString(), TypeEnum.TypeEnum.Bool);
+            return new TypeAnotationNode(TypeEnum.Bool.ToString(), TypeEnum.Bool);
         }
         else if (context.complexType() != null)
         {
             return (TypeAnotationNode)Visit(context.complexType());
         }
 
-        return new TypeAnotationNode(context.GetText(), TypeEnum.TypeEnum.Undefined);
+        return new TypeAnotationNode(context.GetText(), TypeEnum.Undefined);
     }
 
     public override TypeAnotationNode VisitComplexType(UCMParser.ComplexTypeContext context)
@@ -278,14 +278,14 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         if (context.object_t() != null)
         {
-            return new TypeAnotationNode(context.object_t().GetText(), TypeEnum.TypeEnum.Object);
+            return new TypeAnotationNode(context.object_t().GetText(), TypeEnum.Object);
         }
         else if (context.array_t() != null)
         {
-            return new TypeAnotationNode(context.array_t().GetText(), TypeEnum.TypeEnum.Array);
+            return new TypeAnotationNode(context.array_t().GetText(), TypeEnum.Array);
         }
 
-        return new TypeAnotationNode(context.GetText(), TypeEnum.TypeEnum.Undefined);
+        return new TypeAnotationNode(context.GetText(), TypeEnum.Undefined);
     }
 
     public override AstNode VisitMethod(UCMParser.MethodContext context)

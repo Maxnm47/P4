@@ -13,7 +13,7 @@ using UCM.ast.loopConstruction;
 using UCM.ast.numExpr;
 using UCM.ast.root;
 using UCM.ast.statements;
-using UCM.TypeEnum;
+using UCM.typeEnum;
 
 namespace UCM.astVisitor
 {
@@ -62,22 +62,22 @@ namespace UCM.astVisitor
             bool hasDynamicKey = fieldNode.Key.Id is null;
             string key = hasDynamicKey ? Guid.NewGuid().ToString() : fieldNode.Key.Id.value;
 
-            fieldNode.typeInfo ??= new TypeInfo(TypeEnum.TypeEnum.Any);
+            fieldNode.typeInfo ??= new TypeInfo(TypeEnum.Any);
 
             if (hasDynamicKey)
             {
                 ExpressionNode keyExpression = fieldNode.Key.Expr;
-                keyExpression.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Unknown);
+                keyExpression.typeInfo = new TypeInfo(TypeEnum.Unknown);
                 Visit(keyExpression);
 
-                if (keyExpression.typeInfo.type == TypeEnum.TypeEnum.Error)
+                if (keyExpression.typeInfo.type == TypeEnum.Error)
                 {
                     Errors.Add("Error in dynamic key asignment");
                     return fieldNode;
                 }
 
-                if (keyExpression.typeInfo.type == TypeEnum.TypeEnum.Array ||
-                    keyExpression.typeInfo.type == TypeEnum.TypeEnum.Object)
+                if (keyExpression.typeInfo.type == TypeEnum.Array ||
+                    keyExpression.typeInfo.type == TypeEnum.Object)
                 {
                     Errors.Add("Dynamic key can not be of type array or objec");
                     return fieldNode;
@@ -99,7 +99,7 @@ namespace UCM.astVisitor
                     return fieldNode;
                 }
 
-                fieldNode.typeInfo = typeInfo ?? new TypeInfo(TypeEnum.TypeEnum.Any);
+                fieldNode.typeInfo = typeInfo ?? new TypeInfo(TypeEnum.Any);
             }
 
             if (CurrentScope.ContainsKey(key))
@@ -135,17 +135,17 @@ namespace UCM.astVisitor
         {
             TypeInfo exprectedType = typeAnotationNode.typeInfo;
 
-            if (exprectedType.type == TypeEnum.TypeEnum.Unknown || exprectedType.type == TypeEnum.TypeEnum.Any)
+            if (exprectedType.type == TypeEnum.Unknown || exprectedType.type == TypeEnum.Any)
             {
-                exprectedType.type = typeAnotationNode.type ?? TypeEnum.TypeEnum.Any;
-                if (typeAnotationNode.type == TypeEnum.TypeEnum.Object)
+                exprectedType.type = typeAnotationNode.type ?? TypeEnum.Any;
+                if (typeAnotationNode.type == TypeEnum.Object)
                 {
                     exprectedType.templateId = typeAnotationNode.value.Equals("object") ? null : typeAnotationNode.value;
                 }
             }
 
 
-            if (typeAnotationNode.type == TypeEnum.TypeEnum.Object && typeAnotationNode.value != "object")
+            if (typeAnotationNode.type == TypeEnum.Object && typeAnotationNode.value != "object")
             {
                 if (!templateTypeChecker.HasBeenDeclared(typeAnotationNode.value))
                 {
@@ -160,16 +160,16 @@ namespace UCM.astVisitor
                 }
             }
 
-            if (typeAnotationNode.type == TypeEnum.TypeEnum.Array)
+            if (typeAnotationNode.type == TypeEnum.Array)
             {
                 TypeInfo arrayType = calcArrayType(typeAnotationNode.value);
-                if (!arrayType.Equals(exprectedType.arrayType) && exprectedType.arrayType != null && exprectedType.arrayType.type != TypeEnum.TypeEnum.Any && exprectedType.arrayType.type != TypeEnum.TypeEnum.Unknown)
+                if (!arrayType.Equals(exprectedType.arrayType) && exprectedType.arrayType != null && exprectedType.arrayType.type != TypeEnum.Any && exprectedType.arrayType.type != TypeEnum.Unknown)
                 {
                     Errors.Add($"Type mismatch: {arrayType.type} != {exprectedType.arrayType.type}");
                     return base.VisitTypeAnotation(typeAnotationNode);
                 }
 
-                exprectedType.type = TypeEnum.TypeEnum.Array;
+                exprectedType.type = TypeEnum.Array;
                 exprectedType.arrayType = arrayType;
 
             }
@@ -205,7 +205,7 @@ namespace UCM.astVisitor
             foreach (FieldNode field in fields ?? [])
             {
                 // Pass potential type info to children
-                field.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Unknown);
+                field.typeInfo = new TypeInfo(TypeEnum.Unknown);
                 field.typeInfo.templateId = objectNode.typeInfo.templateId;
                 Visit(field);
             }
@@ -221,7 +221,7 @@ namespace UCM.astVisitor
 
             foreach (LoopConstructionNode loop in objectNode.Loops ?? [])
             {
-                loop.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Field);
+                loop.typeInfo = new TypeInfo(TypeEnum.Field);
                 loop.typeInfo.templateId = objectNode.typeInfo.templateId;
                 Visit(loop);
             }
@@ -237,18 +237,18 @@ namespace UCM.astVisitor
                 }
             }
 
-            if (objectNode.typeInfo.type != TypeEnum.TypeEnum.Object && objectNode.typeInfo.type != TypeEnum.TypeEnum.Any && objectNode.typeInfo.type != TypeEnum.TypeEnum.Unknown)
+            if (objectNode.typeInfo.type != TypeEnum.Object && objectNode.typeInfo.type != TypeEnum.Any && objectNode.typeInfo.type != TypeEnum.Unknown)
             {
                 Errors.Add($"Type mismatch: Can not set value of type Object to value of type {objectNode.typeInfo.type}");
             }
 
-            objectNode.typeInfo.type = TypeEnum.TypeEnum.Object;
+            objectNode.typeInfo.type = TypeEnum.Object;
 
             return objectNode;
         }
         public override AstNode VisitIdentifyer(IdentifyerNode node)
         {
-            TypeInfo actualType = new TypeInfo(TypeEnum.TypeEnum.Undefined);
+            TypeInfo actualType = new TypeInfo(TypeEnum.Undefined);
 
             foreach (var scope in SymbolTables)
             {
@@ -259,18 +259,18 @@ namespace UCM.astVisitor
                 }
             }
 
-            if (node.typeInfo.type == TypeEnum.TypeEnum.Any || node.typeInfo.type == TypeEnum.TypeEnum.Unknown)
+            if (node.typeInfo.type == TypeEnum.Any || node.typeInfo.type == TypeEnum.Unknown)
             {
                 node.typeInfo = actualType;
             }
 
-            if (actualType.type == TypeEnum.TypeEnum.Undefined)
+            if (actualType.type == TypeEnum.Undefined)
             {
                 Errors.Add($"Variable {node.value} not declared");
                 return base.VisitIdentifyer(node);
             }
 
-            if (actualType.type == TypeEnum.TypeEnum.Template)
+            if (actualType.type == TypeEnum.Template)
             {
                 return base.VisitIdentifyer(node);
             }
@@ -301,7 +301,7 @@ namespace UCM.astVisitor
 
         public override AstNode VisitString(StringNode node)
         {
-            CheckPrimitiveType(node, TypeEnum.TypeEnum.String);
+            CheckPrimitiveType(node, TypeEnum.String);
             return node;
         }
 
@@ -311,8 +311,8 @@ namespace UCM.astVisitor
             {
                 if (child is StringNode)
                 {
-                    child.typeInfo ??= new TypeInfo(TypeEnum.TypeEnum.Unknown);
-                    CheckPrimitiveType(child, TypeEnum.TypeEnum.String);
+                    child.typeInfo ??= new TypeInfo(TypeEnum.Unknown);
+                    CheckPrimitiveType(child, TypeEnum.String);
                 }
 
                 if (child is ExpressionNode)
@@ -321,25 +321,25 @@ namespace UCM.astVisitor
                 }
             }
 
-            node.typeInfo.type = TypeEnum.TypeEnum.String;
+            node.typeInfo.type = TypeEnum.String;
             return node;
         }
 
         public override AstNode VisitInt(IntNode node)
         {
-            CheckPrimitiveType(node, TypeEnum.TypeEnum.Int);
+            CheckPrimitiveType(node, TypeEnum.Int);
             return node;
         }
 
         public override AstNode VisitFloat(FloatNode node)
         {
-            CheckPrimitiveType(node, TypeEnum.TypeEnum.Float);
+            CheckPrimitiveType(node, TypeEnum.Float);
             return node;
         }
 
         public override AstNode VisitBool(BoolNode node)
         {
-            CheckPrimitiveType(node, TypeEnum.TypeEnum.Bool);
+            CheckPrimitiveType(node, TypeEnum.Bool);
             return node;
         }
 
@@ -347,7 +347,7 @@ namespace UCM.astVisitor
         {
             TypeInfo? elementType = null;
 
-            if (node.typeInfo.type != TypeEnum.TypeEnum.Array && node.typeInfo.type != TypeEnum.TypeEnum.Any && node.typeInfo.type != TypeEnum.TypeEnum.Unknown)
+            if (node.typeInfo.type != TypeEnum.Array && node.typeInfo.type != TypeEnum.Any && node.typeInfo.type != TypeEnum.Unknown)
             {
                 Errors.Add($"Type mismatch: Can not set value of type Array to value of type {node.typeInfo.type}");
                 return node;
@@ -366,12 +366,12 @@ namespace UCM.astVisitor
                 }
                 else if (!elementType.Equals(tempElementType))
                 {
-                    elementType.type = TypeEnum.TypeEnum.Any;
+                    elementType.type = TypeEnum.Any;
                 }
             }
 
-            node.typeInfo.arrayType = elementType ?? new TypeInfo(TypeEnum.TypeEnum.Any);
-            node.typeInfo.type = TypeEnum.TypeEnum.Array;
+            node.typeInfo.arrayType = elementType ?? new TypeInfo(TypeEnum.Any);
+            node.typeInfo.type = TypeEnum.Array;
 
             return node;
         }
@@ -381,19 +381,19 @@ namespace UCM.astVisitor
             ExpressionNode start = rangeNode.Start;
             ExpressionNode end = rangeNode.End;
 
-            start.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Int);
-            end.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Int);
+            start.typeInfo = new TypeInfo(TypeEnum.Int);
+            end.typeInfo = new TypeInfo(TypeEnum.Int);
 
             Visit(start);
             Visit(end);
 
-            if (start.typeInfo.type != TypeEnum.TypeEnum.Int || end.typeInfo.type != TypeEnum.TypeEnum.Int)
+            if (start.typeInfo.type != TypeEnum.Int || end.typeInfo.type != TypeEnum.Int)
             {
                 Errors.Add("Range must have start and end of type int");
                 return rangeNode;
             }
 
-            rangeNode.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Int);
+            rangeNode.typeInfo = new TypeInfo(TypeEnum.Int);
 
             return rangeNode;
         }
@@ -477,7 +477,7 @@ namespace UCM.astVisitor
             List<ExpressionNode>? expressions = evaluationContent.Expressions;
 
             ExpressionNode arrayExprssion = loopConstructionNode.Array;
-            arrayExprssion.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Array, arrayType: new TypeInfo(TypeEnum.TypeEnum.Unknown));
+            arrayExprssion.typeInfo = new TypeInfo(TypeEnum.Array, arrayType: new TypeInfo(TypeEnum.Unknown));
 
             SymbolTables.Push([]);
 
@@ -486,7 +486,7 @@ namespace UCM.astVisitor
 
             if (entityType is not null)
             {
-                entityType.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Unknown);
+                entityType.typeInfo = new TypeInfo(TypeEnum.Unknown);
                 Visit(entityType);
                 entity.typeInfo = entityType.typeInfo;
                 arrayExprssion.typeInfo.arrayType = entityType.typeInfo;
@@ -511,14 +511,14 @@ namespace UCM.astVisitor
                 return loopConstructionNode;
             }
 
-            if (fields != null && loopConstructionNode.typeInfo.type != TypeEnum.TypeEnum.Field)
+            if (fields != null && loopConstructionNode.typeInfo.type != TypeEnum.Field)
             {
                 Errors.Add("Loop construct in array must have expressions not fields");
                 SymbolTables.Pop();
                 return loopConstructionNode;
             }
 
-            if (expressions != null && loopConstructionNode.typeInfo.type == TypeEnum.TypeEnum.Field)
+            if (expressions != null && loopConstructionNode.typeInfo.type == TypeEnum.Field)
             {
                 Errors.Add("Loop construct in object must have fields not expressions");
                 SymbolTables.Pop();
@@ -531,7 +531,7 @@ namespace UCM.astVisitor
             {
                 foreach (FieldNode field in fields)
                 {
-                    field.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Unknown);
+                    field.typeInfo = new TypeInfo(TypeEnum.Unknown);
                     field.typeInfo.templateId = loopConstructionNode.typeInfo.templateId;
                     Visit(field);
                     loopConstructionNode.typeInfo = field.typeInfo;
@@ -564,10 +564,10 @@ namespace UCM.astVisitor
 
             foreach (ExpressionNode index in indexs)
             {
-                index.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Int);
+                index.typeInfo = new TypeInfo(TypeEnum.Int);
                 Visit(index);
 
-                if (index.typeInfo.type == TypeEnum.TypeEnum.Error)
+                if (index.typeInfo.type == TypeEnum.Error)
                 {
                     Errors.Add($"Index must be of type int");
                 }
@@ -579,16 +579,16 @@ namespace UCM.astVisitor
             if (arrayField is null)
             {
                 Errors.Add($"Array {arrayName.value} not declared");
-                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Error);
+                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.Error);
                 return arrayAccessNode;
             }
 
             ArrayNode array = arrayField.Expr.GetChild<ArrayNode>(0);
 
-            if (array.typeInfo.type != TypeEnum.TypeEnum.Array)
+            if (array.typeInfo.type != TypeEnum.Array)
             {
                 Errors.Add($"Variable {arrayName.value} is not an array");
-                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Error);
+                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.Error);
                 return arrayAccessNode;
             }
 
@@ -596,10 +596,10 @@ namespace UCM.astVisitor
 
             for (int i = 0; i < dimentions - 1; i++)
             {
-                if (arrayType.type != TypeEnum.TypeEnum.Array)
+                if (arrayType.type != TypeEnum.Array)
                 {
                     Errors.Add($"Variable {arrayName.value} is not an array of {dimentions} dimentions");
-                    arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Error);
+                    arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.Error);
                     return arrayAccessNode;
                 }
                 arrayType = arrayType.arrayType;
@@ -608,17 +608,17 @@ namespace UCM.astVisitor
             if (arrayAccessNode.typeInfo.templateId != null && arrayType.templateId != arrayAccessNode.typeInfo.templateId)
             {
                 Errors.Add($"Type mismatch: array access of type {arrayType.templateId ?? arrayType.type.ToString()} != {arrayAccessNode.typeInfo.templateId}");
-                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Error);
+                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.Error);
                 return arrayAccessNode;
             }
 
 
             if (!arrayType.Equals(arrayAccessNode.typeInfo) &&
-                arrayAccessNode.typeInfo.type != TypeEnum.TypeEnum.Any &&
-                arrayAccessNode.typeInfo.type != TypeEnum.TypeEnum.Unknown)
+                arrayAccessNode.typeInfo.type != TypeEnum.Any &&
+                arrayAccessNode.typeInfo.type != TypeEnum.Unknown)
             {
                 Errors.Add($"Type mismatch: array access of type {arrayType.type} != {arrayAccessNode.typeInfo.type}");
-                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Error);
+                arrayAccessNode.typeInfo = new TypeInfo(TypeEnum.Error);
                 return arrayAccessNode;
             }
 
@@ -644,7 +644,7 @@ namespace UCM.astVisitor
                 return base.VisitAddition(node);
             }
 
-            if (left.typeInfo.type != TypeEnum.TypeEnum.Int && left.typeInfo.type != TypeEnum.TypeEnum.Float && left.typeInfo.type != TypeEnum.TypeEnum.String)
+            if (left.typeInfo.type != TypeEnum.Int && left.typeInfo.type != TypeEnum.Float && left.typeInfo.type != TypeEnum.String)
             {
                 Errors.Add($"Type {left.typeInfo.type} not supported in addition");
                 return base.VisitAddition(node);
@@ -673,7 +673,7 @@ namespace UCM.astVisitor
                 return base.VisitSubtraction(node);
             }
 
-            if (left.typeInfo.type != TypeEnum.TypeEnum.Int && left.typeInfo.type != TypeEnum.TypeEnum.Float)
+            if (left.typeInfo.type != TypeEnum.Int && left.typeInfo.type != TypeEnum.Float)
             {
                 Errors.Add($"Type {left.typeInfo.type} not supported in subtraction");
                 return base.VisitSubtraction(node);
@@ -701,7 +701,7 @@ namespace UCM.astVisitor
                 return base.VisitMultiplication(node);
             }
 
-            if (left.typeInfo.type != TypeEnum.TypeEnum.Int && left.typeInfo.type != TypeEnum.TypeEnum.Float)
+            if (left.typeInfo.type != TypeEnum.Int && left.typeInfo.type != TypeEnum.Float)
             {
                 Errors.Add($"Type {left.typeInfo.type} not supported in multiplication");
                 return base.VisitMultiplication(node);
@@ -729,7 +729,7 @@ namespace UCM.astVisitor
                 return base.VisitDivision(node);
             }
 
-            if (left.typeInfo.type != TypeEnum.TypeEnum.Int && left.typeInfo.type != TypeEnum.TypeEnum.Float)
+            if (left.typeInfo.type != TypeEnum.Int && left.typeInfo.type != TypeEnum.Float)
             {
                 Errors.Add($"Type {left.typeInfo.type} not supported in division");
                 return base.VisitDivision(node);
@@ -757,7 +757,7 @@ namespace UCM.astVisitor
                 return base.VisitModulo(node);
             }
 
-            if (left.typeInfo.type != TypeEnum.TypeEnum.Int)
+            if (left.typeInfo.type != TypeEnum.Int)
             {
                 Errors.Add($"Type {left.typeInfo.type} not supported in modulo");
                 return base.VisitModulo(node);
@@ -792,7 +792,7 @@ namespace UCM.astVisitor
 
             templateTypeChecker.AddTemplate(node.Id.value, node);
 
-            node.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Template);
+            node.typeInfo = new TypeInfo(TypeEnum.Template);
             CurrentScope.Add(node.Id.value, node);
 
             return base.VisitTemplate(node);
@@ -801,7 +801,7 @@ namespace UCM.astVisitor
         //templateField
         public override AstNode VisitTemplateField(TemplateFieldNode node)
         {
-            node.typeInfo = new TypeInfo(TypeEnum.TypeEnum.Unknown);
+            node.typeInfo = new TypeInfo(TypeEnum.Unknown);
             AstNode type = node.Type;
             type.typeInfo = node.typeInfo;
 
@@ -827,9 +827,9 @@ namespace UCM.astVisitor
             return null;
         }
 
-        void CheckPrimitiveType(AstNode node, TypeEnum.TypeEnum expectedType)
+        void CheckPrimitiveType(AstNode node, TypeEnum expectedType)
         {
-            if (node.typeInfo.type == TypeEnum.TypeEnum.Any || node.typeInfo.type == TypeEnum.TypeEnum.Unknown)
+            if (node.typeInfo.type == TypeEnum.Any || node.typeInfo.type == TypeEnum.Unknown)
             {
                 node.typeInfo = new TypeInfo(expectedType);
                 return;
@@ -838,7 +838,7 @@ namespace UCM.astVisitor
             if (node.typeInfo.type != expectedType)
             {
                 Errors.Add($"Type mismatch: Can not set value of type {expectedType} to value of type {node.typeInfo.type}");
-                node.typeInfo.type = TypeEnum.TypeEnum.Error;
+                node.typeInfo.type = TypeEnum.Error;
             }
         }
 
@@ -850,28 +850,28 @@ namespace UCM.astVisitor
 
             if (!hasSpecifiedType)
             {
-                return new TypeInfo(TypeEnum.TypeEnum.Any);
+                return new TypeInfo(TypeEnum.Any);
             }
 
             if (hasMoreDimensions)
             {
-                return new TypeInfo(TypeEnum.TypeEnum.Array, arrayType: calcArrayType(arrayTypeString));
+                return new TypeInfo(TypeEnum.Array, arrayType: calcArrayType(arrayTypeString));
             }
 
             switch (arrayTypeString)
             {
                 case "int":
-                    return new TypeInfo(TypeEnum.TypeEnum.Int);
+                    return new TypeInfo(TypeEnum.Int);
                 case "float":
-                    return new TypeInfo(TypeEnum.TypeEnum.Float);
+                    return new TypeInfo(TypeEnum.Float);
                 case "string":
-                    return new TypeInfo(TypeEnum.TypeEnum.String);
+                    return new TypeInfo(TypeEnum.String);
                 case "bool":
-                    return new TypeInfo(TypeEnum.TypeEnum.Bool);
+                    return new TypeInfo(TypeEnum.Bool);
                 case "object":
-                    return new TypeInfo(TypeEnum.TypeEnum.Object);
+                    return new TypeInfo(TypeEnum.Object);
                 default:
-                    return new TypeInfo(TypeEnum.TypeEnum.Object, templateId: arrayTypeString);
+                    return new TypeInfo(TypeEnum.Object, templateId: arrayTypeString);
             }
         }
     }

@@ -1,4 +1,4 @@
-namespace UCM.TypeEnum;
+namespace UCM.typeEnum;
 
 public enum TypeEnum
 {

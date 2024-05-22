@@ -1,12 +1,12 @@
-using UCM.TypeEnum;
+using UCM.typeEnum;
 
 namespace UCM.tables;
 
 public class VTableEntry
 {
     public string id;
-    public TypeEnum.TypeEnum type;
-    public VTableEntry(string id, TypeEnum.TypeEnum type)
+    public TypeEnum type;
+    public VTableEntry(string id, TypeEnum type)
     {
         this.id = id;
         this.type = type;

@@ -1,5 +1,5 @@
 using Antlr4.Runtime.Misc;
-using UCM.TypeEnum;
+using UCM.typeEnum;
 
 namespace UCM.ast
 {
@@ -8,7 +8,7 @@ namespace UCM.ast
         public IntNode(int value) :
             base(value)
         {
-            type = TypeEnum.TypeEnum.Int;
+            type = typeEnum.TypeEnum.Int;
         }
 
 

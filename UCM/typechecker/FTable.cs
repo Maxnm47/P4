@@ -1,5 +1,5 @@
 
-using UCM.TypeEnum;
+using UCM.typeEnum;
 
 namespace UCM.tables;
 
@@ -7,9 +7,9 @@ public class FTableEntry
 {
     public string paramId;
     public string body; //måske fjern
-    public TypeEnum.TypeEnum paramtype;
-    public TypeEnum.TypeEnum returntype;
-    public FTableEntry(string paramId, string body, TypeEnum.TypeEnum paramtype, TypeEnum.TypeEnum returntype)
+    public TypeEnum paramtype;
+    public TypeEnum returntype;
+    public FTableEntry(string paramId, string body, TypeEnum paramtype, TypeEnum returntype)
     {
         this.body = body; //måske fjern
         this.paramId = paramId;

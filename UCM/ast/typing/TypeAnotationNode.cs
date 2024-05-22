@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UCM.astVisitor;
-using UCM.TypeEnum;
+using UCM.typeEnum;
 
 namespace UCM.ast
 {
@@ -14,7 +14,7 @@ namespace UCM.ast
         {
         }
 
-        public TypeAnotationNode(string value, TypeEnum.TypeEnum type) :
+        public TypeAnotationNode(string value, TypeEnum type) :
             base(value, type)
         {
         }

@@ -1,4 +1,4 @@
-using UCM.TypeEnum;
+using UCM.typeEnum;
 
 namespace UCM.ast
 {

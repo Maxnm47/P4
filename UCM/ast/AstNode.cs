@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using UCM.astVisitor;
-using UCM.TypeEnum;
+using UCM.typeEnum;
 
 namespace UCM.ast;
 
@@ -16,7 +16,7 @@ public abstract class AstNode
 
     public string referenceId;
 
-    public TypeEnum.TypeEnum? type { get; set; }
+    public TypeEnum? type { get; set; }
     public TypeInfo? typeInfo { get; set; }
 
     public abstract T? Accept<T>(astVisitor.AstBaseVisitor<T> visitor);
