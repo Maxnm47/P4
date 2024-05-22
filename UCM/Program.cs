@@ -17,9 +17,9 @@ class Program
 {
     static void Main(string[] args)
     {
-        if (args.Length == 0)
+        if (args.Length != 2)
         {
-            Console.WriteLine("Please provide the path to the UCM file.");
+            Console.WriteLine("Please provide the path to the UCM file along with output type.");
             return;
         }
 
@@ -30,26 +30,30 @@ class Program
 
         string? outputFilePath = null;
         // Check if '-json' option is present
-        if (Array.IndexOf(args, "-json") != -1)
+        if (args[1].Equals("-json"))
         {
             outputFilePath = Path.ChangeExtension(inputFilePath, ".json");
             TranspileJSON(EvaluatedAst, outputFilePath);
         }
-        else if (Array.IndexOf(args, "-ucm") != -1)
+        else if (args[1].Equals("-ucm"))
         {
             outputFilePath = Path.ChangeExtension(inputFilePath, ".ucm");
             TranspileUCMJunior(EvaluatedAst, outputFilePath);
         }
-        else if (Array.IndexOf(args, "-yaml") != -1)
+        else if (args[1].Equals("-yaml"))
         {
             outputFilePath = Path.ChangeExtension(inputFilePath, ".yaml");
             TranspileYaml(EvaluatedAst, outputFilePath);
+        }
+        else
+        {
+            Console.WriteLine($"The output type {args[1]} is not suported. Please provide one of the following output types: -json, -ucm or -yaml");
+            return;
         }
 
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine($"Transpilation completed successfully: output written to {outputFilePath}");
         Console.ResetColor();
-
     }
 
     static AstNode FrontEnd(string inputFilePath)
