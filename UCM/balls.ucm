@@ -6,12 +6,12 @@ template Pipeline{
 
 hidden bool[] activeArray = [true, true, false];
 
-pipelines = {
+pipelines = [
     for (i in [1,,4]) {
-        Pipeline ($"pipe `i´") = {
+        {
             string name = $"pipeline `i´";
             bool active = activeArray[i-1];
             int port = 6000+i;
-        };
+        }
     }
-};
+];

@@ -1,0 +1,19 @@
+{
+  "pipelines": {
+    "pipe 1": {
+      "name": "pipeline 1",
+      "active": true,
+      "port": 6001
+    },
+    "pipe 2": {
+      "name": "pipeline 2",
+      "active": true,
+      "port": 6002
+    },
+    "pipe 3": {
+      "name": "pipeline 3",
+      "active": false,
+      "port": 6003
+    }
+  }
+}

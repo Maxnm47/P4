@@ -17,7 +17,7 @@ using UCM.typechecker;
 
 namespace UCM.astVisitor
 {
-    public class SemanticAnalysisVisitor : AstBaseVisitor<AstNode>
+    public class TypeChecker : AstBaseVisitor<AstNode>
     {
         public Dictionary<string, TemplateNode> TemplateTalbe { get; set; } = [];
 
@@ -27,7 +27,7 @@ namespace UCM.astVisitor
         public Dictionary<string, AstNode> CurrentScope => SymbolTables.Peek();
 
 
-        public SemanticAnalysisVisitor()
+        public TypeChecker()
         {
             // Initilise the SymbolTables with the global scope
             SymbolTables.Push([]);
@@ -446,7 +446,7 @@ namespace UCM.astVisitor
 
                     foreach (var index in arrayAccessNode.Indexs)
                     {
-                        Visit(index); 
+                        Visit(index);
                     }
 
                     currentNode = currentArray;
