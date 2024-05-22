@@ -127,7 +127,7 @@ public class TypeCheckerTest
         }
         catch (Exception ex)
         {
-            Assert.AreEqual("Semantic analysis failed", ex.Message);
+            Assert.AreEqual("Type checking failed", ex.Message);
         }
     }
 
@@ -161,7 +161,7 @@ public class TypeCheckerTest
         catch (Exception ex)
         {
             // EXTREMELY HACKY
-            Assert.AreEqual("Semantic analysis failed", ex.Message);
+            Assert.AreEqual("Type checking failed", ex.Message);
         }
     }
 
@@ -199,7 +199,7 @@ public class TypeCheckerTest
         catch (Exception ex)
         {
             // EXTREMELY HACKY
-            Assert.AreEqual("Semantic analysis failed", ex.Message);
+            Assert.AreEqual("Type checking failed", ex.Message);
         }
     }
 

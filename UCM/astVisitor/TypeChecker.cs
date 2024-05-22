@@ -53,7 +53,7 @@ namespace UCM.astVisitor
             }
 
             Console.ResetColor();
-            throw new Exception("Semantic analysis failed");
+            throw new Exception("Type checking failed");
         }
 
 

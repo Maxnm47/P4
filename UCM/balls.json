@@ -14,6 +14,11 @@
       "name": "pipeline 3",
       "active": false,
       "port": 6003
+    },
+    {
+      "name": "pipeline 4",
+      "active": true,
+      "port": 6004
     }
   ]
 }

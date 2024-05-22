@@ -1,17 +1,20 @@
-template Pipeline{
-    string name;
-    bool active;
-    int port;
+
+template A {
+    int a;
+    int b;
 }
 
-hidden bool[] activeArray = [true, true, false];
-
-pipelines = [
-    for (i in [1,,4]) {
-        {
-            string name = $"pipeline `i´";
-            bool active = activeArray[i-1];
-            int port = 6000+i;
-        }
+A[] arr = [
+    {
+        a = 1;
+        b = 10;
+    },
+    {
+        a = 2;
+        b = 20;
     }
 ];
+
+
+A hej = arr[0];
+dut = hej.a;
