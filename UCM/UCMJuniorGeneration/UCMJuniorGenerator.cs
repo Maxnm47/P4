@@ -16,7 +16,7 @@ namespace UCM.UCMJuniorGeneration
 
         public override string VisitField(JFieldNode fieldNode)
         {
-            return $"\"{fieldNode.Key.Value}\" = {Visit(fieldNode.Value)};";
+            return $"(\"{fieldNode.Key.Value}\") = {Visit(fieldNode.Value)};";
         }
 
         public override string VisitInt(JIntNode intNode)
