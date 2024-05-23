@@ -33,17 +33,17 @@ class Program
         if (args[1].Equals("-json"))
         {
             outputFilePath = Path.ChangeExtension(inputFilePath, ".json");
-            TranspileJSON(EvaluatedAst, outputFilePath);
+            GenerateJSON(EvaluatedAst, outputFilePath);
         }
         else if (args[1].Equals("-ucm"))
         {
             outputFilePath = Path.ChangeExtension(inputFilePath, ".ucm");
-            TranspileUCMJunior(EvaluatedAst, outputFilePath);
+            GenerateUCMJunior(EvaluatedAst, outputFilePath);
         }
         else if (args[1].Equals("-yaml"))
         {
             outputFilePath = Path.ChangeExtension(inputFilePath, ".yaml");
-            TranspileYaml(EvaluatedAst, outputFilePath);
+            GenerateYaml(EvaluatedAst, outputFilePath);
         }
         else
         {
@@ -83,13 +83,13 @@ class Program
         AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
         AstNode ast = astBuildVisitor.VisitRoot(parseTree);
 
-        // Semantic Analysis
+        // Type checking
         TypeChecker typeChecker = new TypeChecker();
         typeChecker.Visit(ast);
 
         return ast;
     }
-    static void TranspileJSON(JAstNode evaluatedAst, string outputFile)
+    static void GenerateJSON(JAstNode evaluatedAst, string outputFile)
     {
         // Translating the UCM-Junior AST to JSON
         string jsonString = new JSONGenerator().Visit(evaluatedAst);
@@ -100,7 +100,7 @@ class Program
         File.WriteAllText(outputFile, jsonString);
     }
 
-    static void TranspileUCMJunior(JAstNode evaluatedAst, string outputFile)
+    static void GenerateUCMJunior(JAstNode evaluatedAst, string outputFile)
     {
         // Translating the UCM-Junior AST to UCM-Junior code
         string ucmJuniorString = new UCMJuniorGenerator().Visit(evaluatedAst);
@@ -109,7 +109,7 @@ class Program
         File.WriteAllText(outputFile, ucmJuniorString);
     }
 
-    static void TranspileYaml(JAstNode evaluatedAst, string outputFile)
+    static void GenerateYaml(JAstNode evaluatedAst, string outputFile)
     {
         // Translating the UCM-Junior AST to UCM-Junior code
         string ucmJuniorString = new YamlGenerator().Visit(evaluatedAst);
@@ -200,7 +200,7 @@ class Program
 //         AstNode ast = astBuildVisitor.VisitRoot(parseTree);
 //         Console.WriteLine(ast.ToString());
 
-//         // Semantic Analysis
+//         // Type checking
 //         TypeChecker semanticAnalyser = new TypeChecker();
 //         semanticAnalyser.Visit(ast);
 
