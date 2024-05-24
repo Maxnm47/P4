@@ -11,8 +11,8 @@ using UCM.astJunior;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using UCM.UCMJuniorGeneration;
-using UCM.typechecker;
-
+using UCM.astVisitor;
+using UCM.typeEnum;
 namespace UCM.Tests;
 
 [TestClass]

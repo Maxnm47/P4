@@ -9,7 +9,8 @@ using UCM.ast.complexValues;
 using UCM.ast.loopConstruction;
 using UCM.ast.numExpr;
 using UCM.ast.root;
-using UCM.typechecker;
+using UCM.typeEnum;
+
 namespace UCM.astVisitor;
 
 [TestClass]
