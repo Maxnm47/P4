@@ -1,20 +1,2 @@
 
-template A {
-    int a;
-    int b;
-}
-
-A[] arr = [
-    {
-        a = 1;
-        b = 10;
-    },
-    {
-        a = 2;
-        b = 20;
-    }
-];
-
-
-A hej = arr[0];
-dut = hej.a;
+hej = 2+2;

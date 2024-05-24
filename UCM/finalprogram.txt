@@ -65,9 +65,9 @@ class Program
             AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
             AstNode ast = astBuildVisitor.VisitRoot(parseTree);
 
-            // Semantic Analysis
-            SemanticAnalysisVisitor semanticAnalyser = new SemanticAnalysisVisitor();
-            semanticAnalyser.Visit(ast);
+            // Type checking
+            TypeChecker typeChecker = new TypeChecker();
+            typeChecker.Visit(ast);
 
             // Intermediate Generation
             JAstNode intermediateAst = new IntermediateGenerationVisitor().Visit(ast);

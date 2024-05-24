@@ -17,6 +17,9 @@ class Program
 {
     static void Main(string[] args)
     {
+        // Use this for debugging
+        // args = ["balls.ucm", "-json"];
+
         if (args.Length != 2)
         {
             Console.WriteLine("Please provide the path to the UCM file along with output type.");

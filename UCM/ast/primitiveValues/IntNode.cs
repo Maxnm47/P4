@@ -8,7 +8,7 @@ namespace UCM.ast
         public IntNode(int value) :
             base(value)
         {
-            type = typeEnum.TypeEnum.Int;
+            type = TypeEnum.Int;
         }
 
 

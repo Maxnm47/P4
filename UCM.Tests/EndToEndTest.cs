@@ -68,11 +68,11 @@ public class EndToEndTest
         //check the fields
         Assert.AreEqual("a", fieldNode.Key.Id.value);
         Assert.IsInstanceOfType(fieldNode.Type, typeof(TypeAnotationNode));
-        Assert.AreEqual(TypeEnum.Int, ((TypeAnotationNode)fieldNode.Type).type); 
+        Assert.AreEqual(TypeEnum.Int, ((TypeAnotationNode)fieldNode.Type).type);
         Assert.AreEqual(10, fieldNode.Expr.GetChild<IntNode>(0).value);
 
 
-        // Semantic Analysis TEST SEMANTIC ANALYSIS
+        // Type checking TEST Type checking
         TypeChecker typeChecker = new TypeChecker();
         RootNode typeCheckedField = (RootNode)typeChecker.VisitRoot(ASTrootNode as RootNode);
         //check the fields
@@ -94,7 +94,7 @@ public class EndToEndTest
         // JSON Generation TEST JSON GENERATION
         string jsonString = new JSONGenerator().Visit(intermediateAst);
         Assert.AreEqual("{\"a\": 10}", jsonString);
-        
+
     }
     public void ObjectEndToEndTest()
     {
@@ -140,12 +140,12 @@ public class EndToEndTest
         UCMParser.FieldIdContext fieldId1 = field1.fieldId();
         UCMParser.IdContext id1 = fieldId1.id();
         Assert.AreEqual("x", id1.GetText());
-        
+
         UCMParser.ExprContext expr1 = field1.expr();
         UCMParser.ValueContext value1 = expr1.value();
         UCMParser.NumContext num1 = value1.num();
         Assert.AreEqual("10", num1.GetText());
-        
+
 
         UCMParser.TypeContext type1 = field1.type();
         UCMParser.PrimitiveTypeContext primitiveType1 = type1.primitiveType();
@@ -201,7 +201,7 @@ public class EndToEndTest
         Assert.AreEqual("hello", AstObjectNode.Fields[2].Expr.GetChild<StringNode>(0).value);
 
 
-        // Semantic Analysis TEST SEMANTIC ANALYSIS
+        // Type checking TEST Type checking
         TypeChecker typeChecker = new TypeChecker();
         var semanticNode = typeChecker.Visit(ast);
         var typeCheckedField = (RootNode)semanticNode;
@@ -241,7 +241,7 @@ public class EndToEndTest
         // JSON Generation TEST JSON GENERATION
         string jsonString = new JSONGenerator().Visit(intermediateAst);
         Assert.AreEqual("{\"myObj\": {\"x\": 10, \"y\": 20.5, \"z\": \"hello\"}}", jsonString);
-        
+
     }
 
     [TestMethod]
@@ -324,14 +324,14 @@ public class EndToEndTest
         Assert.IsInstanceOfType(fieldNode.Type, typeof(TypeAnotationNode));
 
         Assert.AreEqual(TypeEnum.Object, ((TypeAnotationNode)fieldNode.Type).type);
-        
+
         var AstObjectNode = fieldNode.Expr.GetChild<ObjectNode>(0);
         Assert.AreEqual(1, AstObjectNode.Fields.Count);
         Assert.AreEqual("a", AstObjectNode.Fields[0].Key.Id.value);
         Assert.AreEqual(10, AstObjectNode.Fields[0].Expr.GetChild<IntNode>(0).value);
-        
 
-        // Semantic Analysis TEST SEMANTIC ANALYSIS
+
+        // Type checking TEST Type checking
         TypeChecker typeChecker = new TypeChecker();
         RootNode TypeCheckedNode = (RootNode)typeChecker.Visit(ASTrootNode);
         //check the template
@@ -343,13 +343,13 @@ public class EndToEndTest
         Assert.AreEqual("aA", TypeCheckedNode.Fields[0].Key.Id.value);
         Assert.IsInstanceOfType(TypeCheckedNode.Fields[0].Type, typeof(TypeAnotationNode));
         Assert.AreEqual(TypeCheckedNode.Fields[0].typeInfo.templateId, "A");
-        
+
         var typeCheckedObjectNode = TypeCheckedNode.Fields[0].Expr.GetChild<ObjectNode>(0);
         Assert.AreEqual(1, typeCheckedObjectNode.Fields.Count);
         Assert.AreEqual("a", typeCheckedObjectNode.Fields[0].Key.Id.value);
         Assert.AreEqual(10, typeCheckedObjectNode.Fields[0].Expr.GetChild<IntNode>(0).value);
 
-        
+
         // Intermediate Generation TEST INTERMEDIATE GENERATION
         JAstNode intermediateAst = new IntermediateGenerationVisitor().Visit(ASTrootNode);
         Assert.IsInstanceOfType(intermediateAst, typeof(JObjectNode));
@@ -362,11 +362,11 @@ public class EndToEndTest
         Assert.AreEqual("a", jObjectNode.Fields[0].Key.Value);
         Assert.IsInstanceOfType(jObjectNode.Fields[0].Value, typeof(JIntNode));
         Assert.AreEqual(10, (jObjectNode.Fields[0].Value as JIntNode).Value);
-        
+
         // JSON Generation TEST JSON GENERATION
         string jsonString = new JSONGenerator().Visit(intermediateAst);
         Assert.AreEqual("{\"aA\": {\"a\": 10}}", jsonString);
-        
+
     }
 
 }

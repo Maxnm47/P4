@@ -7,7 +7,7 @@ namespace UCM.ast
     {
         public FloatNode(float value) : base(value)
         {
-            type = typeEnum.TypeEnum.Float;
+            type = TypeEnum.Float;
         }
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)

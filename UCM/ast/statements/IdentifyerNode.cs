@@ -13,7 +13,7 @@ public class IdentifyerNode : AstLeafNode<string>
     {
     }
 
-    public IdentifyerNode(string value, typeEnum.TypeEnum type) : base(value, type)
+    public IdentifyerNode(string value, TypeEnum type) : base(value, type)
     {
     }
 

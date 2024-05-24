@@ -5,9 +5,9 @@ namespace UCM.ast
     public class VoidNode : AstLeafNode<string>
     {
         public VoidNode() :
-            base(typeEnum.TypeEnum.Void.ToString())
+            base(TypeEnum.Void.ToString())
         {
-            type = typeEnum.TypeEnum.Void;
+            type = TypeEnum.Void;
         }
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)

@@ -1,24 +1,3 @@
 {
-  "pipelines": [
-    {
-      "name": "pipeline 1",
-      "active": true,
-      "port": 6001
-    },
-    {
-      "name": "pipeline 2",
-      "active": true,
-      "port": 6002
-    },
-    {
-      "name": "pipeline 3",
-      "active": false,
-      "port": 6003
-    },
-    {
-      "name": "pipeline 4",
-      "active": true,
-      "port": 6004
-    }
-  ]
+  "hej": 4
 }

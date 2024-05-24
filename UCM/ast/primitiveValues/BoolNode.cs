@@ -7,7 +7,7 @@ namespace UCM.ast
         public BoolNode(bool value) :
             base(value)
         {
-            type = typeEnum.TypeEnum.Bool;
+            type = TypeEnum.Bool;
         }
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
