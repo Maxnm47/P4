@@ -43,7 +43,7 @@ namespace UCM.astVisitor
                 }
             }
 
-            return new JObjectNode(fields);
+            return new JRootNode(fields);
         }
 
 

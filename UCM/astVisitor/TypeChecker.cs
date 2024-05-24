@@ -19,8 +19,6 @@ namespace UCM.astVisitor
 {
     public class TypeChecker : AstBaseVisitor<AstNode>
     {
-        public Dictionary<string, TemplateNode> TemplateTalbe { get; set; } = [];
-
         public TemplateTypeChecker templateTypeChecker = new();
         public Stack<Dictionary<string, AstNode>> SymbolTables { get; set; } = new Stack<Dictionary<string, AstNode>>();
         public List<string> Errors { get; set; } = new List<string>();

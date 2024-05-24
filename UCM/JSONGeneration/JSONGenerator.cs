@@ -9,6 +9,11 @@ namespace UCM.JSONGeneration
 {
     public class JSONGenerator : JAstVisitor<string>
     {
+        public override string VisitRoot(JRootNode objectNode)
+        {
+            return "{" + string.Join(", ", objectNode.Fields.Select(Visit)) + "}";
+        }
+
         public override string VisitObject(JObjectNode objectNode)
         {
             return "{" + string.Join(", ", objectNode.Fields.Select(Visit)) + "}";

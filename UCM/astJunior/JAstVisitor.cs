@@ -67,5 +67,10 @@ namespace UCM.astJunior
         {
             return VisitChildren(jStringNode);
         }
+
+        public virtual Result VisitRoot(JRootNode jRootNode)
+        {
+            return VisitChildren(jRootNode);
+        }
     }
 }
