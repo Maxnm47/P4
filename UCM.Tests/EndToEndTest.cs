@@ -84,8 +84,8 @@ public class EndToEndTest
 
         // Intermediate Generation TEST INTERMEDIATE GENERATION
         JAstNode intermediateAst = new IntermediateGenerationVisitor().Visit(typeCheckedField);
-        Assert.IsInstanceOfType(intermediateAst, typeof(JObjectNode));
-        JObjectNode jRootNode = intermediateAst as JObjectNode;
+        Assert.IsInstanceOfType(intermediateAst, typeof(JRootNode));
+        JRootNode jRootNode = intermediateAst as JRootNode;
         Assert.AreEqual(1, jRootNode.Fields.Count);
         Assert.AreEqual("a", jRootNode.Fields[0].Key.Value);
         Assert.IsInstanceOfType(jRootNode.Fields[0].Value, typeof(JIntNode));
@@ -352,8 +352,8 @@ public class EndToEndTest
 
         // Intermediate Generation TEST INTERMEDIATE GENERATION
         JAstNode intermediateAst = new IntermediateGenerationVisitor().Visit(ASTrootNode);
-        Assert.IsInstanceOfType(intermediateAst, typeof(JObjectNode));
-        JObjectNode jRootNode = intermediateAst as JObjectNode;
+        Assert.IsInstanceOfType(intermediateAst, typeof(JRootNode));
+        JRootNode jRootNode = intermediateAst as JRootNode;
         Assert.AreEqual(1, jRootNode.Fields.Count);
         Assert.AreEqual("aA", jRootNode.Fields[0].Key.Value);
         Assert.IsInstanceOfType(jRootNode.Fields[0].Value, typeof(JObjectNode));

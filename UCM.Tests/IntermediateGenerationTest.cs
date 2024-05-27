@@ -35,8 +35,8 @@ namespace UCM.Tests
         {
             string code = "int x = 5;";
             JAstNode result = GenerateIntermediateRepresentation(code);
-            Assert.IsInstanceOfType(result, typeof(JObjectNode));
-            JObjectNode objectNode = result as JObjectNode;
+            Assert.IsInstanceOfType(result, typeof(JRootNode));
+            JRootNode objectNode = result as JRootNode;
             Assert.AreEqual(1, objectNode.Fields.Count);
             JFieldNode field = objectNode.Fields.First();
             Assert.AreEqual("x", field.Key.Value);
@@ -54,8 +54,8 @@ namespace UCM.Tests
                     };
              ";
             JAstNode result = GenerateIntermediateRepresentation(code);
-            Assert.IsInstanceOfType(result, typeof(JObjectNode));
-            JObjectNode rootNode = result as JObjectNode;
+            Assert.IsInstanceOfType(result, typeof(JRootNode));
+            JRootNode rootNode = result as JRootNode;
             JFieldNode outerx = rootNode.Fields[0];
             Assert.AreEqual("x", outerx.Key.Value); //outer x
             Assert.IsInstanceOfType(outerx.Value, typeof(JIntNode));
@@ -79,8 +79,8 @@ namespace UCM.Tests
                 int b = x;
             ";
             JAstNode result = GenerateIntermediateRepresentation(code);
-            Assert.IsInstanceOfType(result, typeof(JObjectNode));
-            JObjectNode rootNode = result as JObjectNode;
+            Assert.IsInstanceOfType(result, typeof(JRootNode));
+            JRootNode rootNode = result as JRootNode;
             JFieldNode x = rootNode.Fields[0];
             Assert.AreEqual("x", x.Key.Value);
             Assert.IsInstanceOfType(x.Value, typeof(JIntNode));
@@ -101,8 +101,8 @@ namespace UCM.Tests
                 };
             ";
             JAstNode result = GenerateIntermediateRepresentation(code);
-            Assert.IsInstanceOfType(result, typeof(JObjectNode));
-            JObjectNode rootNode = result as JObjectNode;
+            Assert.IsInstanceOfType(result, typeof(JRootNode));
+            JRootNode rootNode = result as JRootNode;
             JFieldNode x = rootNode.Fields[0];
             Assert.AreEqual("x", x.Key.Value);
             Assert.IsInstanceOfType(x.Value, typeof(JIntNode));
@@ -124,8 +124,8 @@ namespace UCM.Tests
                 int[] x = [1,2,3];
             ";
             JAstNode result = GenerateIntermediateRepresentation(code);
-            Assert.IsInstanceOfType(result, typeof(JObjectNode));
-            JObjectNode rootNode = result as JObjectNode;
+            Assert.IsInstanceOfType(result, typeof(JRootNode));
+            JRootNode rootNode = result as JRootNode;
             JFieldNode x = rootNode.Fields[0];
             Assert.AreEqual("x", x.Key.Value);
             Assert.IsInstanceOfType(x.Value, typeof(JArrayNode));
@@ -187,8 +187,8 @@ namespace UCM.Tests
                 any[] a = [1,2.1,3];
             ";
             JAstNode result = GenerateIntermediateRepresentation(code);
-            Assert.IsInstanceOfType(result, typeof(JObjectNode));
-            JObjectNode rootNode = result as JObjectNode;
+            Assert.IsInstanceOfType(result, typeof(JRootNode));
+            JRootNode rootNode = result as JRootNode;
             JFieldNode a = rootNode.Fields[0];
             Assert.AreEqual("a", a.Key.Value);
             Assert.IsInstanceOfType(a.Value, typeof(JArrayNode));
