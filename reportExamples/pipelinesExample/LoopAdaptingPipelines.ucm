@@ -1,0 +1,28 @@
+template Pipeline{
+    string name;
+    bool active;
+    int port;
+}
+
+hidden bool[] activeArray = [true, true, false];
+
+pipelines = {
+    for (i in [1,,4]) {
+        Pipeline ($"pipe `i´") = {
+            string name = $"pipeline `i´";
+            bool active = activeArray[i-1];
+            int port = 6000+i;
+        };
+    }
+};
+
+#adapting example
+Pipeline[] pipelinesAdapting = [
+    for (i in [1,,4]){
+        hiddenPipeline {
+            name = $"`i´";
+            active = true;
+            port = i;
+        }
+    }
+];

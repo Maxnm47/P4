@@ -10,20 +10,23 @@ using UCM.ast.statements.whileLoop;
 using UCM.ast.loopConstruction;
 using System.Runtime.CompilerServices;
 using UCM.scope;
+using UCM.typeEnum;
+using System.Globalization;
 
 namespace UCM.ast;
 
 public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 {
     /* ------------------------ Root ------------------------ */
-    
+
     public override AstNode VisitRoot(UCMParser.RootContext context)
     {
+        Console.WriteLine("Visiting Root: " + context.GetText());
         List<FieldNode> fields = context.field().Select(field => (FieldNode)Visit(field)).ToList();
         List<MethodCollectionNode> methodCollections = context.functionCollection().Select(methodCollection => (MethodCollectionNode)Visit(methodCollection)).ToList();
         List<TemplateNode> templates = context.templateDefenition().Select(template => (TemplateNode)Visit(template)).ToList();
 
-        return new RootNode(fields, methodCollections, templates);
+        return new RootNode(methodCollections, templates, fields);
     }
 
     public override MethodCollectionNode VisitFunctionCollection(UCMParser.FunctionCollectionContext context)
@@ -83,10 +86,10 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         bool isCompounAssignment = context.compoundasign() is not null;
 
-        var hidden = new HiddenAnotationNode(isHidden);
+        var hidden = isHidden ? new HiddenAnotationNode(isHidden) : null;
         var type = (isTyped) ?
             (TypeAnotationNode)Visit(context.type()) :
-            new TypeAnotationNode(typechecker.TypeEnum.None.ToString(), typechecker.TypeEnum.None);
+            null;
 
         var _id = Visit(context.fieldId());
         FieldId? id = default;
@@ -163,7 +166,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
         var type = (isTyped) ?
             (TypeAnotationNode)Visit(context.type()) :
-            new TypeAnotationNode(typechecker.TypeEnum.None.ToString(), typechecker.TypeEnum.None);
+            new TypeAnotationNode(TypeEnum.None.ToString(), TypeEnum.None);
         var id = (IdentifyerNode)Visit(context.id());
         var expr = (ExpressionNode)Visit(context.expr());
 
@@ -240,7 +243,49 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override TypeAnotationNode VisitType(UCMParser.TypeContext context)
     {
         Console.WriteLine("Visiting Type: " + context.GetText());
-        return new TypeAnotationNode(context.GetText());
+
+        if (context.GetText() == "void")
+        {
+            return new TypeAnotationNode(TypeEnum.Void.ToString(), TypeEnum.Void);
+        }
+        else if (context.GetText() == "string")
+        {
+            return new TypeAnotationNode(TypeEnum.String.ToString(), TypeEnum.String);
+        }
+        else if (context.GetText() == "int")
+        {
+            return new TypeAnotationNode(TypeEnum.Int.ToString(), TypeEnum.Int);
+        }
+        else if (context.GetText() == "float")
+        {
+            return new TypeAnotationNode(TypeEnum.Float.ToString(), TypeEnum.Float);
+        }
+        else if (context.GetText() == "bool")
+        {
+            return new TypeAnotationNode(TypeEnum.Bool.ToString(), TypeEnum.Bool);
+        }
+        else if (context.complexType() != null)
+        {
+            return (TypeAnotationNode)Visit(context.complexType());
+        }
+
+        return new TypeAnotationNode(context.GetText(), TypeEnum.Undefined);
+    }
+
+    public override TypeAnotationNode VisitComplexType(UCMParser.ComplexTypeContext context)
+    {
+        Console.WriteLine("Visiting ComplexType: " + context.GetText());
+
+        if (context.object_t() != null)
+        {
+            return new TypeAnotationNode(context.object_t().GetText(), TypeEnum.Object);
+        }
+        else if (context.array_t() != null)
+        {
+            return new TypeAnotationNode(context.array_t().GetText(), TypeEnum.Array);
+        }
+
+        return new TypeAnotationNode(context.GetText(), TypeEnum.Undefined);
     }
 
     public override AstNode VisitMethod(UCMParser.MethodContext context)
@@ -399,6 +444,8 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
     }
 
+
+
     /* ------------------------ Exxpresions ------------------------ */
     public override ExpressionNode VisitExpr(UCMParser.ExprContext context)
     {
@@ -410,7 +457,10 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             AstNode childNode = Visit(child);
             expr.AddChild(childNode);
         }
-
+        if (expr.children.Count == 0)
+        {
+            expr.AddChild(new NullNode("null"));
+        }
         return expr;
     }
 
@@ -473,17 +523,58 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         }
         else if (context.compExpr().EQ() != null)
         {
-            return new EqualNode(
-                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
-                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
-            );
+            AstNode left = null;
+            AstNode right = null;
+
+            for (int i = 0; i < context.ChildCount; i++)
+            {
+                var child = context.GetChild(i);
+
+                if (child is UCMParser.BoolExprContext)
+                {
+                    if (left == null)
+                        left = Visit(child as UCMParser.BoolExprContext);
+                    else
+                        right = Visit(child as UCMParser.BoolExprContext);
+                }
+                else if (child is UCMParser.NumExprContext)
+                {
+                    if (left == null)
+                        left = Visit(child as UCMParser.NumExprContext);
+                    else
+                        right = Visit(child as UCMParser.NumExprContext);
+                }
+            }
+
+            return new EqualNode(left, right);
         }
+
         else if (context.compExpr().NEQ() != null)
         {
-            return new NotEqualNode(
-                Visit(context.GetChild<UCMParser.BoolExprContext>(0)),
-                Visit(context.GetChild<UCMParser.BoolExprContext>(1))
-            );
+            AstNode left = null;
+            AstNode right = null;
+
+            for (int i = 0; i < context.ChildCount; i++)
+            {
+                var child = context.GetChild(i);
+
+                if (child is UCMParser.BoolExprContext)
+                {
+                    if (left == null)
+                        left = Visit(child as UCMParser.BoolExprContext);
+                    else
+                        right = Visit(child as UCMParser.BoolExprContext);
+                }
+                else if (child is UCMParser.NumExprContext)
+                {
+                    if (left == null)
+                        left = Visit(child as UCMParser.NumExprContext);
+                    else
+                        right = Visit(child as UCMParser.NumExprContext);
+                }
+            }
+
+            return new NotEqualNode(left, right);
         }
 
         return default;
@@ -576,6 +667,7 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     }
 
 
+
     public override IntNode VisitInt(UCMParser.IntContext context)
     {
         Console.WriteLine("Visiting Int: " + context.GetText());
@@ -586,8 +678,10 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
     public override FloatNode VisitFloat(UCMParser.FloatContext context)
     {
         Console.WriteLine("Visiting Float: " + context.GetText());
-        return new FloatNode(float.Parse(context.GetText()));
+        return new FloatNode(float.Parse(context.GetText(), CultureInfo.InvariantCulture));
     }
+
+
 
 
     /* ------------------------ Complex Types ------------------------ */
@@ -621,12 +715,25 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
 
     public override ObjectFieldAcessNode VisitObjectFieldAcess(UCMParser.ObjectFieldAcessContext context)
     {
-        List<IdentifyerNode> ids = context.id().
-        Select(id => (IdentifyerNode)Visit(id)).ToList();
-
         Console.WriteLine("Visiting ObjectFieldAcess: " + context.GetText());
+        List<AstNode> ids = new List<AstNode>();
+        foreach (var child in context.children)
+        {
+            if (child is UCMParser.IdContext)
+            {
+                AstNode id = Visit(child);
+                ids.Add(id);
+            }
+            if (child is UCMParser.ArrayAccessContext)
+            {
+                AstNode arrayAccess = Visit(child);
+                ids.Add(arrayAccess);
+            }
+        }
+
         return new ObjectFieldAcessNode(ids);
     }
+
 
     public override AstNode VisitArray([NotNull] UCMParser.ArrayContext context)
     {
@@ -640,20 +747,54 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
                 AstNode expr = Visit(child);
                 array.AddChild(expr);
             }
+
+            if (child is UCMParser.LoopConstructionContext)
+            {
+                AstNode x = Visit(child);
+                array.AddChild(x);
+            }
+
+            if (child is UCMParser.RangeContext)
+            {
+                AstNode range = Visit(child);
+                array.AddChild(range);
+            }
         }
 
         return array;
     }
 
+    public override AstNode VisitRange([NotNull] UCMParser.RangeContext context)
+    {
+        Console.WriteLine("Visiting Range: " + context.GetText());
+        ExpressionNode start = (ExpressionNode)Visit(context.expr(0));
+        ExpressionNode end = (ExpressionNode)Visit(context.expr(1));
+
+        return new RangeNode(start, end);
+    }
+
+    public override AstNode VisitArrayAccess([NotNull] UCMParser.ArrayAccessContext context)
+    {
+        List<ExpressionNode> indexs = context.expr().Select(expr => (ExpressionNode)Visit(expr)).ToList();
+
+        IdentifyerNode arrayName = Visit(context.id()) as IdentifyerNode;
+
+        return new ArrayAccessNode(arrayName, indexs);
+    }
+
+
     public override LoopConstructionNode VisitLoopConstruction([NotNull] UCMParser.LoopConstructionContext context)
     {
         Console.WriteLine("Visiting ListConstruction: " + context.GetText());
+
+
+        TypeAnotationNode? type = (context.type() != null) ? (TypeAnotationNode)Visit(context.type()) : null;
 
         IdentifyerNode entity = (IdentifyerNode)Visit(context.id());
         ExpressionNode array = (ExpressionNode)Visit(context.expr());
         LoopConstructContentNode evaluationContent = (LoopConstructContentNode)Visit(context.loopConstructContent());
 
-        return new LoopConstructionNode(entity, array, evaluationContent);
+        return new LoopConstructionNode(type, entity, array, evaluationContent);
     }
 
     public override LoopConstructContentNode VisitLoopConstructContent([NotNull] UCMParser.LoopConstructContentContext context)
@@ -665,8 +806,8 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
         {
             if (child is UCMParser.ExprContext || child is UCMParser.FieldContext)
             {
-                AstNode statementList = Visit(child);
-                loopConstructContent.AddChild(statementList);
+                AstNode content = Visit(child);
+                loopConstructContent.AddChild(content);
             }
         }
 
@@ -707,7 +848,6 @@ public class AstBuildVisitor : UCMBaseVisitor<AstNode>
             }
             else if (child is UCMParser.StringExprContext stringExprContext)
             {
-
                 ExpressionNode expr = (ExpressionNode)Visit(stringExprContext);
                 augmentedStringNode.AddChild(expr);
             }

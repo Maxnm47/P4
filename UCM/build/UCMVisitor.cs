@@ -158,6 +158,12 @@ public interface IUCMVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitArrayElement([NotNull] UCMParser.ArrayElementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="UCMParser.range"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRange([NotNull] UCMParser.RangeContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="UCMParser.array"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

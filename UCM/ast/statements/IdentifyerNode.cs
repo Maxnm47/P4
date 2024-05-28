@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UCM.astVisitor;
-using UCM.typechecker;
+using UCM.typeEnum;
 
 namespace UCM.ast;
 

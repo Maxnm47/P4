@@ -1,5 +1,5 @@
 
-using UCM.typechecker;
+using UCM.typeEnum;
 
 namespace UCM.ast
 {
@@ -7,7 +7,7 @@ namespace UCM.ast
     {
         public FloatNode(float value) : base(value)
         {
-            type = TypeEnum.FLOAT;
+            type = TypeEnum.Float;
         }
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)

@@ -66,7 +66,7 @@ STRING_T: 'string';
 BOOL_T: 'bool';
 VOID_T: 'void';
 object_t: OBJECT_KEYWORD | ID;
-array_t: (primitiveType | object_t | STRING_T) (
+array_t: (primitiveType | object_t | STRING_T |) (
 		LBRACKET RBRACKET
 	)+;
 
@@ -124,10 +124,12 @@ field:
 	HIDDEN_? type? fieldId (ASSIGN | compoundasign) expr SEMI;
 
 // Arrays
-arrayElement: expr | loopConstruction;
-array: LBRACKET (arrayElement (COMMA arrayElement)* |) RBRACKET;
+arrayElement: expr | loopConstruction | range;
+range: expr COMMA COMMA expr;
+array:
+	LBRACKET ((arrayElement (COMMA arrayElement)*) |) RBRACKET;
 
-arrayAccess: id LBRACKET expr RBRACKET;
+arrayAccess: id (LBRACKET expr RBRACKET)+;
 // Templates
 evaluaterArray: LBRACKET (expr (COMMA expr)* |) RBRACKET;
 
@@ -152,17 +154,16 @@ method:
 functionCollectionCall: id DOT;
 methodCall:
 	functionCollectionCall? id LPAREN (expr (COMMA expr)* |) RPAREN;
-objectFieldAcess:
-	id (DOT id)+;
+objectFieldAcess: (id | arrayAccess) (DOT id)+;
 // Expressions
 expr:
 	value
+	| numExpr
 	| id
-	| objectFieldAcess 
+	| objectFieldAcess
 	| arrayAccess
 	| methodCall
 	| boolExpr
-	| numExpr
 	| stringExpr;
 
 stringExpr:
@@ -170,14 +171,16 @@ stringExpr:
 	| id
 	| arrayAccess
 	| methodCall
+	| objectFieldAcess
 	| augmentedString
 	| string;
 
 numExpr:
-	num
+	value
 	//| THIS_KEYWORD // this  may ruin everything in the semantics :)))
 	| id
 	| methodCall
+	| objectFieldAcess
 	| arrayAccess
 	| MINUS numExpr
 	| numExpr (MULT | DIV | MOD) numExpr
@@ -190,6 +193,7 @@ boolExpr:
 	| id
 	| methodCall
 	| NOT boolExpr
+	| numExpr compExpr numExpr
 	| boolExpr compExpr boolExpr
 	| boolExpr AND boolExpr
 	| boolExpr OR boolExpr
@@ -214,7 +218,7 @@ forLoop:
 // List construction
 loopConstructContent: (field | expr)*;
 loopConstruction:
-	FOR LPAREN id IN expr RPAREN LCURLY loopConstructContent RCURLY;
+	FOR LPAREN type? id IN expr RPAREN LCURLY loopConstructContent RCURLY;
 
 //return
 return_: RETURN expr? SEMI;

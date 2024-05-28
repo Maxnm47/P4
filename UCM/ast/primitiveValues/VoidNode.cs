@@ -1,13 +1,13 @@
-using UCM.typechecker;
+using UCM.typeEnum;
 
 namespace UCM.ast
 {
     public class VoidNode : AstLeafNode<string>
     {
         public VoidNode() :
-            base(TypeEnum.VOID.ToString())
+            base(TypeEnum.Void.ToString())
         {
-            type = TypeEnum.VOID;
+            type = TypeEnum.Void;
         }
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)

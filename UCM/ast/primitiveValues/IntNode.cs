@@ -1,4 +1,5 @@
-using UCM.typechecker;
+using Antlr4.Runtime.Misc;
+using UCM.typeEnum;
 
 namespace UCM.ast
 {
@@ -7,12 +8,14 @@ namespace UCM.ast
         public IntNode(int value) :
             base(value)
         {
-            type = TypeEnum.INT;
+            type = TypeEnum.Int;
         }
+
 
         public override T Accept<T>(astVisitor.AstBaseVisitor<T> visitor)
         {
             return visitor.VisitInt(this);
         }
     }
+
 }

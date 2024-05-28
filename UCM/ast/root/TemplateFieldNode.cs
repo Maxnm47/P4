@@ -23,7 +23,7 @@ namespace UCM.ast.root
         public TypeAnotationNode Type => GetChild<TypeAnotationNode>(0);
         public IdentifyerNode Id => GetChild<IdentifyerNode>(0);
 
-        public ExpressionNode Expr => GetChild<ExpressionNode>(0);
+        public ExpressionNode? Expr => GetChild<ExpressionNode>(0);
 
         public ArrayNode? EvaluatorArray => GetChild<ArrayNode>(0);
 

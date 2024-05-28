@@ -12,6 +12,7 @@ using UCM.ast.statements;
 using UCM.ast.statements.condition;
 using UCM.ast.statements.forLoops;
 using UCM.ast.statements.whileLoop;
+using UCM.typeEnum;
 
 namespace UCM.astVisitor
 {
@@ -20,7 +21,8 @@ namespace UCM.astVisitor
         public virtual Result Visit(AstNode node)
         {
             Console.WriteLine(node.GetType());
-            return VisitChildren(node);
+            node.typeInfo ??= new TypeInfo(TypeEnum.Unknown);
+            return node.Accept(this);
         }
 
         public virtual Result VisitChildren(AstNode node)
@@ -28,6 +30,7 @@ namespace UCM.astVisitor
             Result? result = default(Result);
             foreach (AstNode child in node.children)
             {
+                child.typeInfo ??= new TypeInfo(TypeEnum.Unknown);
                 Result? nextResult = child.Accept(this);
                 if (nextResult != null)
                 {
@@ -38,6 +41,10 @@ namespace UCM.astVisitor
             return result;
         }
 
+        public virtual Result VisitNull(NullNode node)
+        {
+            return VisitChildren(node);
+        }
         public virtual Result VisitField(FieldNode node)
         {
             return VisitChildren(node);
@@ -288,6 +295,16 @@ namespace UCM.astVisitor
         public virtual Result VisitObjectFieldAcess(ObjectFieldAcessNode objectFieldAcessNode)
         {
             return VisitChildren(objectFieldAcessNode);
+        }
+
+        public virtual Result VisitArrayAccess(ArrayAccessNode arrayAccessNode)
+        {
+            return VisitChildren(arrayAccessNode);
+        }
+
+        public virtual Result VisitRange(RangeNode rangeNode)
+        {
+            return VisitChildren(rangeNode);
         }
     }
 }

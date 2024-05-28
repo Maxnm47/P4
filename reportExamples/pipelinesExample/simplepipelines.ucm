@@ -1,0 +1,17 @@
+[] pipelines = [
+    {
+        string name = "pipelines 1";
+        bool active = true;
+        int port = 6001;
+    },    
+    {
+        string name = "pipelines 2";
+        bool active = true;
+        int port = 6002;
+    },    
+    {
+        string name = "pipelines 3";
+        bool active = false;
+        int port = 6003;
+    }
+];

@@ -1,0 +1,21 @@
+template SpecMap {
+    string service_display_name;
+    object api_display_names;
+}
+
+hidden string[][] keys = [
+    ["addons", "Addons"],
+    ["adhybridhealthservice", 
+    "AD Hybrid Health Services"], 
+    ["adp", "Autonomous Development Platform"]
+];
+object specmaps = {
+    for(int i in [0,,3]){
+        SpecMap (keys[i][0]) ={
+            service_display_name = keys[i][1];
+            api_display_names = {
+                string resource_manager = keys[i][1];
+            };
+        };        
+    }
+};

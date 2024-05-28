@@ -9,10 +9,17 @@ namespace UCM.ast;
 
 public class FieldNode : AstNode
 {
-    public FieldNode(HiddenAnotationNode hidden, TypeAnotationNode type, FieldId id, ExpressionNode expr)
+    public FieldNode(HiddenAnotationNode? hidden, TypeAnotationNode? type, FieldId id, ExpressionNode expr)
     {
-        children.Add(hidden);
-        children.Add(type);
+        if (hidden != null)
+        {
+            children.Add(hidden);
+        }
+        if (type != null)
+        {
+            children.Add(type);
+        }
+
         children.Add(id);
         children.Add(expr);
     }
@@ -21,8 +28,8 @@ public class FieldNode : AstNode
     {
         return visitor.VisitField(this);
     }
-    public HiddenAnotationNode Hidden => GetChild<HiddenAnotationNode>(0);
-    public TypeAnotationNode Type => GetChild<TypeAnotationNode>(0);
+    public HiddenAnotationNode? Hidden => GetChild<HiddenAnotationNode>(0);
+    public TypeAnotationNode? Type => GetChild<TypeAnotationNode>(0);
     public FieldId Key => GetChild<FieldId>(0);
 
     public ExpressionNode Expr => GetChild<ExpressionNode>(0);
