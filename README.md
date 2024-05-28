@@ -1,5 +1,5 @@
 # Unified Computational Modeling Language
-Short name UCM
+Unified Computational Modeling Language (UCM) is a language designed to produce serialized languages such as JSON or YAML, ensuring type safety of the fields.
 ## Prerequisites
 
 - `dotnet` v8+
@@ -12,7 +12,6 @@ On **Windows**, the parser code must be **generated manually**:
 ```sh
 cd P4 
 Run the antlrmaker.sh
-cd ..
 ```
 
 ## Dotnet commands
