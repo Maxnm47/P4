@@ -83,12 +83,11 @@ namespace UCM.astVisitor
             {
                 if (tField.typeInfo.Equals(fieldNode.typeInfo) && tField.Id.value == fieldNode.Key.Id.value)
                 {
+                    if (tField.typeInfo.templateId != null)
+                    {
+                        return Check(tField.typeInfo.templateId, fieldNode.Expr.GetChild<ObjectNode>(0).Fields);
+                    }
                     return true;
-                }
-
-                if (tField.typeInfo.templateId != null)
-                {
-                    return Check(tField.typeInfo.templateId, fieldNode.Expr.GetChild<ObjectNode>(0).Fields);
                 }
             }
 
