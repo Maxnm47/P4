@@ -27,9 +27,15 @@ dotnet test
 To run the project:
 
 ```sh
-dotnet run -- path/to/yourfile.ucm 
+dotnet run path/to/yourfile.ucm 
 ```
+
 To output the file to JSON
 ```sh
-dotnet run -- path/to/yourfile.ucm -json
+dotnet run path/to/yourfile.ucm -json
+```
+
+To output the file to YAML
+```sh
+dotnet run path/to/yourfile.ucm -yaml
 ```

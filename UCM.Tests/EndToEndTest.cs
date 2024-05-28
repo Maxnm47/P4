@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using UCM.UCMJuniorGeneration;
 using UCM.astVisitor;
 using UCM.typeEnum;
+using UCM.visitors;
 namespace UCM.Tests;
 
 [TestClass]
@@ -369,4 +370,111 @@ public class EndToEndTest
 
     }
 
+    [TestMethod]
+    public void PipeLinesExampleTest(){
+        string input = """
+        template Pipeline{
+            string name;
+            bool active;
+            int port;
+        }
+
+        hidden Pipeline hiddenPipeline = {
+            name = "pipeline ";
+            port = 6000;
+        };
+
+        Pipeline[] pipelines = [
+            for (i in [1,,4]){
+                {
+                    name = hiddenPipeline.name + $"`i´";
+                    active = true;
+                    port = hiddenPipeline.port + i;
+                }
+            }
+        ];
+        """;
+        ICharStream stream = CharStreams.fromString(input);
+
+        // Create tokens
+        UCMLexer lexer = new UCMLexer(stream);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        //add errorlistener
+        lexer.RemoveErrorListeners();
+        lexer.AddErrorListener(new ErrorListener());
+
+        // Create parser
+        UCMParser parser = new UCMParser(tokens);
+        UCMParser.RootContext parseTree = parser.root();
+        //add error listenr
+        parser.RemoveErrorListeners();
+        parser.AddErrorListener(new ErrorListener());
+
+        //template
+        AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
+        var ASTrootNode = (RootNode)astBuildVisitor.VisitRoot(parseTree);
+
+        TypeChecker typeChecker = new TypeChecker();
+        var semanticNode = typeChecker.Visit(ASTrootNode);
+
+        JAstNode intermediateAst = new IntermediateGenerationVisitor().Visit(semanticNode);
+        Assert.IsInstanceOfType(intermediateAst, typeof(JRootNode));
+
+        string jsonString = new JSONGenerator().Visit(intermediateAst);
+        Assert.AreEqual("{\"pipelines\": [{\"name\": \"pipeline 1\", \"active\": true, \"port\": 6001}, {\"name\": \"pipeline 2\", \"active\": true, \"port\": 6002}, {\"name\": \"pipeline 3\", \"active\": true, \"port\": 6003}]}", jsonString);
+    }
+
+        [TestMethod]
+        public void AzureExampleTest(){
+        string input = """
+            template SpecMap {
+                string service_display_name;
+                object api_display_names;
+            }
+
+            hidden string[][] keys = [
+                                    ["addons", "Addons"],
+                                    ["adhybridhealthservice", "AD Hybrid Health Services"], 
+                                    ["adp", "Autonomous Development Platform"]
+                                    ];
+            object specmaps = {
+                for(int i in [0,,3]){
+                        SpecMap (keys[i][0]) ={
+                            service_display_name = keys[i][1];
+                            api_display_names = {
+                                string resource_manager = keys[i][1];
+                            };
+                        };        
+                }
+            };
+        """;
+        ICharStream stream = CharStreams.fromString(input);
+
+        // Create tokens
+        UCMLexer lexer = new UCMLexer(stream);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        //add errorlistener
+        lexer.RemoveErrorListeners();
+        lexer.AddErrorListener(new ErrorListener());
+
+        // Create parser
+        UCMParser parser = new UCMParser(tokens);
+        UCMParser.RootContext parseTree = parser.root();
+        //add error listenr
+        parser.RemoveErrorListeners();
+        parser.AddErrorListener(new ErrorListener());
+
+        //template
+        AstBuildVisitor astBuildVisitor = new AstBuildVisitor();
+        var ASTrootNode = (RootNode)astBuildVisitor.VisitRoot(parseTree);
+
+        TypeChecker typeChecker = new TypeChecker();
+        var semanticNode = typeChecker.Visit(ASTrootNode);
+
+        JAstNode intermediateAst = new IntermediateGenerationVisitor().Visit(semanticNode);
+        Assert.IsInstanceOfType(intermediateAst, typeof(JRootNode));
+
+        string jsonString = new JSONGenerator().Visit(intermediateAst);
+        Assert.AreEqual("{\"specmaps\": {\"addons\": {\"service_display_name\": \"Addons\", \"api_display_names\": {\"resource_manager\": \"Addons\"}}, \"adhybridhealthservice\": {\"service_display_name\": \"AD Hybrid Health Services\", \"api_display_names\": {\"resource_manager\": \"AD Hybrid Health Services\"}}, \"adp\": {\"service_display_name\": \"Autonomous Development Platform\", \"api_display_names\": {\"resource_manager\": \"Autonomous Development Platform\"}}}}", jsonString);
+    }
 }
